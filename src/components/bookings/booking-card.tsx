@@ -32,16 +32,16 @@ export function BookingCard({ booking, onDelete }: BookingCardProps) {
       "p-4 rounded-xl border transition-all duration-300",
       booking.isActionRequired 
         ? "border-orange-500/30 bg-orange-500/5 hover:bg-orange-500/10" 
-        : "border-border/50 bg-card/30 hover:bg-accent/50"
+        : "bg-card/30"
     )}>
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div className="space-y-2">
           <div className="flex items-center gap-2">
-            <h3 className="font-bold text-lg tracking-tight uppercase">
+            <h3 className="font-semibold text-lg uppercase">
               {booking.title}
             </h3>
             {booking.isActionRequired && (
-              <Badge variant="warning" className="text-[10px] uppercase font-bold  py-0 h-5">
+              <Badge variant="warning" className="text-[10px] uppercase font-semibold py-0">
                 পদক্ষেপ প্রয়োজন
               </Badge>
             )}
@@ -58,12 +58,12 @@ export function BookingCard({ booking, onDelete }: BookingCardProps) {
               </p>
             )}
             {booking.amount && (
-              <p className="flex items-center gap-1.5 font-bold text-emerald-500">
+              <p className="flex items-center gap-1.5 font-semibold text-emerald-500">
                 প্রাপ্তি: ৳{booking.amount}
               </p>
             )}
             {isRequest && (
-              <p className="text-orange-500 font-medium ">
+              <p className="text-orange-500 font-medium">
                 {booking.date}
               </p>
             )}
@@ -76,7 +76,7 @@ export function BookingCard({ booking, onDelete }: BookingCardProps) {
               <Button 
                 size="sm" 
                 variant="success" 
-                className="gap-2 font-bold uppercase  text-xs h-9"
+                className="font-semibold uppercase text-xs"
               >
                 <CheckCircle2 />
                 অনুমোদন দিন
@@ -84,7 +84,7 @@ export function BookingCard({ booking, onDelete }: BookingCardProps) {
               <Button 
                 size="sm" 
                 variant="outline" 
-                className="gap-2 font-bold uppercase  text-xs h-9 border-destructive/30 text-destructive hover:bg-destructive/10"
+                className="font-semibold uppercase text-xs text-destructive"
               >
                 <XCircle />
                 প্রত্যাখ্যান করুন
@@ -99,7 +99,7 @@ export function BookingCard({ booking, onDelete }: BookingCardProps) {
               <Button 
                 size="sm" 
                 variant="outline" 
-                className="h-9 gap-2 border-emerald-500/30 text-emerald-500 hover:bg-emerald-500/10 font-bold uppercase  text-xs"
+                className="font-semibold uppercase text-xs text-emerald-500"
               >
                  <CheckCircle2 />
                  সম্পন্ন

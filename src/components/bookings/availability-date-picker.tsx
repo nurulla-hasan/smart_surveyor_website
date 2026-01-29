@@ -33,8 +33,8 @@ export function AvailabilityDatePicker({
   };
 
   const modifiersClassNames = {
-    booked: "bg-orange-500 text-white font-black rounded-full shadow-[0_0_10px_rgba(249,115,22,0.3)]",
-    blocked: "bg-red-500/20 text-red-500 font-black border border-red-500/30 rounded-full",
+    booked: "bg-orange-500 text-white font-semibold rounded-full shadow-[0_0_10px_rgba(249,115,22,0.3)]",
+    blocked: "bg-red-500/20 text-red-500 font-semibold border border-red-500/30 rounded-full",
   };
 
   return (
@@ -43,7 +43,7 @@ export function AvailabilityDatePicker({
         <Button
           variant={"outline"}
           className={cn(
-            "w-full justify-start text-left font-normal bg-muted/20 border-border/50",
+            "w-full justify-start text-left font-normal",
             !date && "text-muted-foreground",
             className
           )}
@@ -52,7 +52,7 @@ export function AvailabilityDatePicker({
           {date ? format(date, "PPP", { locale: bn }) : <span>{label}</span>}
         </Button>
       </PopoverTrigger>
-      <PopoverContent className="w-auto p-0 border-border/50 bg-slate-900 shadow-2xl" align="start">
+      <PopoverContent className="w-auto p-0" align="start">
         <Calendar
           mode="single"
           selected={date}
@@ -62,17 +62,17 @@ export function AvailabilityDatePicker({
           modifiersClassNames={modifiersClassNames}
           classNames={{
             day_selected: "bg-emerald-500 text-white hover:bg-emerald-600 focus:bg-emerald-500 rounded-full",
-            day_today: "bg-muted text-foreground font-black rounded-full",
+            day_today: "bg-muted text-foreground font-semibold rounded-full",
           }}
         />
-        <div className="p-4 border-t border-border/50 space-y-2">
+        <div className="p-4 border-t space-y-2">
             <div className="flex items-center gap-2">
                 <div className="h-2 w-2 rounded-full bg-red-500" />
-                <span className="text-[10px] text-muted-foreground uppercase font-black">অফ-ডে (ব্লক)</span>
+                <span className="text-[10px] text-muted-foreground uppercase font-semibold">অফ-ডে (ব্লক)</span>
             </div>
             <div className="flex items-center gap-2">
                 <div className="h-2 w-2 rounded-full bg-orange-500" />
-                <span className="text-[10px] text-muted-foreground uppercase font-black">বুকিং আছে</span>
+                <span className="text-[10px] text-muted-foreground uppercase font-semibold">বুকিং আছে</span>
             </div>
         </div>
       </PopoverContent>

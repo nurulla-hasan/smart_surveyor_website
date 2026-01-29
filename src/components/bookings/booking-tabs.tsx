@@ -42,7 +42,7 @@ export function BookingTabs({ activeTab, onTabChange, requestCount = 0 }: Bookin
             key={tab.id}
             onClick={() => onTabChange(tab.id)}
             className={cn(
-              "flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-bold transition-all duration-200 uppercase  tracking-tighter",
+              "flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-semibold transition-all duration-200 uppercase tracking-tight",
               isActive 
                 ? "bg-slate-800 text-white shadow-lg" 
                 : "text-muted-foreground hover:bg-muted/50 hover:text-foreground"
@@ -52,7 +52,7 @@ export function BookingTabs({ activeTab, onTabChange, requestCount = 0 }: Bookin
             {tab.label}
             {tab.count !== undefined && tab.count > 0 && (
               <span className={cn(
-                "flex items-center justify-center min-w-[18px] h-[18px] rounded-full text-[10px] font-black",
+                "flex items-center justify-center min-w-[18px] h-[18px] rounded-full text-[10px] font-semibold",
                 isActive ? "bg-red-500 text-white" : "bg-red-500/20 text-red-500"
               )}>
                 {tab.count}

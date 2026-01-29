@@ -127,7 +127,7 @@ export default function BookingsPage() {
              
              <div className="relative space-y-6">
                 <div className="space-y-1">
-                  <h2 className="text-xl font-black uppercase  tracking-tighter text-foreground">
+                  <h2 className="text-xl font-bold uppercase text-foreground">
                     {getTabTitle()}
                   </h2>
                   <p className="text-sm text-muted-foreground font-medium">
@@ -150,7 +150,7 @@ export default function BookingsPage() {
                         <Inbox className="h-8 w-8 text-muted-foreground" />
                       </div>
                       <div className="space-y-1">
-                        <p className="font-black uppercase  tracking-tighter">কোনো বুকিং পাওয়া যায়নি</p>
+                        <p className="font-bold uppercase">কোনো বুকিং পাওয়া যায়নি</p>
                         <p className="text-xs">এই তারিখে কোনো অ্যাপয়েন্টমেন্ট নেই।</p>
                       </div>
                     </div>
