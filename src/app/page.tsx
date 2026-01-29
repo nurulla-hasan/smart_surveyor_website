@@ -7,7 +7,7 @@ export default async function Home() {
   };
   
   if (!user) {
-    redirect("/login");
+    redirect("/auth/login");
   }
 
   if (user.role === 'client') {

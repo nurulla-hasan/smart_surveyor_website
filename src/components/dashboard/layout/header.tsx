@@ -30,6 +30,7 @@ import {
 } from "@/components/ui/command";
 import { Badge } from "@/components/ui/badge";
 import { format } from "date-fns";
+import { logOut } from "@/services/auth";
 
 // Static Notifications Data for UI Demo
 const STATIC_NOTIFICATIONS = [
@@ -70,6 +71,12 @@ export function Header() {
     setSearchOpen(false)
     router.push(href)
   }
+
+  const handleLogout = async () => {
+    await logOut();
+    router.refresh();
+    router.push("/auth/login");
+  };
 
   return (
     <header className="sticky top-0 z-50 w-full bg-sidebar backdrop-blur-md">
@@ -309,7 +316,7 @@ export function Header() {
                 <DropdownMenuSeparator />
                 <DropdownMenuItem 
                     className="text-red-600 focus:text-red-600 cursor-pointer"
-                    onClick={() => console.log("Logout clicked")}
+                    onClick={handleLogout}
                 >
                   লগ আউট
                 </DropdownMenuItem>

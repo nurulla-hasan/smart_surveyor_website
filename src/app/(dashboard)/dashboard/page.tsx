@@ -15,7 +15,6 @@ import {
 } from "lucide-react";
 import { format } from "date-fns";
 import { Badge } from "@/components/ui/badge";
-import { cn } from "@/lib/utils";
 import { OverviewChart } from "@/components/dashboard/overview-chart";
 import { DashboardCalendar } from "@/components/dashboard/dashboard-calendar";
 import { StatCard } from "@/components/dashboard/stat-card";
@@ -124,7 +123,14 @@ export default function DashboardPage() {
           <Card>
             <CardHeader className="flex items-center justify-between">
               <CardTitle>সাম্প্রতিক কার্যক্রম</CardTitle>
-              <Badge variant="secondary">
+              <Badge 
+                variant="success" 
+                className="uppercase flex gap-1.5 items-center"
+              >
+                <span className="relative flex h-1.5 w-1.5">
+                  <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+                  <span className="relative inline-flex rounded-full h-1.5 w-1.5 bg-emerald-500"></span>
+                </span>
                 রিয়েল-টাইম
               </Badge>
             </CardHeader>
@@ -147,11 +153,8 @@ export default function DashboardPage() {
                       </div>
                     </div>
                     <Badge
-                      variant={booking.status === "scheduled" ? "default" : "secondary"}
-                      className={cn(
-                        "text-[10px] font-bold px-2 py-0",
-                        booking.status === "scheduled" ? "bg-emerald-500" : ""
-                      )}
+                      variant={booking.status === "scheduled" ? "info" : "success"}
+                      className="uppercase"
                     >
                       {booking.status === "scheduled" ? "Scheduled" : "Completed"}
                     </Badge>
