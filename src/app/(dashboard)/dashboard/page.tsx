@@ -1,6 +1,4 @@
 "use client";
-
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import {
   Card,
   CardContent,
@@ -80,11 +78,9 @@ const STATIC_DATA = {
 
 export default function DashboardPage() {
   const data = STATIC_DATA;
-  const today = new Date();
-  today.setHours(0, 0, 0, 0);
 
   return (
-    <div className="space-y-6 w-full max-w-[1600px] mx-auto p-2">
+    <div className="space-y-6">
       {/* Stats Cards Row */}
       <div className="grid gap-4 grid-cols-1 sm:grid-cols-2 lg:grid-cols-4">
         <StatCard
@@ -126,9 +122,9 @@ export default function DashboardPage() {
           <OverviewChart data={data.monthlyStats} />
 
           <Card>
-            <CardHeader className="flex flex-row items-center justify-between pb-2">
-              <CardTitle className="text-xl font-bold">সাম্প্রতিক কার্যক্রম</CardTitle>
-              <Badge variant="secondary" className="font-semibold text-[10px] px-2 py-0">
+            <CardHeader className="flex items-center justify-between">
+              <CardTitle>সাম্প্রতিক কার্যক্রম</CardTitle>
+              <Badge variant="secondary">
                 রিয়েল-টাইম
               </Badge>
             </CardHeader>
@@ -168,17 +164,11 @@ export default function DashboardPage() {
 
         {/* Right Column: Booking Calendar and Pending Requests */}
         <div className="lg:col-span-4 space-y-6">
-          <DashboardCalendar
-            blockedDates={data.blockedDates.map((d: any) => new Date(d))}
-            upcomingBookings={data.allUpcomingBookings.map((b: any) => ({
-                ...b,
-                bookingDate: new Date(b.bookingDate)
-            }))}
-          />
+          <DashboardCalendar/>
 
           <Card>
             <CardHeader>
-              <CardTitle className="text-lg font-bold flex items-center gap-2">
+              <CardTitle className="flex items-center gap-2">
                 <Inbox className="h-5 w-5 text-orange-500" />
                 অপেক্ষমান অনুরোধ
               </CardTitle>
