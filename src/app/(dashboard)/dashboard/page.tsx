@@ -1,4 +1,3 @@
-"use client";
 import {
   Card,
   CardContent,
@@ -9,7 +8,7 @@ import {
 import {
   CalendarDays,
   TrendingUp,
-  Activity,
+  Activity as ActivityIcon,
   Inbox,
   CheckCircle2,
 } from "lucide-react";
@@ -18,65 +17,50 @@ import { Badge } from "@/components/ui/badge";
 import { OverviewChart } from "@/components/dashboard/overview-chart";
 import { DashboardCalendar } from "@/components/dashboard/dashboard-calendar";
 import { StatCard } from "@/components/dashboard/stat-card";
+import { getDashboardStats, getMonthlyStats, getCalendarData } from "@/services/dashboard";
 
-const STATIC_DATA = {
-  totalBookings: 5,
-  completedBookings: 4,
-  totalClients: 42,
-  totalReports: 156,
-  totalCalculations: 312,
-  totalIncome: 9000,
-  totalDue: 100,
-  recentBookings: [
-    {
-      id: "1",
-      client: { name: "Golap hasan" },
-      bookingDate: "2026-02-01",
-      status: "scheduled",
-    },
-    {
-      id: "2",
-      client: { name: "Mahmud" },
-      bookingDate: "2026-01-30",
-      status: "completed",
-    },
-    {
-      id: "3",
-      client: { name: "Golap hasan" },
-      bookingDate: "2026-01-29",
-      status: "completed",
-    },
-    {
-      id: "4",
-      client: { name: "Jane Smith" },
-      bookingDate: "2026-01-28",
-      status: "completed",
-    },
-  ],
-  recentCalculations: [],
-  monthlyStats: [
-    { name: "Jan", total: 4 },
-    { name: "Feb", total: 1 },
-    { name: "Mar", total: 0 },
-    { name: "Apr", total: 0 },
-    { name: "May", total: 0 },
-    { name: "Jun", total: 0 },
-    { name: "Jul", total: 0 },
-    { name: "Aug", total: 0 },
-    { name: "Sep", total: 0 },
-    { name: "Oct", total: 0 },
-    { name: "Nov", total: 0 },
-    { name: "Dec", total: 0 },
-  ],
-  blockedDates: [],
-  allUpcomingBookings: [
-    { bookingDate: new Date("2026-02-01"), status: "scheduled" },
-  ],
-  pendingRequests: [],
-};
+interface RecentActivity {
+  id: string;
+  client?: { name: string };
+  bookingDate: string;
+  status: string;
+}
 
-export default function DashboardPage() {
-  const data = STATIC_DATA;
+interface PendingRequest {
+  id: string;
+  name: string;
+  phone: string;
+}
+
+export default async function DashboardPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ month?: string; year?: string }>;
+}) {
+  const params = await searchParams;
+  const now = new Date();
+  const currentMonth = params.month ? parseInt(params.month) : now.getMonth() + 1;
+  const currentYear = params.year ? parseInt(params.year) : now.getFullYear();
+
+  const [statsResponse, monthlyStatsResponse, calendarResponse] = await Promise.all([
+    getDashboardStats(),
+    getMonthlyStats(currentYear),
+    getCalendarData(currentMonth, currentYear)
+  ]);
+
+  const stats = statsResponse?.data || {
+    totalBookings: 0,
+    activeClients: 0,
+    reportsGenerated: 0,
+    completedBookings: 0,
+    totalIncome: 0,
+    totalDue: 0,
+    pendingRequests: [],
+    recentActivities: []
+  };
+
+  const monthlyStats = monthlyStatsResponse?.data || [];
+  const calendarData = calendarResponse?.data || { blockedDates: [], bookedDates: [] };
 
   return (
     <div className="space-y-6">
@@ -84,7 +68,7 @@ export default function DashboardPage() {
       <div className="grid gap-4 grid-cols-1 sm:grid-cols-2 lg:grid-cols-4">
         <StatCard
           title="মোট আয়"
-          value={`৳${data.totalIncome}`}
+          value={`৳${stats.totalIncome}`}
           description="নগদ সংগ্রহ"
           icon={TrendingUp}
           color="text-emerald-500"
@@ -92,15 +76,15 @@ export default function DashboardPage() {
 
         <StatCard
           title="বকেয়া টাকা"
-          value={`৳${data.totalDue}`}
+          value={`৳${stats.totalDue}`}
           description="সংগ্রহ করতে হবে"
-          icon={Activity}
+          icon={ActivityIcon}
           color="text-red-500"
         />
 
         <StatCard
           title="মোট বুকিং"
-          value={data.totalBookings}
+          value={stats.totalBookings}
           description="সর্বমোট"
           icon={CalendarDays}
           color="text-emerald-500"
@@ -108,7 +92,7 @@ export default function DashboardPage() {
 
         <StatCard
           title="সম্পন্ন"
-          value={data.completedBookings}
+          value={stats.completedBookings}
           description="শেষ কাজ"
           icon={CheckCircle2}
           color="text-emerald-500"
@@ -118,7 +102,7 @@ export default function DashboardPage() {
       <div className="grid gap-6 grid-cols-1 lg:grid-cols-12">
         {/* Left Column: Overview and Recent Activity */}
         <div className="lg:col-span-8 space-y-6">
-          <OverviewChart data={data.monthlyStats} />
+          <OverviewChart data={monthlyStats} />
 
           <Card>
             <CardHeader className="flex items-center justify-between">
@@ -136,30 +120,36 @@ export default function DashboardPage() {
             </CardHeader>
             <CardContent>
               <div className="space-y-4">
-                {data.recentBookings.map((booking) => (
-                  <div
-                    key={booking.id}
-                    className="flex items-center justify-between p-3 rounded-xl border border-border/50 hover:bg-muted/50 transition-colors"
-                  >
-                    <div className="flex items-center gap-4">
-                      <div className="h-10 w-10 rounded-lg bg-muted flex items-center justify-center">
-                        <CalendarDays className="h-5 w-5 text-muted-foreground" />
-                      </div>
-                      <div className="grid gap-1">
-                        <p className="text-sm font-bold leading-none">{booking.client.name}</p>
-                        <p className="text-[11px] text-muted-foreground">
-                          {format(new Date(booking.bookingDate), "MMM d")}
-                        </p>
-                      </div>
-                    </div>
-                    <Badge
-                      variant={booking.status === "scheduled" ? "info" : "success"}
-                      className="uppercase"
+                {stats.recentActivities?.length > 0 ? (
+                  stats.recentActivities.map((activity: RecentActivity) => (
+                    <div
+                      key={activity.id}
+                      className="flex items-center justify-between p-3 rounded-xl border border-border/50 hover:bg-muted/50 transition-colors"
                     >
-                      {booking.status === "scheduled" ? "Scheduled" : "Completed"}
-                    </Badge>
+                      <div className="flex items-center gap-4">
+                        <div className="h-10 w-10 rounded-lg bg-muted flex items-center justify-center">
+                          <CalendarDays className="h-5 w-5 text-muted-foreground" />
+                        </div>
+                        <div className="grid gap-1">
+                          <p className="text-sm font-bold leading-none">{activity.client?.name || "Client"}</p>
+                          <p className="text-[11px] text-muted-foreground">
+                            {activity.bookingDate ? format(new Date(activity.bookingDate), "MMM d") : "N/A"}
+                          </p>
+                        </div>
+                      </div>
+                      <Badge
+                        variant={activity.status === "scheduled" ? "info" : "success"}
+                        className="uppercase"
+                      >
+                        {activity.status === "scheduled" ? "Scheduled" : "Completed"}
+                      </Badge>
+                    </div>
+                  ))
+                ) : (
+                  <div className="text-center py-8 text-muted-foreground text-sm">
+                    কোনো সাম্প্রতিক কার্যক্রম পাওয়া যায়নি
                   </div>
-                ))}
+                )}
               </div>
             </CardContent>
           </Card>
@@ -167,7 +157,10 @@ export default function DashboardPage() {
 
         {/* Right Column: Booking Calendar and Pending Requests */}
         <div className="lg:col-span-4 space-y-6">
-          <DashboardCalendar/>
+          <DashboardCalendar
+            blockedDates={calendarData.blockedDates}
+            bookedDates={calendarData.bookedDates}
+          />
 
           <Card>
             <CardHeader>
@@ -180,12 +173,23 @@ export default function DashboardPage() {
               </CardDescription>
             </CardHeader>
             <CardContent className="min-h-[200px] flex flex-col items-center justify-center">
-              <div className="flex flex-col items-center justify-center text-center space-y-3 opacity-40">
-                <div className="h-12 w-12 rounded-full bg-muted flex items-center justify-center">
-                   <Inbox className="h-6 w-6" />
+              {stats.pendingRequests?.length > 0 ? (
+                <div className="w-full space-y-3">
+                   {stats.pendingRequests.map((request: PendingRequest) => (
+                      <div key={request.id} className="p-3 rounded-lg border bg-muted/30">
+                         <p className="text-sm font-bold">{request.name}</p>
+                         <p className="text-xs text-muted-foreground">{request.phone}</p>
+                      </div>
+                   ))}
                 </div>
-                <p className="text-xs font-medium">কোনো অপেক্ষমান অনুরোধ নেই</p>
-              </div>
+              ) : (
+                <div className="flex flex-col items-center justify-center text-center space-y-3 opacity-40">
+                  <div className="h-12 w-12 rounded-full bg-muted flex items-center justify-center">
+                    <Inbox className="h-6 w-6" />
+                  </div>
+                  <p className="text-xs font-medium">কোনো অপেক্ষমান অনুরোধ নেই</p>
+                </div>
+              )}
             </CardContent>
           </Card>
         </div>
