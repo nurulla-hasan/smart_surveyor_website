@@ -88,8 +88,11 @@ export function OverviewChart({ data = [] }: OverviewChartProps) {
                 tickLine={false}
                 axisLine={false}
                 tickMargin={12}
-                width={30}
+                width={40}
                 className="text-[12px]"
+                domain={[0, 60]}
+                ticks={[0, 10, 20, 30, 40, 50, 60]}
+                allowDecimals={false}
               />
               <ChartTooltip
                 cursor={false}
@@ -122,7 +125,7 @@ export function OverviewChart({ data = [] }: OverviewChartProps) {
             </LineChart>
           </ChartContainer>
         ) : (
-          <div className="flex h-[300px] items-center justify-center text-muted-foreground italic text-sm">
+          <div className="flex h-[300px] items-center justify-center text-muted-foreground  text-sm">
             কোনো তথ্য পাওয়া যায়নি
           </div>
         )}

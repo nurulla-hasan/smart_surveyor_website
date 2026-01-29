@@ -44,7 +44,7 @@ export function ModalWrapper({
         {/* Header Section */}
         {title && (
           <DialogHeader className="px-6 py-4 border-b shrink-0 text-left">
-            <DialogTitle className="text-xl font-black italic uppercase tracking-tighter">
+            <DialogTitle className="text-xl font-black  uppercase tracking-tighter">
               {title}
             </DialogTitle>
             {description && <DialogDescription>{description}</DialogDescription>}
@@ -59,7 +59,7 @@ export function ModalWrapper({
         {showClose && (
           <div className="p-4 border-t bg-muted/20 flex justify-end shrink-0">
             <DialogClose asChild>
-              <Button type="button" variant="outline" className="font-bold uppercase italic">
+              <Button type="button" variant="outline" className="font-bold uppercase ">
                 Close
               </Button>
             </DialogClose>
