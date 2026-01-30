@@ -16,13 +16,22 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
-import { Plus } from "lucide-react";
-import { AvailabilityDatePicker } from "@/components/bookings/availability-date-picker";
+import { Plus, CalendarIcon } from "lucide-react";
+import { BookingCalendar } from "@/components/bookings/booking-calendar";
 import { getClients } from "@/services/clients";
 import { createBooking } from "@/services/bookings";
 import { SuccessToast, ErrorToast } from "@/lib/utils";
-import { useCallback } from "react";
+import { useCallback, useEffect } from "react";
 import { SearchableSelect, SearchableOption } from "@/components/ui/custom/searchable-select";
+import { format } from "date-fns";
+import { bn } from "date-fns/locale";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
+import { useSearchParams } from "next/navigation";
+import { cn } from "@/lib/utils";
 
 // Define Form Schema
 const formSchema = z.object({
@@ -44,6 +53,7 @@ interface CreateBookingModalProps {
 export function CreateBookingModal({ onSuccess }: CreateBookingModalProps) {
   const [isOpen, setIsOpen] = useState(false);
   const [loading, setLoading] = useState(false);
+  const searchParams = useSearchParams();
 
   // Fetch clients for selection
   const fetchClientOptions = useCallback(async (search: string): Promise<SearchableOption[]> => {
@@ -74,6 +84,14 @@ export function CreateBookingModal({ onSuccess }: CreateBookingModalProps) {
     },
   });
 
+  // Auto-select date from URL if available
+  useEffect(() => {
+    const dateParam = searchParams.get("date");
+    if (dateParam && isOpen) {
+      form.setValue("bookingDate", new Date(dateParam));
+    }
+  }, [searchParams, isOpen, form]);
+
   // 2. Handle submit
   const onSubmit = async (values: FormValues) => {
     setLoading(true);
@@ -83,7 +101,7 @@ export function CreateBookingModal({ onSuccess }: CreateBookingModalProps) {
         title: values.title,
         description: values.description || "",
         propertyAddress: values.propertyAddress || "",
-        bookingDate: values.bookingDate.toISOString(),
+        bookingDate: format(values.bookingDate, "yyyy-MM-dd"),
       };
 
       if (values.clientId) {
@@ -250,19 +268,44 @@ export function CreateBookingModal({ onSuccess }: CreateBookingModalProps) {
             )}
           </div>
 
-          {/* Date Picker Field */}
+          {/* Date Selection Section */}
           <FormField
             control={form.control}
             name="bookingDate"
             render={({ field }) => (
               <FormItem className="flex flex-col">
                 <FormLabel className="text-sm font-semibold uppercase">
-                  বুকিংয়ের তারিখ
+                  বুকিংয়ের তারিখ নির্বাচন করুন
                 </FormLabel>
-                <AvailabilityDatePicker 
-                  date={field.value}
-                  setDate={field.onChange}
-                />
+                <Popover>
+                  <PopoverTrigger asChild>
+                    <FormControl>
+                      <Button
+                        variant={"outline"}
+                        className={cn(
+                          "w-full justify-start text-left font-normal",
+                          !field.value && "text-muted-foreground"
+                        )}
+                      >
+                        <CalendarIcon className="mr-2 h-4 w-4" />
+                        {field.value ? (
+                          format(field.value, "PPP", { locale: bn })
+                        ) : (
+                          <span>তারিখ নির্বাচন করুন</span>
+                        )}
+                      </Button>
+                    </FormControl>
+                  </PopoverTrigger>
+                  <PopoverContent className="w-auto p-0" align="start">
+                    <BookingCalendar
+                      selectedDate={field.value}
+                      onSelect={(date) => {
+                        field.onChange(date);
+                      }}
+                      className="border-none shadow-none"
+                    />
+                  </PopoverContent>
+                </Popover>
                 <FormMessage />
               </FormItem>
             )}

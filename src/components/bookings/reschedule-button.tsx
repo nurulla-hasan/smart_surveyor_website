@@ -8,7 +8,12 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
-import { Calendar } from "@/components/ui/calendar";
+import { BookingCalendar } from "@/components/bookings/booking-calendar";
+import { updateBooking } from "@/services/bookings";
+import { format } from "date-fns";
+import { SuccessToast, ErrorToast } from "@/lib/utils";
+import { ConfirmationModal } from "@/components/ui/custom/confirmation-modal";
+import { bn } from "date-fns/locale";
 
 interface RescheduleButtonProps {
   bookingId: string;
@@ -18,62 +23,80 @@ interface RescheduleButtonProps {
 
 export function RescheduleButton({ bookingId, onConfirm, trigger }: RescheduleButtonProps) {
   const [date, setDate] = useState<Date | undefined>(new Date());
+  const [loading, setLoading] = useState(false);
+  const [open, setOpen] = useState(false);
+  const [pendingDate, setPendingDate] = useState<Date | null>(null);
+  const [isConfirmOpen, setIsConfirmOpen] = useState(false);
 
   const handleSelect = (selectedDate: Date | undefined) => {
-    if (selectedDate) {
-      setDate(selectedDate);
-      onConfirm?.(bookingId, selectedDate);
+    if (!selectedDate) return;
+    setPendingDate(selectedDate);
+    setIsConfirmOpen(true);
+  };
+
+  const handleConfirmReschedule = async () => {
+    if (!pendingDate) return;
+
+    setLoading(true);
+    try {
+      const res = await updateBooking(bookingId, {
+        bookingDate: format(pendingDate, "yyyy-MM-dd"),
+      });
+
+      if (res?.success) {
+        SuccessToast("বুকিং সফলভাবে রি-শিডিউল করা হয়েছে");
+        setDate(pendingDate);
+        onConfirm?.(bookingId, pendingDate);
+        setOpen(false);
+        setIsConfirmOpen(false);
+        // Trigger calendar refresh
+        window.dispatchEvent(new CustomEvent("refresh-calendar"));
+      } else {
+        ErrorToast(res?.message || "রি-শিডিউল করতে সমস্যা হয়েছে");
+      }
+    } catch {
+      ErrorToast("সার্ভারে সমস্যা হয়েছে");
+    } finally {
+      setLoading(false);
     }
   };
 
-  // Mock data for availability markers (should ideally come from props or a hook)
-  const modifiers = {
-    booked: [new Date(2026, 0, 16), new Date(2026, 0, 15), new Date(2026, 1, 2)],
-    blocked: [new Date(2026, 0, 30), new Date(2026, 1, 11)],
-  };
-
-  const modifiersClassNames = {
-    booked: "bg-orange-500 text-white font-semibold rounded-full shadow-[0_0_10px_rgba(249,115,22,0.3)]",
-    blocked: "bg-red-500/20 text-red-500 font-semibold border border-red-500/30 rounded-full",
-  };
-
   return (
-    <Popover>
-      <PopoverTrigger asChild>
-        {trigger || (
-          <Button 
-            size="sm" 
-            variant="outline" 
-          >
-            <CalendarClock />
-            নতুন সময় দিন
-          </Button>
-        )}
-      </PopoverTrigger>
-      <PopoverContent className="w-auto p-0" align="end">
-        <Calendar
-          mode="single"
-          selected={date}
-          onSelect={handleSelect}
-          initialFocus
-          modifiers={modifiers}
-          modifiersClassNames={modifiersClassNames}
-          classNames={{
-            day_selected: "bg-emerald-500 text-white hover:bg-emerald-600 focus:bg-emerald-500 rounded-full",
-            day_today: "bg-muted text-foreground font-semibold rounded-full",
-          }}
-        />
-        <div className="p-4 border-t space-y-2">
-            <div className="flex items-center gap-2">
-                <div className="h-2 w-2 rounded-full bg-red-500" />
-                <span className="text-[10px] text-muted-foreground uppercase font-semibold">অফ-ডে (ব্লক)</span>
-            </div>
-            <div className="flex items-center gap-2">
-                <div className="h-2 w-2 rounded-full bg-orange-500" />
-                <span className="text-[10px] text-muted-foreground uppercase font-semibold">বুকিং আছে</span>
-            </div>
-        </div>
-      </PopoverContent>
-    </Popover>
+    <>
+      <Popover open={open} onOpenChange={setOpen}>
+        <PopoverTrigger asChild>
+          {trigger || (
+            <Button 
+              size="sm" 
+              variant="outline" 
+              loading={loading}
+              loadingText="আপডেট হচ্ছে..."
+            >
+              <CalendarClock />
+              নতুন সময় দিন
+            </Button>
+          )}
+        </PopoverTrigger>
+        <PopoverContent className="w-auto p-0" align="end">
+          <BookingCalendar
+            selectedDate={date}
+            onSelect={handleSelect}
+            showLegend={true}
+            className="border-none shadow-none"
+          />
+        </PopoverContent>
+      </Popover>
+
+      <ConfirmationModal
+         open={isConfirmOpen}
+         onOpenChange={setIsConfirmOpen}
+         title="আপনি কি নিশ্চিত?"
+         description={`আপনি কি এই বুকিংটি ${pendingDate ? format(pendingDate, "MMMM dd, yyyy", { locale: bn }) : ""} তারিখে রি-শিডিউল করতে চান?`}
+         onConfirm={handleConfirmReschedule}
+         isLoading={loading}
+         confirmText="নিশ্চিত করুন"
+         cancelText="বাতিল"
+       />
+    </>
   );
 }

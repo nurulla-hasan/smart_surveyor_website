@@ -11,17 +11,17 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
-import { Button } from "@/components/ui/button";
-import { Trash2 } from "lucide-react";
 import { ReactNode } from "react";
 import { Spinner } from "../spinner";
 
 interface ConfirmationModalProps {
   title?: string;
   description?: string;
+  confirmText?: string;
+  cancelText?: string;
   open?: boolean;
   onOpenChange?: (open: boolean) => void;
-  onDelete: () => void;
+  onConfirm: () => void;
   isLoading?: boolean;
   trigger?: ReactNode;
 }
@@ -29,24 +29,21 @@ interface ConfirmationModalProps {
 export function ConfirmationModal({
   title = "Are you sure?",
   description = "This action cannot be undone.",
+  confirmText = "Delete",
+  cancelText = "Cancel",
   open,
   onOpenChange,
-  onDelete,
+  onConfirm,
   isLoading,
   trigger,
 }: ConfirmationModalProps) {
   return (
     <AlertDialog open={open} onOpenChange={onOpenChange}>
-      <AlertDialogTrigger asChild>
-        {trigger || (
-          <Button
-            variant="ghost"
-            size="icon"
-          >
-            <Trash2 />
-          </Button>
-        )}
-      </AlertDialogTrigger>
+      {trigger && (
+        <AlertDialogTrigger asChild>
+          {trigger}
+        </AlertDialogTrigger>
+      )}
 
       <AlertDialogContent>
         <AlertDialogHeader>
@@ -55,21 +52,21 @@ export function ConfirmationModal({
         </AlertDialogHeader>
 
         <AlertDialogFooter>
-          <AlertDialogCancel disabled={isLoading}>Cancel</AlertDialogCancel>
+          <AlertDialogCancel disabled={isLoading}>{cancelText}</AlertDialogCancel>
           <AlertDialogAction
             onClick={(e: { preventDefault: () => void; }) => {
               e.preventDefault();
-              onDelete();
+              onConfirm();
             }}
             disabled={isLoading}
           >
             {isLoading ? (
               <>
                 <Spinner />
-                Deleting...
+                {confirmText}...
               </>
             ) : (
-              "Delete"
+              confirmText
             )}
           </AlertDialogAction>
         </AlertDialogFooter>

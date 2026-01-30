@@ -38,15 +38,16 @@ export default async function BookingsPage({
     statusFilter = "upcoming";
   }
 
-  // Fetches are now automatically delayed in development via serverFetch
-  const calendarResponse = await getCalendarData(month, year);
-  
-  const bookingsResponse = await getBookings({ 
-    filter: statusFilter, 
-    date: statusFilter === "upcoming" ? dateFilter : undefined,
-    page,
-    pageSize 
-  });
+  // Fetch data in parallel since rate limits are removed
+  const [calendarResponse, bookingsResponse] = await Promise.all([
+    getCalendarData(month, year),
+    getBookings({ 
+      filter: statusFilter, 
+      date: statusFilter === "upcoming" ? dateFilter : undefined,
+      page,
+      pageSize 
+    })
+  ]);
   
   // Only fetch pending count if current filter is not pending
   let requestCount = 0;

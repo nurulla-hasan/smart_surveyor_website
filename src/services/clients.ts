@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-'use server';
+"use server";
 
 import { serverFetch } from "@/lib/fetcher";
 import { buildQueryString } from "@/lib/buildQueryString";
@@ -7,12 +7,15 @@ import { FieldValues } from "react-hook-form";
 import { updateTag } from "next/cache";
 import { GetClientsResponse } from "@/types/clients";
 
-export const getClients = async (query: Record<string, string | string[] | undefined> = {}): Promise<GetClientsResponse | null> => {
+export const getClients = async (
+  query: Record<string, string | string[] | undefined> = {},
+): Promise<GetClientsResponse | null> => {
   try {
     const queryString = buildQueryString(query);
 
     const response = await serverFetch(`/clients${queryString}`, {
       next: {
+        revalidate: 86400,
         tags: ["clients"],
       },
     } as any);

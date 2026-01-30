@@ -46,7 +46,7 @@ export function ClientActions({ client }: ClientActionsProps) {
       <ConfirmationModal
         title="আপনি কি নিশ্চিত?"
         description="এই ক্লায়েন্টটি ডিলিট করলে তা আর ফিরিয়ে আনা সম্ভব হবে না।"
-        onDelete={handleDelete}
+        onConfirm={handleDelete}
         isLoading={isDeleting}
         trigger={
           <Button variant="ghost" size="icon-sm" className="hover:text-destructive">

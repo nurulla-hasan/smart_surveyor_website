@@ -128,8 +128,6 @@ export function BookingsView({
           <BookingCalendar
             selectedDate={selectedDate}
             onSelect={handleDateSelect}
-            bookedDates={bookedDates}
-            blockedDates={blockedDates}
             onMonthChange={handleMonthChange}
           />
         </div>

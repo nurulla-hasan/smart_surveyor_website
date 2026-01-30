@@ -3,6 +3,7 @@ import { Button } from "@/components/ui/button";
 import { CheckCircle2, Trash2, XCircle, Calendar } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { RescheduleButton } from "@/components/bookings/reschedule-button";
+import { CompleteBookingModal } from "@/components/bookings/complete-booking-modal";
 import { ScrollArea, ScrollBar } from "../ui/scroll-area";
 import { Booking } from "@/types/bookings";
 import { format, isPast } from "date-fns";
@@ -84,9 +85,7 @@ export function BookingCard({ booking, onDelete }: BookingCardProps) {
                   SCHEDULED
                 </Badge>
 
-                <Button size="sm" variant="outline" className="font-bold uppercase text-[11px] h-9 px-4 rounded-lg border-emerald-500/20 text-emerald-500 hover:bg-emerald-500/10 gap-2">
-                  <CheckCircle2 className="h-4 w-4" /> সম্পন্ন হিসেবে চিহ্নিত করুন
-                </Button>
+                <CompleteBookingModal bookingId={booking.id} />
 
                 <RescheduleButton
                   bookingId={booking.id}

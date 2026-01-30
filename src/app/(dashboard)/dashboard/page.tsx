@@ -45,10 +45,12 @@ export default async function DashboardPage({
   const currentMonth = params.month ? parseInt(params.month) : now.getMonth() + 1;
   const currentYear = params.year ? parseInt(params.year) : now.getFullYear();
 
-  // Fetches are now automatically delayed in development via serverFetch
-  const statsResponse = await getDashboardStats();
-  const monthlyStatsResponse = await getMonthlyStats(currentYear);
-  const calendarResponse = await getCalendarData(currentMonth, currentYear);
+  // Fetch data in parallel since rate limits are removed
+  const [statsResponse, monthlyStatsResponse, calendarResponse] = await Promise.all([
+    getDashboardStats(),
+    getMonthlyStats(currentYear),
+    getCalendarData(currentMonth, currentYear)
+  ]);
 
   const stats = statsResponse?.data || {
     totalBookings: 0,
