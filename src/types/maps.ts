@@ -29,6 +29,8 @@ export interface MapsResponse {
 export interface SaveMapPayload {
   name: string;
   data: any;
+  area?: number;
+  perimeter?: number;
   fileUrl?: string | null;
   bookingId?: string | null;
 }

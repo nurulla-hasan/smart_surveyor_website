@@ -82,7 +82,7 @@ export function SearchableSelect({
         </Button>
       </PopoverTrigger>
       <PopoverContent
-        className="w-[--radix-popover-trigger-width] p-0"
+        className="w-[--radix-popover-trigger-width] p-0 z-5001"
         align="start"
       >
         <Command shouldFilter={false}>

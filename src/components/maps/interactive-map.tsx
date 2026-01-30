@@ -18,6 +18,10 @@ import { FlyToLocation, FitBounds } from "./map-effects";
 import { MapSaveDialog } from "./map-dialogs";
 
 import { saveMap as saveMapService } from "@/services/maps";
+import { getBookings } from "@/services/bookings";
+import { SearchableOption } from "@/components/ui/custom/searchable-select";
+import { Booking } from "@/types/bookings";
+import { useEffect } from "react";
 
 export default function InteractiveMap() {
   // State
@@ -33,7 +37,20 @@ export default function InteractiveMap() {
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
   const [isSaveDialogOpen, setIsSaveDialogOpen] = useState(false);
   const [mapName, setMapName] = useState("");
+  const [selectedBooking, setSelectedBooking] = useState<SearchableOption | null>(null);
+  const [bookings, setBookings] = useState<Booking[]>([]);
   const [isPending, startTransition] = useTransition();
+
+  // Fetch bookings for dropdown
+  useEffect(() => {
+    const fetchBookings = async () => {
+      const res = await getBookings();
+      if (res?.success) {
+        setBookings(res.data.bookings || []);
+      }
+    };
+    fetchBookings();
+  }, []);
 
   // Refs
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -133,12 +150,14 @@ export default function InteractiveMap() {
         const res = await saveMapService({
           name: mapName,
           data: geoJsonData,
+          bookingId: (selectedBooking?.value === "none" ? null : selectedBooking?.value) || null,
         });
         
         if (res?.success) {
           toast.success("ম্যাপ সফলভাবে সেভ করা হয়েছে!");
           setIsSaveDialogOpen(false);
           setMapName("");
+          setSelectedBooking(null);
         } else {
           toast.error("ম্যাপ সেভ করতে সমস্যা হয়েছে");
         }
@@ -180,6 +199,9 @@ export default function InteractiveMap() {
         onOpenChange={setIsSaveDialogOpen}
         mapName={mapName}
         setMapName={setMapName}
+        selectedBooking={selectedBooking}
+        setSelectedBooking={setSelectedBooking}
+        bookings={bookings}
         onSave={handleSaveMap}
         isPending={isPending}
       />
@@ -191,6 +213,7 @@ export default function InteractiveMap() {
           style={{ height: "100%", width: "100%" }}
           ref={mapRef}
           zoomControl={false}
+          maxZoom={22}
         >
           <TileLayer
             attribution={activeLayer === "satellite" ? "&copy; Google Maps" : "&copy; OpenStreetMap"}
@@ -198,6 +221,8 @@ export default function InteractiveMap() {
               ? "https://mt0.google.com/vt/lyrs=y&hl=en&x={x}&y={y}&z={z}"
               : "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
             }
+            maxZoom={22}
+            maxNativeZoom={activeLayer === "satellite" ? 20 : 19}
           />
 
           {userLocation && (
