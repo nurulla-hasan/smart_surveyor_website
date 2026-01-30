@@ -1,3 +1,4 @@
+import Link from "next/link";
 import {
   Card,
   CardContent,
@@ -28,8 +29,10 @@ interface RecentActivity {
 
 interface PendingRequest {
   id: string;
-  name: string;
-  phone: string;
+  title: string;
+  client?: { name: string; phone?: string };
+  description?: string;
+  bookingDate?: string;
 }
 
 export default async function DashboardPage({
@@ -172,16 +175,37 @@ export default async function DashboardPage({
                 পাবলিক পেজ থেকে নতুন জরিপ অনুরোধ।
               </CardDescription>
             </CardHeader>
-            <CardContent className="min-h-[200px] flex flex-col items-center justify-center">
+            <CardContent className="flex flex-col items-center justify-center">
               {stats.pendingRequests?.length > 0 ? (
-                <div className="w-full space-y-3">
-                   {stats.pendingRequests.map((request: PendingRequest) => (
-                      <div key={request.id} className="p-3 rounded-lg border bg-muted/30">
-                         <p className="text-sm font-bold">{request.name}</p>
-                         <p className="text-xs text-muted-foreground">{request.phone}</p>
-                      </div>
-                   ))}
-                </div>
+                <>
+                  <div className="w-full space-y-3">
+                     {stats.pendingRequests.map((request: PendingRequest) => (
+                        <div key={request.id} className="p-4 rounded-xl border border-border/50 bg-muted/20 hover:bg-muted/40 transition-colors">
+                           <div className="flex flex-col gap-1">
+                              <p className="text-sm font-bold uppercase tracking-tight">{request.title}</p>
+                              <div className="flex items-center justify-between mt-1">
+                                 <p className="text-xs text-muted-foreground">
+                                   ক্লায়েন্ট: <span className="font-semibold text-foreground">{request.client?.name || "N/A"}</span>
+                                 </p>
+                                 {request.bookingDate && (
+                                   <p className="text-[10px] text-muted-foreground">
+                                     {format(new Date(request.bookingDate), "MMM d, yyyy")}
+                                   </p>
+                                 )}
+                              </div>
+                           </div>
+                        </div>
+                     ))}
+                  </div>
+                  <div className="w-full pt-4 mt-2 border-t border-border/50">
+                    <Link 
+                      href="/bookings?tab=requests" 
+                      className="flex items-center justify-center gap-2 text-xs font-semibold text-primary hover:underline transition-all"
+                    >
+                      সব অনুরোধ দেখুন
+                    </Link>
+                  </div>
+                </>
               ) : (
                 <div className="flex flex-col items-center justify-center text-center space-y-3 opacity-40">
                   <div className="h-12 w-12 rounded-full bg-muted flex items-center justify-center">

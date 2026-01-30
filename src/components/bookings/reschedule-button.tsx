@@ -41,10 +41,9 @@ export function RescheduleButton({ bookingId, onConfirm }: RescheduleButtonProps
       <PopoverTrigger asChild>
         <Button 
           size="sm" 
-          variant="outline" 
-          className="gap-2"
+          variant="ghost" 
         >
-          <CalendarClock className="h-4 w-4" />
+          <CalendarClock />
           নতুন সময় দিন
         </Button>
       </PopoverTrigger>

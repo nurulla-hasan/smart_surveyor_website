@@ -83,7 +83,7 @@ export function BookingCard({ booking, onDelete }: BookingCardProps) {
               </Button>
               <Button 
                 size="sm" 
-                variant="outline" 
+                variant="ghost" 
                 className="font-semibold uppercase text-xs text-destructive"
               >
                 <XCircle />
@@ -98,7 +98,7 @@ export function BookingCard({ booking, onDelete }: BookingCardProps) {
               
               <Button 
                 size="sm" 
-                variant="outline" 
+                variant="ghost" 
                 className="font-semibold uppercase text-xs text-emerald-500"
               >
                  <CheckCircle2 />
@@ -112,7 +112,7 @@ export function BookingCard({ booking, onDelete }: BookingCardProps) {
               
               <Button 
                 size="icon" 
-                variant="ghost" 
+                variant="outline" 
                 onClick={() => onDelete?.(booking.id)}
               >
                 <Trash2 />
@@ -120,12 +120,12 @@ export function BookingCard({ booking, onDelete }: BookingCardProps) {
             </>
           ) : (
             <>
-              <Badge variant="outline">
+              <Badge variant="ghost">
                 {booking.status}
               </Badge>
               <Button 
                 size="icon" 
-                variant="ghost" 
+                variant="outline" 
                 onClick={() => onDelete?.(booking.id)}
               >
                 <Trash2 />

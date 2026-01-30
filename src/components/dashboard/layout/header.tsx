@@ -102,8 +102,8 @@ export function Header() {
                 <SheetDescription className="sr-only">
                   Main navigation sidebar for accessing dashboard pages.
                 </SheetDescription>
-                <Sidebar 
-                  className="flex w-full border-none" 
+                <Sidebar
+                  className="flex w-full border-none"
                   onItemClick={() => setOpen(false)}
                 />
               </SheetContent>
@@ -121,23 +121,23 @@ export function Header() {
         {/* Client Navigation Links - Centered & Styled */}
         {isClient && (
           <nav className="flex items-center bg-muted/50 p-1 rounded-xl ml-8">
-            <Link 
-              href="/portal" 
+            <Link
+              href="/portal"
               className={cn(
                 "px-4 py-1.5 text-sm font-medium rounded-lg transition-all",
-                pathname === "/portal" 
-                  ? "bg-background text-primary shadow-sm" 
+                pathname === "/portal"
+                  ? "bg-background text-primary shadow-sm"
                   : "text-muted-foreground hover:text-foreground"
               )}
             >
               ড্যাশবোর্ড
             </Link>
-            <Link 
-              href="/book-survey" 
+            <Link
+              href="/book-survey"
               className={cn(
                 "px-4 py-1.5 text-sm font-medium rounded-lg transition-all",
-                pathname === "/book-survey" 
-                  ? "bg-background text-primary shadow-sm" 
+                pathname === "/book-survey"
+                  ? "bg-background text-primary shadow-sm"
                   : "text-muted-foreground hover:text-foreground"
               )}
             >
@@ -147,45 +147,45 @@ export function Header() {
         )}
 
         <div className="flex flex-1 items-center justify-end space-x-2 sm:space-x-4">
-            {/* Static Search Bar UI */}
-            {!isClient && (
-              <>
-                <Button
-                  variant="ghost"
-                  size="icon"
-                  onClick={() => setSearchOpen(true)}
-                >
-                  <Search className="h-5 w-5" />
-                </Button>
+          {/* Static Search Bar UI */}
+          {!isClient && (
+            <>
+              <Button
+                variant="ghost"
+                size="icon"
+                onClick={() => setSearchOpen(true)}
+              >
+                <Search className="h-5 w-5" />
+              </Button>
 
-                <CommandDialog 
-                  open={searchOpen} 
-                  onOpenChange={setSearchOpen}
-                >
-                  <CommandInput 
-                      placeholder="ক্লায়েন্ট, বুকিং, রিপোর্ট খুঁজুন..." 
-                  />
-                  <CommandList>
-                    <CommandEmpty>কোনো ফলাফল পাওয়া যায়নি।</CommandEmpty>
-                    <CommandSeparator />
-                    <CommandGroup heading="কুইক অ্যাকশন">
-                      <CommandItem onSelect={() => handleSelect('/bookings')}>
-                        <PlusCircle className="mr-2 h-4 w-4" />
-                        <span>নতুন বুকিং</span>
-                      </CommandItem>
-                      <CommandItem onSelect={() => handleSelect('/reports/new')}>
-                        <FileText className="mr-2 h-4 w-4" />
-                        <span>নতুন রিপোর্ট</span>
-                      </CommandItem>
-                      <CommandItem onSelect={() => handleSelect('/calculator')}>
-                        <Calculator className="mr-2 h-4 w-4" />
-                        <span>ল্যান্ড ক্যালকুলেটর</span>
-                      </CommandItem>
-                    </CommandGroup>
-                  </CommandList>
-                </CommandDialog>
-              </>
-            )}
+              <CommandDialog
+                open={searchOpen}
+                onOpenChange={setSearchOpen}
+              >
+                <CommandInput
+                  placeholder="ক্লায়েন্ট, বুকিং, রিপোর্ট খুঁজুন..."
+                />
+                <CommandList>
+                  <CommandEmpty>কোনো ফলাফল পাওয়া যায়নি।</CommandEmpty>
+                  <CommandSeparator />
+                  <CommandGroup heading="কুইক অ্যাকশন">
+                    <CommandItem onSelect={() => handleSelect('/bookings')}>
+                      <PlusCircle className="mr-2 h-4 w-4" />
+                      <span>নতুন বুকিং</span>
+                    </CommandItem>
+                    <CommandItem onSelect={() => handleSelect('/reports/new')}>
+                      <FileText className="mr-2 h-4 w-4" />
+                      <span>নতুন রিপোর্ট</span>
+                    </CommandItem>
+                    <CommandItem onSelect={() => handleSelect('/calculator')}>
+                      <Calculator className="mr-2 h-4 w-4" />
+                      <span>ল্যান্ড ক্যালকুলেটর</span>
+                    </CommandItem>
+                  </CommandGroup>
+                </CommandList>
+              </CommandDialog>
+            </>
+          )}
 
           <nav className="flex items-center gap-2">
             {/* Simple Theme Toggle */}
@@ -217,36 +217,36 @@ export function Header() {
                 </DropdownMenuTrigger>
                 <DropdownMenuContent className="w-80" align="end">
                   <DropdownMenuLabel className="flex items-center justify-between">
-                      বিজ্ঞপ্তি
-                      <Badge variant="secondary" className="font-normal">২ নতুন</Badge>
+                    বিজ্ঞপ্তি
+                    <Badge variant="secondary" className="font-normal">২ নতুন</Badge>
                   </DropdownMenuLabel>
                   <DropdownMenuSeparator />
                   <div className="max-h-75 overflow-y-auto">
-                      {STATIC_NOTIFICATIONS.map((notif) => (
-                          <DropdownMenuItem 
-                              key={notif.id} 
-                              className="flex flex-col items-start gap-1 p-4 cursor-pointer"
-                              onClick={() => handleSelect(notif.link)}
-                          >
-                              <div className="flex items-center gap-2 w-full">
-                                  <div className={cn(
-                                      "h-2 w-2 rounded-full",
-                                      notif.type === 'missed' ? "bg-red-500" : "bg-blue-500"
-                                  )} />
-                                  <span className="font-semibold text-sm">{notif.title}</span>
-                                  <span className="ml-auto text-[10px] text-muted-foreground">
-                                      {format(new Date(notif.date), "MMM d")}
-                                  </span>
-                              </div>
-                              <p className="text-xs text-muted-foreground line-clamp-2">
-                                  {notif.description}
-                              </p>
-                          </DropdownMenuItem>
-                      ))}
+                    {STATIC_NOTIFICATIONS.map((notif) => (
+                      <DropdownMenuItem
+                        key={notif.id}
+                        className="flex flex-col items-start gap-1 p-4 cursor-pointer"
+                        onClick={() => handleSelect(notif.link)}
+                      >
+                        <div className="flex items-center gap-2 w-full">
+                          <div className={cn(
+                            "h-2 w-2 rounded-full",
+                            notif.type === 'missed' ? "bg-red-500" : "bg-blue-500"
+                          )} />
+                          <span className="font-semibold text-sm">{notif.title}</span>
+                          <span className="ml-auto text-[10px] text-muted-foreground">
+                            {format(new Date(notif.date), "MMM d")}
+                          </span>
+                        </div>
+                        <p className="text-xs text-muted-foreground line-clamp-2">
+                          {notif.description}
+                        </p>
+                      </DropdownMenuItem>
+                    ))}
                   </div>
                   <DropdownMenuSeparator />
                   <DropdownMenuItem className="justify-center text-xs text-primary font-medium cursor-pointer" onClick={() => handleSelect('/bookings')}>
-                      সব বুকিং দেখুন
+                    সব বুকিং দেখুন
                   </DropdownMenuItem>
                 </DropdownMenuContent>
               </DropdownMenu>
@@ -254,15 +254,10 @@ export function Header() {
 
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
-                <Button
-                  variant="ghost"
-                  className="relative h-9 w-9 rounded-full"
-                >
-                  <Avatar className="h-9 w-9 border">
-                    <AvatarImage src="/avatars/01.png" alt="@user" />
-                    <AvatarFallback>{"GH"}</AvatarFallback>
-                  </Avatar>
-                </Button>
+                <Avatar className="h-10 w-10 border">
+                  <AvatarImage src="/avatars/01.png" alt="@user" />
+                  <AvatarFallback>{"GH"}</AvatarFallback>
+                </Avatar>
               </DropdownMenuTrigger>
               <DropdownMenuContent className="w-56" align="end" forceMount>
                 <DropdownMenuLabel className="font-normal">
@@ -314,9 +309,9 @@ export function Header() {
                   </>
                 )}
                 <DropdownMenuSeparator />
-                <DropdownMenuItem 
-                    className="text-red-600 focus:text-red-600 cursor-pointer"
-                    onClick={handleLogout}
+                <DropdownMenuItem
+                  className="text-red-600 focus:text-red-600 cursor-pointer"
+                  onClick={handleLogout}
                 >
                   লগ আউট
                 </DropdownMenuItem>

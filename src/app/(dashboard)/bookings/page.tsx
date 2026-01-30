@@ -121,7 +121,7 @@ export default function BookingsPage() {
             requestCount={requestCount}
           />
 
-          <div className="bg-card/20 border border-border/50 rounded-2xl p-6 min-h-[500px] shadow-xl backdrop-blur-sm relative overflow-hidden">
+          <div className="bg-card/20 border border-border/50 rounded-2xl p-6 shadow-xl backdrop-blur-sm relative overflow-hidden">
              {/* Decorative background glow */}
              <div className="absolute top-0 right-0 -mr-20 -mt-20 w-64 h-64 bg-primary/5 rounded-full blur-3xl pointer-events-none" />
              
