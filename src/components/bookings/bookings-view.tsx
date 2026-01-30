@@ -27,7 +27,6 @@ interface BookingsViewProps {
 }
 
 export function BookingsView({ 
-  bookedDates, 
   blockedDates, 
   initialBookings, 
   requestCount,
@@ -161,7 +160,6 @@ export function BookingsView({
                       <BookingCard
                         key={booking.id}
                         booking={booking}
-                        onDelete={(id) => console.log("Delete:", id)}
                       />
                     ))
                   ) : (
