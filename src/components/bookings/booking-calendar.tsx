@@ -6,13 +6,21 @@ import { Card } from "@/components/ui/card";
 interface BookingCalendarProps {
   selectedDate: Date | undefined;
   onSelect: (date: Date | undefined) => void;
+  bookedDates?: Date[];
+  blockedDates?: Date[];
+  onMonthChange?: (date: Date) => void;
 }
 
-export function BookingCalendar({ selectedDate, onSelect }: BookingCalendarProps) {
-  // Mock data for modifiers
+export function BookingCalendar({ 
+  selectedDate, 
+  onSelect, 
+  bookedDates = [], 
+  blockedDates = [],
+  onMonthChange 
+}: BookingCalendarProps) {
   const modifiers = {
-    booked: [new Date(2026, 0, 16), new Date(2026, 0, 15), new Date(2026, 1, 2)],
-    blocked: [new Date(2026, 0, 30), new Date(2026, 1, 11)],
+    booked: bookedDates,
+    blocked: blockedDates,
   };
 
   const modifiersClassNames = {
@@ -26,6 +34,8 @@ export function BookingCalendar({ selectedDate, onSelect }: BookingCalendarProps
         mode="single"
         selected={selectedDate}
         onSelect={onSelect}
+        onMonthChange={onMonthChange}
+        disabled={blockedDates}
         className="rounded-md"
         modifiers={modifiers}
         modifiersClassNames={modifiersClassNames}

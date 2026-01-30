@@ -41,7 +41,7 @@ export function RescheduleButton({ bookingId, onConfirm }: RescheduleButtonProps
       <PopoverTrigger asChild>
         <Button 
           size="sm" 
-          variant="ghost" 
+          variant="outline" 
         >
           <CalendarClock />
           নতুন সময় দিন
