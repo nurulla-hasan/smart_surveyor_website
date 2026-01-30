@@ -4,7 +4,7 @@ import { cn } from "@/lib/utils";
 import { CalendarDays, ClipboardList, History } from "lucide-react";
 import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area"; // ScrollArea ইমপোর্ট করে নিন
 
-export type BookingTab = "SCHEDULED" | "REQUEST" | "HISTORY";
+export type BookingTab = "upcoming" | "pending" | "past";
 
 interface BookingTabsProps {
   activeTab: BookingTab;
@@ -15,18 +15,18 @@ interface BookingTabsProps {
 export function BookingTabs({ activeTab, onTabChange, requestCount = 0 }: BookingTabsProps) {
   const tabs = [
     {
-      id: "SCHEDULED" as const,
+      id: "upcoming" as const,
       label: "আসন্ন",
       icon: CalendarDays,
     },
     {
-      id: "REQUEST" as const,
+      id: "pending" as const,
       label: "অনুরোধ",
       icon: ClipboardList,
       count: requestCount,
     },
     {
-      id: "HISTORY" as const,
+      id: "past" as const,
       label: "ইতিহাস",
       icon: History,
     },

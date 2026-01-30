@@ -1,0 +1,199 @@
+{
+    "success": true,
+    "statusCode": 200,
+    "message": "Bookings fetched successfully",
+    "data": {
+        "bookings": [
+            {
+                "id": "697b0bcc914d47e4225d210f",
+                "userId": "697a015a98d991d07becdd51",
+                "clientId": "697b0abc914d47e4225d210d",
+                "title": "Survey for Plot A",
+                "description": "Detailed survey requirement",
+                "bookingDate": "2026-01-14T18:00:00.000Z",
+                "status": "completed",
+                "propertyAddress": "123 Main St, City",
+                "lat": null,
+                "lng": null,
+                "amountReceived": 3000,
+                "amountDue": 0,
+                "paymentNote": "",
+                "createdAt": "2026-01-29T07:27:08.027Z",
+                "updatedAt": "2026-01-29T07:27:43.642Z",
+                "client": {
+                    "id": "697b0abc914d47e4225d210d",
+                    "name": "Jane Smith",
+                    "email": "temp@example.com",
+                    "phone": "+1234567890"
+                }
+            },
+            {
+                "id": "697b0d44e7ae81cbad687fb7",
+                "userId": "697a015a98d991d07becdd51",
+                "clientId": "697b0abc914d47e4225d210d",
+                "title": "Survey for Plot A",
+                "description": "Detailed survey requirement",
+                "bookingDate": "2026-01-15T18:00:00.000Z",
+                "status": "completed",
+                "propertyAddress": "123 Main St, City",
+                "lat": null,
+                "lng": null,
+                "amountReceived": 1500,
+                "amountDue": 0,
+                "paymentNote": "Full payment cleared",
+                "createdAt": "2026-01-29T07:33:24.022Z",
+                "updatedAt": "2026-01-29T07:34:54.915Z",
+                "client": {
+                    "id": "697b0abc914d47e4225d210d",
+                    "name": "Jane Smith",
+                    "email": "temp@example.com",
+                    "phone": "+1234567890"
+                }
+            },
+            {
+                "id": "697b726df60ac8a4346471b7",
+                "userId": "697a015a98d991d07becdd51",
+                "clientId": "697b0abc914d47e4225d210d",
+                "title": "In voluptatem ipsa ",
+                "description": "",
+                "bookingDate": "2026-01-29T00:00:00.000Z",
+                "status": "scheduled",
+                "propertyAddress": null,
+                "lat": null,
+                "lng": null,
+                "amountReceived": 0,
+                "amountDue": 0,
+                "paymentNote": null,
+                "createdAt": "2026-01-29T14:45:00.699Z",
+                "updatedAt": "2026-01-29T14:45:00.699Z",
+                "client": {
+                    "id": "697b0abc914d47e4225d210d",
+                    "name": "Jane Smith",
+                    "email": "temp@example.com",
+                    "phone": "+1234567890"
+                }
+            },
+            {
+                "id": "697b5b6a95c590e2a1cccf3d",
+                "userId": "697a015a98d991d07becdd51",
+                "clientId": "697b0abc914d47e4225d210d",
+                "title": "jomi",
+                "description": "",
+                "bookingDate": "2026-01-31T00:00:00.000Z",
+                "status": "scheduled",
+                "propertyAddress": null,
+                "lat": null,
+                "lng": null,
+                "amountReceived": 0,
+                "amountDue": 0,
+                "paymentNote": null,
+                "createdAt": "2026-01-29T13:06:50.143Z",
+                "updatedAt": "2026-01-29T13:06:50.143Z",
+                "client": {
+                    "id": "697b0abc914d47e4225d210d",
+                    "name": "Jane Smith",
+                    "email": "temp@example.com",
+                    "phone": "+1234567890"
+                }
+            },
+            {
+                "id": "697b098d58bf9d7c2e6ed23e",
+                "userId": "697a015a98d991d07becdd51",
+                "clientId": "697adafde8a6bdc376376d58",
+                "title": "Jomi map",
+                "description": "",
+                "bookingDate": "2026-02-01T00:00:00.000Z",
+                "status": "scheduled",
+                "propertyAddress": null,
+                "lat": null,
+                "lng": null,
+                "amountReceived": 0,
+                "amountDue": 0,
+                "paymentNote": null,
+                "createdAt": "2026-01-29T07:17:32.883Z",
+                "updatedAt": "2026-01-29T07:17:32.883Z",
+                "client": {
+                    "id": "697adafde8a6bdc376376d58",
+                    "name": "Golap hasan",
+                    "email": "temp@example.com",
+                    "phone": "01750974716"
+                }
+            },
+            {
+                "id": "697b70f5f60ac8a4346471b5",
+                "userId": "697a015a98d991d07becdd51",
+                "clientId": "697b0abc914d47e4225d210d",
+                "title": "Dolores voluptatibus",
+                "description": "",
+                "bookingDate": "2026-02-02T00:00:00.000Z",
+                "status": "scheduled",
+                "propertyAddress": null,
+                "lat": null,
+                "lng": null,
+                "amountReceived": 0,
+                "amountDue": 0,
+                "paymentNote": null,
+                "createdAt": "2026-01-29T14:38:45.011Z",
+                "updatedAt": "2026-01-29T14:38:45.011Z",
+                "client": {
+                    "id": "697b0abc914d47e4225d210d",
+                    "name": "Jane Smith",
+                    "email": "temp@example.com",
+                    "phone": "+1234567890"
+                }
+            },
+            {
+                "id": "697b713ef60ac8a4346471b6",
+                "userId": "697a015a98d991d07becdd51",
+                "clientId": "697b53a0b84aa87aac92d881",
+                "title": "IPSAM DOLORE LABORIS - Torimpur - 22",
+                "description": "সময়: সকাল ১০:০০. সেবা: Ipsam dolore laboris. মৌজা: Torimpur. দাগ: 22. নোট: ashen taratari",
+                "bookingDate": "2026-02-04T00:00:00.000Z",
+                "status": "pending",
+                "propertyAddress": "Dinajpur",
+                "lat": null,
+                "lng": null,
+                "amountReceived": 0,
+                "amountDue": 0,
+                "paymentNote": null,
+                "createdAt": "2026-01-29T14:39:58.435Z",
+                "updatedAt": "2026-01-29T14:39:58.435Z",
+                "client": {
+                    "id": "697b53a0b84aa87aac92d881",
+                    "name": "Fake User",
+                    "email": "user@gmail.com",
+                    "phone": "Fake User"
+                }
+            },
+            {
+                "id": "697b53a1b84aa87aac92d882",
+                "userId": "697a015a98d991d07becdd51",
+                "clientId": "697b53a0b84aa87aac92d881",
+                "title": "JOMI MAPA - Torimpur - 66",
+                "description": "সময়: বিকাল ৪:০০. সেবা: Jomi mapa. মৌজা: Torimpur. দাগ: 66. নোট: amin saheb, ektu taratari ashiyen.",
+                "bookingDate": "2026-02-10T00:00:00.000Z",
+                "status": "cancelled",
+                "propertyAddress": "bangladesh",
+                "lat": null,
+                "lng": null,
+                "amountReceived": 0,
+                "amountDue": 0,
+                "paymentNote": null,
+                "createdAt": "2026-01-29T12:33:37.218Z",
+                "updatedAt": "2026-01-29T13:08:09.991Z",
+                "client": {
+                    "id": "697b53a0b84aa87aac92d881",
+                    "name": "Fake User",
+                    "email": "user@gmail.com",
+                    "phone": "Fake User"
+                }
+            }
+        ],
+        "meta": {
+            "totalItems": 8,
+            "totalPages": 1,
+            "currentPage": 1,
+            "pageSize": 10
+        }
+    }
+}

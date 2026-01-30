@@ -1,23 +1,11 @@
-"use client";
-
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { CheckCircle2, MapPin, Trash2, XCircle } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { RescheduleButton } from "@/components/bookings/reschedule-button";
 import { ScrollArea, ScrollBar } from "../ui/scroll-area";
-
-export interface Booking {
-  id: string;
-  title: string;
-  clientName: string;
-  date: string;
-  type: "SCHEDULED" | "REQUEST" | "HISTORY";
-  status: string;
-  location?: string;
-  amount?: number;
-  isActionRequired?: boolean;
-}
+import { Booking } from "@/types/bookings";
+import { format } from "date-fns";
 
 interface BookingCardProps {
   booking: Booking;
@@ -25,13 +13,14 @@ interface BookingCardProps {
 }
 
 export function BookingCard({ booking, onDelete }: BookingCardProps) {
-  const isScheduled = booking.type === "SCHEDULED";
-  const isRequest = booking.type === "REQUEST";
+  const isScheduled = booking.status === "scheduled";
+  const isRequest = booking.status === "pending";
 
   return (
     <div className={cn(
       "p-4 rounded-xl border transition-all duration-300",
-      booking.isActionRequired
+      // Use pending status for action required style
+      isRequest
         ? "border-orange-500/30 bg-orange-500/5 hover:bg-orange-500/10"
         : "bg-card/30"
     )}>
@@ -42,7 +31,7 @@ export function BookingCard({ booking, onDelete }: BookingCardProps) {
               <h3 className="font-semibold text-lg uppercase">
                 {booking.title}
               </h3>
-              {booking.isActionRequired && (
+              {isRequest && (
                 <Badge variant="warning" className="text-[10px] uppercase font-semibold py-0">
                   পদক্ষেপ প্রয়োজন
                 </Badge>
@@ -51,22 +40,22 @@ export function BookingCard({ booking, onDelete }: BookingCardProps) {
 
             <div className="flex flex-wrap items-center gap-x-4 gap-y-1 text-sm text-muted-foreground">
               <p className="flex items-center gap-1.5 font-medium">
-                ক্লায়েন্ট: <span className="text-foreground">{booking.clientName}</span>
+                ক্লায়েন্ট: <span className="text-foreground">{booking.client?.name}</span>
               </p>
-              {booking.location && (
+              {booking.propertyAddress && (
                 <p className="flex items-center gap-1.5">
                   <MapPin className="h-3.5 w-3.5" />
-                  {booking.location}
+                  {booking.propertyAddress}
                 </p>
               )}
-              {booking.amount && (
+              {booking.amountReceived > 0 && (
                 <p className="flex items-center gap-1.5 font-semibold text-emerald-500">
-                  প্রাপ্তি: ৳{booking.amount}
+                  প্রাপ্তি: ৳{booking.amountReceived}
                 </p>
               )}
               {isRequest && (
                 <p className="text-orange-500 font-medium">
-                  {booking.date}
+                  {format(new Date(booking.bookingDate), "PP")}
                 </p>
               )}
             </div>
@@ -101,7 +90,7 @@ export function BookingCard({ booking, onDelete }: BookingCardProps) {
               </div>
             ) : (
               <>
-                <Badge variant="success">{booking.status}</Badge>
+                <Badge variant="secondary" className="uppercase bg-slate-100 dark:bg-slate-800">{booking.status}</Badge>
                 <Button size="icon" variant="outline" className="text-destructive" onClick={() => onDelete?.(booking.id)}>
                   <Trash2 />
                 </Button>

@@ -35,6 +35,8 @@ interface PendingRequest {
   bookingDate?: string;
 }
 
+const sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
+
 export default async function DashboardPage({
   searchParams,
 }: {
@@ -45,11 +47,16 @@ export default async function DashboardPage({
   const currentMonth = params.month ? parseInt(params.month) : now.getMonth() + 1;
   const currentYear = params.year ? parseInt(params.year) : now.getFullYear();
 
-  const [statsResponse, monthlyStatsResponse, calendarResponse] = await Promise.all([
-    getDashboardStats(),
-    getMonthlyStats(currentYear),
-    getCalendarData(currentMonth, currentYear)
-  ]);
+  // Fetch data sequentially with 500ms delay to avoid "Too Many Requests" (429) error
+  const statsResponse = await getDashboardStats();
+  
+  await sleep(500);
+  
+  const monthlyStatsResponse = await getMonthlyStats(currentYear);
+  
+  await sleep(500);
+  
+  const calendarResponse = await getCalendarData(currentMonth, currentYear);
 
   const stats = statsResponse?.data || {
     totalBookings: 0,

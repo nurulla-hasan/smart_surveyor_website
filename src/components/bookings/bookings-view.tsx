@@ -6,67 +6,60 @@ import { useSmartFilter } from "@/hooks/useSmartFilter";
 import { Inbox } from "lucide-react";
 import { BookingCalendar } from "@/components/bookings/booking-calendar";
 import { BookingTabs, BookingTab } from "@/components/bookings/booking-tabs";
-import { BookingCard, Booking } from "@/components/bookings/booking-card";
+import { BookingCard } from "@/components/bookings/booking-card";
+import { Booking } from "@/types/bookings";
 import { CreateBookingModal } from "@/components/bookings/create-booking-modal";
 import { format, isSameDay } from "date-fns";
 import { ScrollArea } from "@/components/ui/scroll-area";
-
-// Mock Data (Temporary, will be replaced by API)
-const MOCK_BOOKINGS: Booking[] = [
-  {
-    id: "1",
-    title: "Jomi map",
-    clientName: "Golap hasan",
-    date: "2026-02-01",
-    type: "SCHEDULED",
-    status: "SCHEDULED"
-  },
-  {
-    id: "2",
-    title: "In voluptatem ipsa",
-    clientName: "Jane Smith",
-    date: "2026-01-29",
-    type: "SCHEDULED",
-    status: "SCHEDULED",
-    isActionRequired: true
-  },
-  {
-    id: "3",
-    title: "IPSAM DOLORE LABORIS - Torimpur - 22",
-    clientName: "Fake User • Fake User",
-    date: "February 4th, 2026",
-    type: "REQUEST",
-    status: "PENDING",
-    location: "Dinajpur"
-  },
-  {
-    id: "4",
-    title: "Survey for Plot A",
-    clientName: "Jane Smith",
-    date: "January 16th, 2026",
-    type: "HISTORY",
-    status: "COMPLETED",
-    amount: 1500
-  },
-  {
-    id: "5",
-    title: "Survey for Plot A",
-    clientName: "Jane Smith",
-    date: "January 15th, 2026",
-    type: "HISTORY",
-    status: "COMPLETED",
-    amount: 3000
-  }
-];
+import CustomPagination from "@/components/ui/custom/CustomPagination";
 
 interface BookingsViewProps {
   bookedDates: Date[];
   blockedDates: Date[];
+  initialBookings: Booking[];
+  requestCount: number;
+  meta: {
+    totalItems: number;
+    totalPages: number;
+    currentPage: number;
+    pageSize: number;
+  };
 }
 
-export function BookingsView({ bookedDates, blockedDates }: BookingsViewProps) {
+export function BookingsView({ 
+  bookedDates, 
+  blockedDates, 
+  initialBookings, 
+  requestCount,
+  meta
+}: BookingsViewProps) {
   const { updateFilter, updateBatch, getFilter } = useSmartFilter();
-  const [selectedDate, setSelectedDate] = useState<Date | undefined>(new Date());
+  
+  // Initialize selectedDate from URL or default to matching server logic (today)
+  const dateParam = getFilter("date");
+  const initialDate = dateParam ? new Date(dateParam) : new Date();
+  const [selectedDate, setSelectedDate] = useState<Date | undefined>(initialDate);
+  
+  // Sync selectedDate state when URL changes
+  useEffect(() => {
+    if (dateParam) {
+      setSelectedDate(new Date(dateParam));
+    } else {
+      // If no date in URL, server defaults to today, but maybe clear selection?
+      // For now keep it as today or whatever logic we want.
+      // If we want to allow "all", then undefined. But for scheduled usually date specific.
+      setSelectedDate(new Date());
+    }
+  }, [dateParam]);
+
+  const handleDateSelect = (date: Date | undefined) => {
+    setSelectedDate(date);
+    if (date) {
+      updateFilter("date", format(date, "yyyy-MM-dd")); // Use backend friendly format
+    } else {
+      updateFilter("date", null);
+    }
+  };
   
   // Prevent selecting blocked dates initially or when data loads
   useEffect(() => {
@@ -76,12 +69,8 @@ export function BookingsView({ bookedDates, blockedDates }: BookingsViewProps) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [blockedDates]);
   
-  // Initialize activeTab from URL or default to SCHEDULED
-  const activeTab = (getFilter("tab") as BookingTab) || "SCHEDULED";
-
-  // Filter bookings
-  const filteredBookings = MOCK_BOOKINGS.filter(b => b.type === activeTab);
-  const requestCount = MOCK_BOOKINGS.filter(b => b.type === "REQUEST").length;
+  // Initialize activeTab from URL or default to upcoming
+  const activeTab = (getFilter("tab") as BookingTab) || "upcoming";
 
   // Handle Tab Change with URL sync logic
   const handleTabChange = (tab: BookingTab) => {
@@ -98,11 +87,11 @@ export function BookingsView({ bookedDates, blockedDates }: BookingsViewProps) {
 
   const getTabTitle = () => {
     switch (activeTab) {
-      case "SCHEDULED":
+      case "upcoming":
         return `${selectedDate ? format(selectedDate, "MMMM do, yyyy") : "আজকের"}-এর অ্যাপয়েন্টমেন্ট`;
-      case "REQUEST":
+      case "pending":
         return "পাবলিক বুকিং অনুরোধ";
-      case "HISTORY":
+      case "past":
         return "অতীত বুকিং";
       default:
         return "";
@@ -111,11 +100,11 @@ export function BookingsView({ bookedDates, blockedDates }: BookingsViewProps) {
 
   const getTabDescription = () => {
     switch (activeTab) {
-      case "SCHEDULED":
-        return `আজ আপনার ${filteredBookings.length}টি বুকিং আছে।`;
-      case "REQUEST":
+      case "upcoming":
+        return `আজ আপনার ${initialBookings.length}টি বুকিং আছে।`;
+      case "pending":
         return "পাবলিক পেজ থেকে নতুন জরিপ অনুরোধগুলো পর্যালোচনা এবং অনুমোদন করুন।";
-      case "HISTORY":
+      case "past":
         return "সম্পন্ন হওয়া জরিপগুলোর ইতিহাস।";
       default:
         return "";
@@ -140,7 +129,7 @@ export function BookingsView({ bookedDates, blockedDates }: BookingsViewProps) {
         <div className="lg:col-span-4 sticky top-6">
           <BookingCalendar
             selectedDate={selectedDate}
-            onSelect={setSelectedDate}
+            onSelect={handleDateSelect}
             bookedDates={bookedDates}
             blockedDates={blockedDates}
             onMonthChange={handleMonthChange}
@@ -157,7 +146,7 @@ export function BookingsView({ bookedDates, blockedDates }: BookingsViewProps) {
 
           <div className="bg-card/20 border border-border/50 rounded-2xl p-6 shadow-xl backdrop-blur-sm relative overflow-hidden">
             {/* Decorative background glow */}
-            <div className="absolute top-0 right-0 -mr-20 -mt-20 w-64 h-64 bg-primary/5 rounded-full blur-3xl pointer-events-none" />
+            <div className="absolute top-0 right-0 -mr-20 -mt-20 w-64 bg-primary/5 rounded-full blur-3xl pointer-events-none" />
 
             <div className="relative space-y-6">
               <div className="space-y-1">
@@ -169,10 +158,10 @@ export function BookingsView({ bookedDates, blockedDates }: BookingsViewProps) {
                 </p>
               </div>
 
-              <ScrollArea className="h-[600px] pr-4">
+              <ScrollArea className="h-120 pr-4">
                 <div className="space-y-6">
-                  {filteredBookings.length > 0 ? (
-                    filteredBookings.map((booking) => (
+                  {initialBookings.length > 0 ? (
+                    initialBookings.map((booking) => (
                       <BookingCard
                         key={booking.id}
                         booking={booking}
@@ -192,6 +181,13 @@ export function BookingsView({ bookedDates, blockedDates }: BookingsViewProps) {
                   )}
                 </div>
               </ScrollArea>
+
+              {/* Pagination */}
+              {meta.totalPages > 1 && (
+                <div className="pt-4 border-t border-border/10">
+                  <CustomPagination currentPage={meta.currentPage} totalPages={meta.totalPages} />
+                </div>
+              )}
             </div>
           </div>
         </div>
