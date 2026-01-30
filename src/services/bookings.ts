@@ -13,6 +13,7 @@ export const getBookings = async (query: Record<string, string | string[] | unde
 
     const response = await serverFetch(`/bookings${queryString}`, {
       next: {
+        revalidate: 86400,
         tags: ["bookings"],
       },
     } as any);

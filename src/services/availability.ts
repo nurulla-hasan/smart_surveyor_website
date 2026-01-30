@@ -2,7 +2,8 @@
 'use server';
 
 import { serverFetch } from "@/lib/fetcher";
-import { revalidateTag } from "next/cache";
+import { updateTag } from "next/cache";
+import { buildQueryString } from "@/lib/buildQueryString";
 
 export interface BlockedDate {
   id: string;
@@ -12,16 +13,14 @@ export interface BlockedDate {
 
 export const getBlockedDates = async (month?: number, year?: number): Promise<any> => {
   try {
-    let url = "/blocked-dates";
-    const params = new URLSearchParams();
-    if (month) params.append("month", month.toString());
-    if (year) params.append("year", year.toString());
-    
-    const queryString = params.toString();
-    if (queryString) url += `?${queryString}`;
+    const queryString = buildQueryString({
+      month: month?.toString(),
+      year: year?.toString(),
+    });
 
-    const response = await serverFetch(url, {
+    const response = await serverFetch(`/blocked-dates${queryString}`, {
       next: {
+        revalidate: 86400,
         tags: ["blocked-dates"],
       },
     } as any);
@@ -40,8 +39,8 @@ export const toggleBlockedDate = async (date: string, reason: string = "Off-day"
     });
     
     if (response?.success) {
-      revalidateTag("blocked-dates");
-      revalidateTag("bookings"); // Also revalidate bookings as blocked dates affect calendar
+      updateTag("blocked-dates");
+      updateTag("bookings"); // Also revalidate bookings as blocked dates affect calendar
     }
     
     return response;

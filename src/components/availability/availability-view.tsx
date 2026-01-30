@@ -261,7 +261,7 @@ export function AvailabilityView({
                           )}
                         </div>
                         <Button
-                          variant="ghost"
+                          variant="outline"
                           size="icon"
                           className="text-destructive"
                           onClick={() => handleToggleDate(new Date(item.date))}

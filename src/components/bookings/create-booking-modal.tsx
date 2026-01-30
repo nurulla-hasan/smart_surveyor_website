@@ -208,13 +208,14 @@ export function CreateBookingModal({ onSuccess }: CreateBookingModalProps) {
                   </FormLabel>
                   <FormControl>
                     <SearchableSelect
-                      onSelect={(value, original) => {
+                      onSelect={(option) => {
+                        const value = option?.value || "";
                         field.onChange(value);
                         // Clear manual entry fields if a client is selected
                         if (value) {
                           form.setValue("clientName", "");
                           form.setValue("clientPhone", "");
-                          setSelectedClient({ value, label: original?.name || "" });
+                          setSelectedClient(option);
                         } else {
                           setSelectedClient(null);
                         }
@@ -222,8 +223,7 @@ export function CreateBookingModal({ onSuccess }: CreateBookingModalProps) {
                       placeholder="ক্লায়েন্ট নির্বাচন করুন..."
                       searchPlaceholder="ক্লায়েন্ট খুঁজুন..."
                       fetchOptions={fetchClientOptions}
-                      defaultValue={field.value}
-                      defaultLabel={selectedClient?.label}
+                      value={selectedClient}
                     />
                   </FormControl>
                   <FormMessage />

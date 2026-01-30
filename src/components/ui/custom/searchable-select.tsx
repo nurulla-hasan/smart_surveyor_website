@@ -26,14 +26,14 @@ export interface SearchableOption {
 }
 
 interface SearchableSelectProps {
-  onSelect: (value: string, original?: any) => void;
+  onSelect: (option: SearchableOption | null) => void;
   placeholder?: string;
   searchPlaceholder?: string;
   emptyMessage?: string;
   fetchOptions: (search: string) => Promise<SearchableOption[]>;
-  defaultValue?: string;
-  defaultLabel?: string;
+  value?: SearchableOption | null;
   className?: string;
+  renderOption?: (option: SearchableOption) => React.ReactNode;
 }
 
 export function SearchableSelect({
@@ -42,31 +42,14 @@ export function SearchableSelect({
   searchPlaceholder = "খুঁজুন...",
   emptyMessage = "কোনো ফলাফল পাওয়া যায়নি।",
   fetchOptions,
-  defaultValue = "",
-  defaultLabel = "",
+  value = null,
   className,
+  renderOption,
 }: SearchableSelectProps) {
   const [open, setOpen] = React.useState(false);
-  const [value, setValue] = React.useState(defaultValue);
-  const [label, setLabel] = React.useState(defaultLabel);
   const [searchTerm, setSearchTerm] = React.useState("");
   const [options, setOptions] = React.useState<SearchableOption[]>([]);
   const [loading, setLoading] = React.useState(false);
-
-  // Sync internal value and label with props
-  React.useEffect(() => {
-    setValue(defaultValue);
-    if (defaultLabel) {
-      setLabel(defaultLabel);
-    } else if (defaultValue === "") {
-      setLabel("");
-    } else if (options.length > 0) {
-      const selectedOption = options.find((opt) => opt.value === defaultValue);
-      if (selectedOption) {
-        setLabel(selectedOption.label);
-      }
-    }
-  }, [defaultValue, defaultLabel, options]);
 
   // Fetch options with debounce
   React.useEffect(() => {
@@ -94,14 +77,17 @@ export function SearchableSelect({
           aria-expanded={open}
           className={cn("w-full justify-between font-normal", className)}
         >
-          {label || placeholder}
+          {value?.label || placeholder}
           <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
         </Button>
       </PopoverTrigger>
-      <PopoverContent className="w-[--radix-popover-trigger-width] p-0" align="start">
+      <PopoverContent
+        className="w-[--radix-popover-trigger-width] p-0"
+        align="start"
+      >
         <Command shouldFilter={false}>
-          <CommandInput 
-            placeholder={searchPlaceholder} 
+          <CommandInput
+            placeholder={searchPlaceholder}
             onValueChange={setSearchTerm}
           />
           <CommandList>
@@ -118,19 +104,19 @@ export function SearchableSelect({
                       key={option.value}
                       value={option.label}
                       onSelect={() => {
-                        setValue(option.value);
-                        setLabel(option.label);
-                        onSelect(option.value, option.original);
+                        onSelect(option);
                         setOpen(false);
                       }}
                     >
                       <Check
                         className={cn(
                           "mr-2 h-4 w-4",
-                          value === option.value ? "opacity-100" : "opacity-0"
+                          value?.value === option.value
+                            ? "opacity-100"
+                            : "opacity-0"
                         )}
                       />
-                      {option.label}
+                      {renderOption ? renderOption(option) : option.label}
                     </CommandItem>
                   ))}
                 </CommandGroup>
