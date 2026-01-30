@@ -60,21 +60,21 @@ export function SurveyControls({
   return (
     <div className="absolute inset-0 pointer-events-none z-3000 flex flex-col justify-between p-4">
       {/* Top Status Bar: Area Display */}
-      <div className="flex justify-center w-full mt-2">
-        <div className="bg-[#0B0F17]/80 backdrop-blur-md border border-white/10 px-6 py-3 rounded-2xl shadow-2xl pointer-events-auto flex items-center gap-4">
-          <div className="flex flex-col items-center border-r border-white/10 pr-4">
-            <span className="text-[10px] uppercase tracking-wider text-muted-foreground font-bold">এলাকা (শতাংশ)</span>
-            <span className="text-xl font-black text-white">{areaInfo.decimal} <span className="text-sm font-medium opacity-60">শতাংশ</span></span>
+      <div className="flex justify-start w-full mt-4 ml-4 pointer-events-none">
+        <div className="bg-background/90 backdrop-blur-md border px-4 py-2 rounded-xl shadow-lg pointer-events-auto flex items-center gap-4">
+          <div className="flex flex-col items-center border-r pr-4">
+            <span className="text-[10px] uppercase text-muted-foreground font-medium">এলাকা</span>
+            <span className="text-lg font-bold">{areaInfo.decimal} <span className="text-sm font-normal text-muted-foreground">শতাংশ</span></span>
           </div>
           <div className="flex flex-col items-center">
-            <span className="text-[10px] uppercase tracking-wider text-muted-foreground font-bold">বর্গফুট</span>
-            <span className="text-xl font-black text-white">{areaInfo.sqft.toLocaleString()} <span className="text-sm font-medium opacity-60">sqft</span></span>
+            <span className="text-[10px] uppercase text-muted-foreground font-medium">বর্গফুট</span>
+            <span className="text-lg font-bold">{areaInfo.sqft.toLocaleString()} <span className="text-sm font-normal text-muted-foreground">sqft</span></span>
           </div>
         </div>
       </div>
 
       {/* Floating Buttons (Center-Right) */}
-      <div className="absolute top-1/2 right-6 -translate-y-1/2 flex flex-col gap-6 items-center">
+      <div className="absolute top-1/2 right-8 -translate-y-1/2 flex flex-col gap-4 items-center z-10">
         <TooltipProvider>
           <Tooltip>
             <TooltipTrigger asChild>
@@ -83,36 +83,36 @@ export function SurveyControls({
                 variant="secondary"
                 onClick={onMyLocation}
                 disabled={isLoadingLocation}
-                className="size-14 rounded-full bg-[#1A1D23]/80 backdrop-blur-xl border-2 border-white/20 text-white shadow-2xl pointer-events-auto hover:bg-[#252930] hover:scale-110 hover:border-blue-500/50 active:scale-95 transition-all duration-300"
+                className="size-12 rounded-full pointer-events-auto"
               >
                 {isLoadingLocation ? (
-                  <Loader2 className="size-6 animate-spin" />
+                  <Loader2 className="size-5 animate-spin" />
                 ) : (
-                  <Navigation className="size-6 text-blue-500 fill-blue-500 drop-shadow-[0_0_8px_rgba(59,130,246,0.5)]" />
+                  <Navigation className="size-5 text-blue-500 fill-blue-500" />
                 )}
               </Button>
             </TooltipTrigger>
-            <TooltipContent side="left" className="bg-[#1A1D23] border-white/10 text-white font-bold">
+            <TooltipContent side="left">
               <p>আমার অবস্থান</p>
             </TooltipContent>
           </Tooltip>
         </TooltipProvider>
 
-        <div className="flex flex-col items-center gap-3">
+        <div className="flex flex-col items-center gap-2">
           <Button
             size="icon"
             onClick={onAddPoint}
-            className="size-20 rounded-full bg-emerald-500 hover:bg-emerald-600 shadow-[0_0_30px_rgba(16,185,129,0.4)] hover:scale-105 active:scale-90 transition-all duration-300 pointer-events-auto border-4 border-white/20 group"
+            className="size-14 rounded-full pointer-events-auto"
           >
-            <Plus className="size-10 stroke-3 text-white group-hover:rotate-90 transition-transform duration-300" />
+            <Plus className="size-8" />
           </Button>
-          <span className="text-[11px] font-black uppercase tracking-wider text-white drop-shadow-[0_2px_4px_rgba(0,0,0,0.8)] bg-black/40 px-3 py-1 rounded-full backdrop-blur-sm">পয়েন্ট যোগ করুন</span>
+          <span className="text-[10px] font-medium text-muted-foreground">পয়েন্ট</span>
         </div>
       </div>
 
       {/* Bottom Action Bar */}
-      <div className="flex justify-center w-full pb-4">
-        <div className="bg-[#1A1D23]/90 backdrop-blur-2xl border border-white/10 p-2 rounded-4xl shadow-[0_20px_50px_rgba(0,0,0,0.5)] pointer-events-auto flex items-center gap-2 max-w-sm w-full border-t-white/20">
+      <div className="flex justify-center w-full">
+        <div className="bg-background/90 backdrop-blur-md border p-2 rounded-xl shadow-lg pointer-events-auto flex items-center gap-2 max-w-[90%] w-fit">
           <TooltipProvider>
             <Tooltip>
               <TooltipTrigger asChild>
@@ -120,15 +120,13 @@ export function SurveyControls({
                   variant="ghost"
                   onClick={onUndo}
                   disabled={points.length === 0}
-                  className="flex-1 h-14 rounded-2xl text-white hover:bg-white/10 gap-2 transition-all active:scale-95 disabled:opacity-30"
+                  className="flex-1"
                 >
-                  <div className="bg-white/10 p-2 rounded-xl">
-                    <Undo2 className="size-5" />
-                  </div>
-                  <span className="text-sm font-bold">আগেরটি মুছুন</span>
+                  <Undo2 className="size-4" />
+                  মুছুন
                 </Button>
               </TooltipTrigger>
-              <TooltipContent className="bg-[#1A1D23] border-white/10 text-white font-bold">
+              <TooltipContent>
                 <p>শেষ পয়েন্টটি মুছে ফেলুন</p>
               </TooltipContent>
             </Tooltip>
@@ -137,14 +135,14 @@ export function SurveyControls({
               <TooltipTrigger asChild>
                 <Button
                   variant="ghost"
+                  size="icon"
                   onClick={onReset}
                   disabled={points.length === 0}
-                  className="size-14 rounded-2xl text-white hover:bg-red-500/20 hover:text-red-400 transition-all active:scale-95 disabled:opacity-30"
                 >
-                  <RotateCcw className="size-5" />
+                  <RotateCcw className="size-4" />
                 </Button>
               </TooltipTrigger>
-              <TooltipContent className="bg-red-500 border-none text-white font-bold">
+              <TooltipContent>
                 <p>সব মুছে নতুন করে শুরু করুন</p>
               </TooltipContent>
             </Tooltip>
@@ -154,13 +152,13 @@ export function SurveyControls({
                 <Button
                   onClick={onSave}
                   disabled={points.length < 3 || isPending}
-                  className="flex-[1.2] h-14 rounded-2xl bg-linear-to-r from-blue-600 to-indigo-600 text-white hover:from-blue-700 hover:to-indigo-700 gap-2 shadow-lg transition-all active:scale-95 disabled:opacity-30 border-t border-white/20"
+                  className="flex-[1.2]"
                 >
-                  {isPending ? <Loader2 className="size-5 animate-spin" /> : <Save className="size-5" />}
-                  <span className="text-sm font-bold">সেভ করুন</span>
+                  {isPending ? <Loader2 className="size-4 animate-spin" /> : <Save className="size-4" />}
+                  সেভ
                 </Button>
               </TooltipTrigger>
-              <TooltipContent className="bg-blue-600 border-none text-white font-bold">
+              <TooltipContent>
                 <p>জরিপ সেভ করুন</p>
               </TooltipContent>
             </Tooltip>

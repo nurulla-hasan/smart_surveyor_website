@@ -101,7 +101,6 @@ export function MapSaveDialog({
               placeholder="উদাঃ প্লট ১০২ জরিপ"
               value={mapName}
               onChange={(e) => setMapName(e.target.value)}
-              className="rounded-xl h-12 bg-muted/20 border-white/10"
             />
           </div>
 
@@ -124,14 +123,13 @@ export function MapSaveDialog({
           </div>
         </div>
 
-        <DialogFooter className="gap-2 sm:gap-0 mt-2">
-          <Button variant="ghost" onClick={() => onOpenChange(false)} className="rounded-xl h-12">
+        <DialogFooter>
+          <Button variant="ghost" onClick={() => onOpenChange(false)}>
             বাতিল
           </Button>
           <Button 
             disabled={!mapName || isPending} 
             onClick={onSave}
-            className="rounded-xl h-12 bg-emerald-600 hover:bg-emerald-700 shadow-lg shadow-emerald-900/20 px-8"
           >
             {isPending && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
             জরিপ সেভ করুন

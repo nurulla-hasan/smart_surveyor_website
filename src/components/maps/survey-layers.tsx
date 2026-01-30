@@ -1,6 +1,6 @@
 "use client";
 
-import { Polygon, Polyline, CircleMarker, useMap } from "react-leaflet";
+import { Polygon, Polyline, CircleMarker } from "react-leaflet";
 import L from "leaflet";
 
 interface SurveyLayersProps {

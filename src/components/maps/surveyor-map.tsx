@@ -154,7 +154,7 @@ export function SurveyorMap() {
         setSelectedBooking(null);
         setCurrentStats(undefined);
       } else {
-        toast.error("সেভ করতে সমস্যা হয়েছে");
+        toast.error("সেভ করতে সমস্যা হয়েছে"); 
       }
     } catch (error) {
       console.error("Save error:", error);

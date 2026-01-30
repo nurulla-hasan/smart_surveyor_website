@@ -39,25 +39,25 @@ export function MapsView() {
   return (
     <div className="h-[calc(100vh-104px)] w-full relative">
       {/* Mode Switcher */}
-      <div className="absolute top-6 right-6 z-4000">
-        <div className="bg-[#0B0F17]/80 backdrop-blur-md p-1 rounded-full border border-white/10 flex gap-1">
+      <div className="absolute bottom-20 left-1/2 -translate-x-1/2 md:translate-x-0 md:left-auto md:top-6 md:bottom-auto md:right-6 z-4000 pointer-events-none">
+        <div className="bg-background/80 backdrop-blur-md p-1 rounded-full border flex gap-1 pointer-events-auto shadow-lg">
           <Button
             variant={mode === "interactive" ? "default" : "ghost"}
             size="sm"
             onClick={() => setMode("interactive")}
-            className="rounded-full h-9 gap-2 px-4 transition-all"
+            className="rounded-full"
           >
             <MapIcon className="size-4" />
-            <span className="text-xs font-bold">ইন্টারঅ্যাক্টিভ</span>
+            <span className="text-xs font-medium">ম্যাপ</span>
           </Button>
           <Button
             variant={mode === "survey" ? "default" : "ghost"}
             size="sm"
             onClick={() => setMode("survey")}
-            className="rounded-full h-9 gap-2 px-4 transition-all"
+            className="rounded-full"
           >
             <Ruler className="size-4" />
-            <span className="text-xs font-bold">জরিপ মোড</span>
+            <span className="text-xs font-medium">জরিপ</span>
           </Button>
         </div>
       </div>
