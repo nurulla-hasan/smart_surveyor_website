@@ -10,8 +10,6 @@ export const metadata = {
   description: "আপনার জরিপের অ্যাপয়েন্টমেন্ট এবং অনুরোধগুলো পরিচালনা করুন।",
 };
 
-const sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
-
 export default async function BookingsPage({
   searchParams,
 }: {
@@ -40,10 +38,8 @@ export default async function BookingsPage({
     statusFilter = "upcoming";
   }
 
-  // Fetch data sequentially with 500ms delay to avoid "Too Many Requests" (429) error
+  // Fetches are now automatically delayed in development via serverFetch
   const calendarResponse = await getCalendarData(month, year);
-  
-  await sleep(500);
   
   const bookingsResponse = await getBookings({ 
     filter: statusFilter, 
@@ -57,7 +53,6 @@ export default async function BookingsPage({
   if (statusFilter === "pending") {
     requestCount = bookingsResponse?.success ? bookingsResponse.data.meta.totalItems : 0;
   } else {
-    await sleep(500);
     const pendingCountResponse = await getBookings({ filter: "pending", pageSize: "1" });
     requestCount = pendingCountResponse?.success ? pendingCountResponse.data.meta.totalItems : 0;
   }

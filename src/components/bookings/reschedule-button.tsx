@@ -13,9 +13,10 @@ import { Calendar } from "@/components/ui/calendar";
 interface RescheduleButtonProps {
   bookingId: string;
   onConfirm?: (id: string, newDate: Date) => void;
+  trigger?: React.ReactNode;
 }
 
-export function RescheduleButton({ bookingId, onConfirm }: RescheduleButtonProps) {
+export function RescheduleButton({ bookingId, onConfirm, trigger }: RescheduleButtonProps) {
   const [date, setDate] = useState<Date | undefined>(new Date());
 
   const handleSelect = (selectedDate: Date | undefined) => {
@@ -39,13 +40,15 @@ export function RescheduleButton({ bookingId, onConfirm }: RescheduleButtonProps
   return (
     <Popover>
       <PopoverTrigger asChild>
-        <Button 
-          size="sm" 
-          variant="outline" 
-        >
-          <CalendarClock />
-          নতুন সময় দিন
-        </Button>
+        {trigger || (
+          <Button 
+            size="sm" 
+            variant="outline" 
+          >
+            <CalendarClock />
+            নতুন সময় দিন
+          </Button>
+        )}
       </PopoverTrigger>
       <PopoverContent className="w-auto p-0" align="end">
         <Calendar

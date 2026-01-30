@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 
 import { useState } from "react";
@@ -15,51 +16,97 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
 import { Plus } from "lucide-react";
 import { AvailabilityDatePicker } from "@/components/bookings/availability-date-picker";
+import { getClients } from "@/services/clients";
+import { createBooking } from "@/services/bookings";
+import { SuccessToast, ErrorToast } from "@/lib/utils";
+import { useCallback } from "react";
+import { SearchableSelect, SearchableOption } from "@/components/ui/custom/searchable-select";
 
 // Define Form Schema
 const formSchema = z.object({
   title: z.string().min(1, "শিরোনাম প্রয়োজন"),
+  description: z.string().optional(),
+  propertyAddress: z.string().optional(),
   clientId: z.string().optional(),
-  newClientName: z.string().optional(),
-  newClientPhone: z.string().optional(),
-  date: z.date(),
+  clientName: z.string().optional(),
+  clientPhone: z.string().optional(),
+  bookingDate: z.date(),
 });
 
 type FormValues = z.infer<typeof formSchema>;
 
 interface CreateBookingModalProps {
-  onConfirm?: (data: FormValues) => void;
+  onSuccess?: () => void;
 }
 
-export function CreateBookingModal({ onConfirm }: CreateBookingModalProps) {
+export function CreateBookingModal({ onSuccess }: CreateBookingModalProps) {
   const [isOpen, setIsOpen] = useState(false);
+  const [loading, setLoading] = useState(false);
+
+  // Fetch clients for selection
+  const fetchClientOptions = useCallback(async (search: string): Promise<SearchableOption[]> => {
+    const res = await getClients({ search, pageSize: "10" });
+    if (res?.success) {
+      return res.data.clients.map((client) => ({
+        value: client.id,
+        label: client.name,
+        original: client,
+      }));
+    }
+    return [];
+  }, []);
+
+  const [selectedClient, setSelectedClient] = useState<SearchableOption | null>(null);
 
   // 1. Initialize form
   const form = useForm<FormValues>({
     resolver: zodResolver(formSchema),
     defaultValues: {
       title: "",
+      description: "",
+      propertyAddress: "",
       clientId: "",
-      newClientName: "",
-      newClientPhone: "",
-      date: new Date(),
+      clientName: "",
+      clientPhone: "",
+      bookingDate: undefined as unknown as Date,
     },
   });
 
   // 2. Handle submit
-  const onSubmit = (values: FormValues) => {
-    onConfirm?.(values);
-    form.reset();
-    setIsOpen(false);
+  const onSubmit = async (values: FormValues) => {
+    setLoading(true);
+    try {
+      // Prepare payload based on selection or manual entry
+      const payload: any = {
+        title: values.title,
+        description: values.description || "",
+        propertyAddress: values.propertyAddress || "",
+        bookingDate: values.bookingDate.toISOString(),
+      };
+
+      if (values.clientId) {
+        payload.clientId = values.clientId;
+      } else {
+        payload.clientName = values.clientName;
+        payload.clientPhone = values.clientPhone;
+      }
+
+      const res = await createBooking(payload);
+      if (res?.success) {
+        SuccessToast("বুকিং সফলভাবে তৈরি করা হয়েছে");
+        form.reset();
+        setIsOpen(false);
+        onSuccess?.();
+      } else {
+        ErrorToast(res?.message || "বুকিং তৈরি করতে সমস্যা হয়েছে");
+      }
+    } catch {
+      ErrorToast("কিছু ভুল হয়েছে");
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -73,7 +120,7 @@ export function CreateBookingModal({ onConfirm }: CreateBookingModalProps) {
       description="নতুন জরিপ বুকিং শিডিউল করতে বিস্তারিত তথ্য দিন।"
       actionTrigger={
         <Button>
-          <Plus className="h-5 w-5" />
+          <Plus />
           নতুন বুকিং
         </Button>
       }
@@ -97,69 +144,116 @@ export function CreateBookingModal({ onConfirm }: CreateBookingModalProps) {
             )}
           />
 
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <FormField
+              control={form.control}
+              name="propertyAddress"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel className="text-sm font-semibold uppercase">
+                    জমির ঠিকানা
+                  </FormLabel>
+                  <FormControl>
+                    <Input placeholder="e.g. Savar, Dhaka" {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            <FormField
+              control={form.control}
+              name="description"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel className="text-sm font-semibold uppercase">
+                    বিস্তারিত বিবরণ
+                  </FormLabel>
+                  <FormControl>
+                    <Input placeholder="জরিপ সম্পর্কে কিছু লিখুন..." {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+          </div>
+
           {/* Client Selection Section */}
           <div className="space-y-4">
             <FormField
               control={form.control}
               name="clientId"
               render={({ field }) => (
-                <FormItem>
+                <FormItem className="flex flex-col">
                   <FormLabel className="text-sm font-semibold uppercase">
                     ক্লায়েন্ট
                   </FormLabel>
-                  <Select onValueChange={field.onChange} defaultValue={field.value}>
-                    <FormControl>
-                      <SelectTrigger className="w-full">
-                        <SelectValue placeholder="ক্লায়েন্ট নির্বাচন করুন..." />
-                      </SelectTrigger>
-                    </FormControl>
-                    <SelectContent>
-                      <SelectItem value="1">Golap Hasan</SelectItem>
-                      <SelectItem value="2">Jane Smith</SelectItem>
-                    </SelectContent>
-                  </Select>
+                  <FormControl>
+                    <SearchableSelect
+                      onSelect={(value, original) => {
+                        field.onChange(value);
+                        // Clear manual entry fields if a client is selected
+                        if (value) {
+                          form.setValue("clientName", "");
+                          form.setValue("clientPhone", "");
+                          setSelectedClient({ value, label: original?.name || "" });
+                        } else {
+                          setSelectedClient(null);
+                        }
+                      }}
+                      placeholder="ক্লায়েন্ট নির্বাচন করুন..."
+                      searchPlaceholder="ক্লায়েন্ট খুঁজুন..."
+                      fetchOptions={fetchClientOptions}
+                      defaultValue={field.value}
+                      defaultLabel={selectedClient?.label}
+                    />
+                  </FormControl>
                   <FormMessage />
-                  <p className="text-[11px] text-muted-foreground mt-1">
-                    ক্লায়েন্ট খুঁজে পাচ্ছেন না? <span className="text-emerald-500 font-bold cursor-pointer">প্রথমে তাদের যোগ করুন</span> অথবা নিচে ম্যানুয়ালি নাম লিখুন।
-                  </p>
+                  {!field.value && (
+                    <p className="text-[11px] text-muted-foreground mt-1">
+                      ক্লায়েন্ট খুঁজে পাচ্ছেন না? <span className="text-emerald-500 font-bold cursor-pointer">প্রথমে তাদের যোগ করুন</span> অথবা নিচে ম্যানুয়ালি নাম লিখুন।
+                    </p>
+                  )}
                 </FormItem>
               )}
             />
 
-            {/* Manual Entry Fields */}
-            <div className="grid gap-3">
-              <FormField
-                control={form.control}
-                name="newClientName"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormControl>
-                      <Input placeholder="অথবা নতুন ক্লায়েন্টের নাম লিখুন..." {...field} />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
+            {/* Manual Entry Fields - Only show if no client is selected */}
+            {!form.watch("clientId") && (
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-3 animate-in fade-in slide-in-from-top-1 duration-200">
+                <FormField
+                  control={form.control}
+                  name="clientName"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormControl>
+                        <Input placeholder="অথবা নতুন ক্লায়েন্টের নাম লিখুন..." {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
 
-              <FormField
-                control={form.control}
-                name="newClientPhone"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormControl>
-                      <Input placeholder="ক্লায়েন্টের ফোন নম্বর..." {...field} />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-            </div>
+                <FormField
+                  control={form.control}
+                  name="clientPhone"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormControl>
+                        <Input placeholder="ক্লায়েন্টের ফোন নম্বর..." {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              </div>
+            )}
           </div>
 
           {/* Date Picker Field */}
           <FormField
             control={form.control}
-            name="date"
+            name="bookingDate"
             render={({ field }) => (
               <FormItem className="flex flex-col">
                 <FormLabel className="text-sm font-semibold uppercase">
@@ -181,12 +275,15 @@ export function CreateBookingModal({ onConfirm }: CreateBookingModalProps) {
               variant="outline" 
               onClick={() => setIsOpen(false)}
               className="flex-1 font-semibold uppercase"
+              disabled={loading}
             >
               বাতিল
             </Button>
             <Button 
               type="submit" 
               className="flex-1 font-semibold uppercase"
+              loading={loading}
+              loadingText="তৈরি হচ্ছে..."
             >
               বুকিং তৈরি করুন
             </Button>

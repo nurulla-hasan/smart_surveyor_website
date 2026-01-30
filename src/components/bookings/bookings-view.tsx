@@ -119,9 +119,7 @@ export function BookingsView({
           title="বুকিং"
           description="আপনার জরিপের অ্যাপয়েন্টমেন্ট এবং অনুরোধগুলো পরিচালনা করুন।"
         />
-        <CreateBookingModal
-          onConfirm={(data) => console.log("New Booking:", data)}
-        />
+        <CreateBookingModal/>
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
@@ -144,7 +142,7 @@ export function BookingsView({
             requestCount={requestCount}
           />
 
-          <div className="bg-card/20 border border-border/50 rounded-2xl p-6 shadow-xl backdrop-blur-sm relative overflow-hidden">
+          <div className="bg-card border border-border/50 rounded-2xl p-6 shadow-xl backdrop-blur-sm relative overflow-hidden">
             {/* Decorative background glow */}
             <div className="absolute top-0 right-0 -mr-20 -mt-20 w-64 bg-primary/5 rounded-full blur-3xl pointer-events-none" />
 

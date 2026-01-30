@@ -30,6 +30,8 @@ export const serverFetch = async (
 
   if (process.env.NODE_ENV === "development") {
     console.log(`🚀 [API Request]: ${rest.method || "GET"} ${endpoint}`);
+    // Add a 500ms delay in development to avoid "Too Many Requests"
+    await new Promise((resolve) => setTimeout(resolve, 500));
   }
 
   const res = await fetch(url, {

@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 
 import * as React from "react";
@@ -13,6 +14,9 @@ import {
   PopoverTrigger,
 } from "@/components/ui/popover";
 
+import { getCalendarData } from "@/services/dashboard";
+import { isSameDay } from "date-fns";
+
 interface AvailabilityDatePickerProps {
   date: Date | undefined;
   setDate: (date: Date | undefined) => void;
@@ -26,19 +30,42 @@ export function AvailabilityDatePicker({
   label = "তারিখ নির্বাচন করুন",
   className 
 }: AvailabilityDatePickerProps) {
-  // Mock data for availability markers
+  const [open, setOpen] = React.useState(false);
+  const [bookedDates, setBookedDates] = React.useState<Date[]>([]);
+  const [blockedDates, setBlockedDates] = React.useState<Date[]>([]);
+  const [currentMonth, setCurrentMonth] = React.useState<Date>(new Date());
+
+  const fetchAvailability = React.useCallback(async (month: number, year: number) => {
+    const res = await getCalendarData(month, year);
+    if (res?.success) {
+      const booked = (res.data.bookedDates || []).map((d: any) => new Date(d.date));
+      const blocked = (res.data.blockedDates || []).map((d: any) => new Date(d.date));
+      setBookedDates(booked);
+      setBlockedDates(blocked);
+    }
+  }, []);
+
+  React.useEffect(() => {
+    fetchAvailability(currentMonth.getMonth() + 1, currentMonth.getFullYear());
+  }, [currentMonth, fetchAvailability]);
+
   const modifiers = {
-    booked: [new Date(2026, 0, 16), new Date(2026, 0, 15), new Date(2026, 1, 2)],
-    blocked: [new Date(2026, 0, 30), new Date(2026, 1, 11)],
+    booked: bookedDates,
+    blocked: blockedDates,
   };
 
   const modifiersClassNames = {
     booked: "bg-orange-500 text-white font-semibold rounded-full shadow-[0_0_10px_rgba(249,115,22,0.3)]",
-    blocked: "bg-red-500/20 text-red-500 font-semibold border border-red-500/30 rounded-full",
+    blocked: "bg-red-500/20 text-red-500 font-semibold border border-red-500/30 rounded-full cursor-not-allowed",
+  };
+
+  // Function to disable blocked dates
+  const isDateDisabled = (date: Date) => {
+    return blockedDates.some((blockedDate) => isSameDay(date, blockedDate));
   };
 
   return (
-    <Popover>
+    <Popover open={open} onOpenChange={setOpen}>
       <PopoverTrigger asChild>
         <Button
           variant={"outline"}
@@ -57,6 +84,8 @@ export function AvailabilityDatePicker({
           mode="single"
           selected={date}
           onSelect={setDate}
+          onMonthChange={setCurrentMonth}
+          disabled={isDateDisabled}
           initialFocus
           modifiers={modifiers}
           modifiersClassNames={modifiersClassNames}
