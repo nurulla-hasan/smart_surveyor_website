@@ -33,7 +33,7 @@ export function MapToolbar({
   isLoadingLocation,
 }: MapToolbarProps) {
   return (
-    <div className="absolute top-4 left-4 md:top-6 md:left-6 z-10 flex flex-col gap-3 md:gap-4 pointer-events-none">
+    <div className="absolute top-6 left-6 md:top-6 md:left-6 z-10 flex flex-col gap-3 md:gap-4 pointer-events-none">
       {/* Search Bar */}
       <div className="pointer-events-auto flex items-center bg-background backdrop-blur border rounded-lg shadow-md max-w-xs overflow-hidden">
         <Input
@@ -54,7 +54,7 @@ export function MapToolbar({
       </div>
 
       {/* Buttons Row */}
-      <div className="grid grid-cols-2 md:grid-cols-4 items-center gap-2">
+      <div className="grid grid-cols-2 md:grid-cols-4 items-center gap-2 pointer-events-auto">
         <Button
           variant="secondary"
           size="sm"

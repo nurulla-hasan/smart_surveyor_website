@@ -168,7 +168,7 @@ export default function InteractiveMap() {
   };
 
   return (
-    <div className="relative h-full w-[calc(100%+2.5rem)] overflow-hidden flex flex-col">
+    <div className="relative h-full w-full overflow-hidden flex flex-col">
       <MapToolbar
         searchQuery={searchQuery}
         setSearchQuery={setSearchQuery}

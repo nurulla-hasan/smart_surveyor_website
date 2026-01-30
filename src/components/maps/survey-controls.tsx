@@ -60,7 +60,7 @@ export function SurveyControls({
   return (
     <div className="absolute inset-0 pointer-events-none z-3000 flex flex-col justify-between p-4">
       {/* Top Status Bar: Area Display */}
-      <div className="flex justify-start w-full mt-4 ml-4 pointer-events-none">
+      <div className="flex justify-start w-full pointer-events-none">
         <div className="bg-background/90 backdrop-blur-md border px-4 py-2 rounded-xl shadow-lg pointer-events-auto flex items-center gap-4">
           <div className="flex flex-col items-center border-r pr-4">
             <span className="text-[10px] uppercase text-muted-foreground font-medium">এলাকা</span>
@@ -74,7 +74,7 @@ export function SurveyControls({
       </div>
 
       {/* Floating Buttons (Center-Right) */}
-      <div className="absolute top-1/2 right-8 -translate-y-1/2 flex flex-col gap-4 items-center z-10">
+      <div className="absolute md:top-1/2 right-2 md:right-6 md:-translate-y-1/2 flex flex-col gap-4 items-center z-10">
         <TooltipProvider>
           <Tooltip>
             <TooltipTrigger asChild>
@@ -98,16 +98,22 @@ export function SurveyControls({
           </Tooltip>
         </TooltipProvider>
 
-        <div className="flex flex-col items-center gap-2">
-          <Button
-            size="icon"
-            onClick={onAddPoint}
-            className="size-14 rounded-full pointer-events-auto"
-          >
-            <Plus className="size-8" />
-          </Button>
-          <span className="text-[10px] font-medium text-muted-foreground">পয়েন্ট</span>
-        </div>
+        <TooltipProvider>
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <Button
+                size="icon"
+                onClick={onAddPoint}
+                className="size-14 rounded-full pointer-events-auto"
+              >
+                <Plus className="size-8" />
+              </Button>
+            </TooltipTrigger>
+            <TooltipContent side="left">
+              <p>পয়েন্ট যোগ করুন</p>
+            </TooltipContent>
+          </Tooltip>
+        </TooltipProvider>
       </div>
 
       {/* Bottom Action Bar */}

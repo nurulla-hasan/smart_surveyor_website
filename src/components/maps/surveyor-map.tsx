@@ -165,7 +165,7 @@ export function SurveyorMap() {
   };
 
   return (
-    <div className="relative h-full w-[calc(100%+2.5rem)] -m-5 overflow-hidden flex flex-col bg-black">
+    <div className="relative h-full w-full overflow-hidden flex flex-col">
       {/* 1. The Map */}
       <div className="flex-1 relative z-0">
         <MapContainer
