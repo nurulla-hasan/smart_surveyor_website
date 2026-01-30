@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 
-import { Folder, Eye, Trash2 } from "lucide-react";
+import { Folder, Eye, Trash2, ChevronLeft, ChevronRight, Loader2 } from "lucide-react";
 import {
   Sheet,
   SheetContent,
@@ -11,73 +11,120 @@ import {
 } from "@/components/ui/sheet";
 import { Button } from "@/components/ui/button";
 import { format } from "date-fns";
-
-interface SavedMap {
-  id: string;
-  name: string;
-  data: any;
-  createdAt: string;
-}
+import { useState, useEffect } from "react";
+import { getMaps, deleteMap as deleteMapService } from "@/services/maps";
+import { MapData, MapMeta } from "@/types/maps";
+import { toast } from "sonner";
 
 interface SavedMapsDrawerProps {
   isOpen: boolean;
   onClose: () => void;
-  savedMaps: SavedMap[];
   onLoadMap: (data: any) => void;
-  onDeleteMap: (id: string) => void;
 }
 
 export function SavedMapsDrawer({
   isOpen,
   onClose,
-  savedMaps,
   onLoadMap,
-  onDeleteMap,
 }: SavedMapsDrawerProps) {
+  const [maps, setMaps] = useState<MapData[]>([]);
+  const [meta, setMeta] = useState<MapMeta | null>(null);
+  const [page, setPage] = useState(1);
+  const [isLoading, setIsLoading] = useState(false);
+
+  const fetchMaps = async (currentPage: number) => {
+    setIsLoading(true);
+    try {
+      const response = await getMaps(currentPage, 6);
+      if (response?.success) {
+        setMaps(response.data.maps);
+        setMeta(response.data.meta);
+      }
+    } catch (error) {
+      console.error("Error fetching maps:", error);
+      toast.error("ম্যাপ লোড করতে সমস্যা হয়েছে");
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    if (isOpen) {
+      fetchMaps(page);
+    }
+  }, [isOpen, page]);
+
+  const handleDelete = async (id: string) => {
+    try {
+      const res = await deleteMapService(id);
+      if (res?.success) {
+        toast.success("ম্যাপ সফলভাবে মুছে ফেলা হয়েছে");
+        fetchMaps(page);
+      } else {
+        toast.error("ম্যাপ মুছতে সমস্যা হয়েছে");
+      }
+    } catch {
+      toast.error("সার্ভার এরর");
+    }
+  };
+
   return (
     <Sheet open={isOpen} onOpenChange={onClose}>
-      <SheetContent side="left" className="max-w-md">
-        <SheetHeader>
-          <SheetTitle>সংরক্ষিত ম্যাপ</SheetTitle>
-          <SheetDescription>
-            আপনার আগে সেভ করা ম্যাপগুলো লোড অথবা ডিলিট করুন।
-          </SheetDescription>
-        </SheetHeader>
+      <SheetContent side="left" className="sm:max-w-md flex flex-col h-full p-0 border-r-0">
+        <div className="p-2 border-b">
+          <SheetHeader className="text-left">
+            <SheetTitle className="text-xl font-bold">সংরক্ষিত ম্যাপ</SheetTitle>
+            <SheetDescription>
+              আপনার আগে সেভ করা ম্যাপগুলো লোড অথবা ডিলিট করুন।
+            </SheetDescription>
+          </SheetHeader>
+        </div>
 
-        <div className="flex-1 overflow-y-auto mt-6">
-          {savedMaps.length === 0 ? (
-            <div className="flex h-full flex-col items-center justify-center text-muted-foreground">
-              <Folder className="opacity-20 size-12" />
-              <p className="mt-4">কোনো সংরক্ষিত ম্যাপ পাওয়া যায়নি।</p>
+        <div className="flex-1 overflow-y-auto min-h-0 px-4 py-4">
+          {isLoading ? (
+            <div className="flex h-full items-center justify-center">
+              <Loader2 className="animate-spin size-8 text-primary" />
+            </div>
+          ) : maps.length === 0 ? (
+            <div className="flex h-full flex-col items-center justify-center text-muted-foreground opacity-50">
+              <Folder className="size-12" />
+              <p className="mt-4 font-medium">কোনো সংরক্ষিত ম্যাপ পাওয়া যায়নি।</p>
             </div>
           ) : (
             <div className="grid gap-4">
-              {savedMaps.map((map) => (
+              {maps.map((map) => (
                 <div
                   key={map.id}
-                  className="flex items-center justify-between p-4 rounded-xl border bg-card hover:bg-accent/50 transition-all shadow-sm"
+                  className="flex items-center justify-between p-5 rounded-2xl border bg-card/50 hover:bg-accent/50 transition-all duration-200 group shadow-sm hover:shadow-md"
                 >
                   <div className="grid gap-1 overflow-hidden">
-                    <p className="font-bold truncate">{map.name}</p>
-                    <p className="text-xs text-muted-foreground">
+                    <p className="font-bold text-base tracking-tight truncate group-hover:text-primary transition-colors">
+                      {map.name}
+                    </p>
+                    <p className="text-xs text-muted-foreground/80 font-medium">
                       {format(new Date(map.createdAt), "MMM d, yyyy")}
                     </p>
                   </div>
 
-                  <div className="flex items-center gap-2">
+                  <div className="flex items-center gap-1">
                     <Button
                       size="icon"
                       variant="ghost"
-                      onClick={() => onLoadMap(map.data)}
+                      className="size-9 rounded-full hover:bg-primary/10 hover:text-primary transition-colors"
+                      onClick={() => {
+                        onLoadMap(map.data);
+                        onClose();
+                      }}
                     >
-                      <Eye />
+                      <Eye className="size-4" />
                     </Button>
                     <Button
                       size="icon"
                       variant="ghost"
-                      onClick={() => onDeleteMap(map.id)}
+                      className="size-9 rounded-full hover:bg-destructive/10 hover:text-destructive transition-colors text-muted-foreground group-hover:text-destructive"
+                      onClick={() => handleDelete(map.id)}
                     >
-                      <Trash2 className="text-destructive" />
+                      <Trash2 className="size-4" />
                     </Button>
                   </div>
                 </div>
@@ -85,6 +132,39 @@ export function SavedMapsDrawer({
             </div>
           )}
         </div>
+
+        {meta && meta.totalPages > 1 && (
+          <div className="px-6 py-4 border-t bg-background/50 backdrop-blur-sm mt-auto">
+            <div className="flex items-center justify-between">
+              <Button
+                variant="outline"
+                size="sm"
+                disabled={page <= 1 || isLoading}
+                onClick={() => setPage((p) => p - 1)}
+                className="gap-2 rounded-full px-4"
+              >
+                <ChevronLeft className="size-4" />
+                আগে
+              </Button>
+              <div className="flex flex-col items-center">
+                <span className="text-xs text-muted-foreground font-medium uppercase tracking-wider">পেইজ</span>
+                <span className="text-sm font-bold">
+                  {page} / {meta.totalPages}
+                </span>
+              </div>
+              <Button
+                variant="outline"
+                size="sm"
+                disabled={page >= meta.totalPages || isLoading}
+                onClick={() => setPage((p) => p + 1)}
+                className="gap-2 rounded-full px-4"
+              >
+                পরে
+                <ChevronRight className="size-4" />
+              </Button>
+            </div>
+          </div>
+        )}
       </SheetContent>
     </Sheet>
   );

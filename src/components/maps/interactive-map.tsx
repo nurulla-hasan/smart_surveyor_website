@@ -8,13 +8,16 @@ import "leaflet-defaulticon-compatibility";
 import "leaflet-defaulticon-compatibility/dist/leaflet-defaulticon-compatibility.css";
 import L from "leaflet";
 import { toast } from "sonner";
+import { Button } from "@/components/ui/button";
 
 // Modular Components
 import { MapToolbar } from "./map-toolbar";
 import { SavedMapsDrawer } from "./saved-maps-drawer";
 import { MapGeoJSONLayer } from "./map-geojson-layer";
 import { FlyToLocation, FitBounds } from "./map-effects";
-import { MapSaveDialog, MapDeleteDialog } from "./map-dialogs";
+import { MapSaveDialog } from "./map-dialogs";
+
+import { saveMap as saveMapService } from "@/services/maps";
 
 export default function InteractiveMap() {
   // State
@@ -28,9 +31,7 @@ export default function InteractiveMap() {
   
   // UI State
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
-  const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
   const [isSaveDialogOpen, setIsSaveDialogOpen] = useState(false);
-  const [mapToDelete, setMapToDelete] = useState<string | null>(null);
   const [mapName, setMapName] = useState("");
   const [isPending, startTransition] = useTransition();
 
@@ -124,23 +125,26 @@ export default function InteractiveMap() {
     setIsDrawerOpen(false);
   };
 
-  const handleSaveMap = () => {
-    // TODO: Implement actual save action
-    startTransition(() => {
-      console.log("Saving map:", mapName);
-      toast.success("ম্যাপ সফলভাবে সেভ করা হয়েছে!");
-      setIsSaveDialogOpen(false);
-      setMapName("");
-    });
-  };
-
-  const handleDeleteMap = () => {
-    // TODO: Implement actual delete action
-    startTransition(() => {
-      console.log("Deleting map:", mapToDelete);
-      toast.success("ম্যাপ সফলভাবে মোছা হয়েছে!");
-      setIsDeleteDialogOpen(false);
-      setMapToDelete(null);
+  const handleSaveMap = async () => {
+    if (!geoJsonData || !mapName) return;
+    
+    startTransition(async () => {
+      try {
+        const res = await saveMapService({
+          name: mapName,
+          data: geoJsonData,
+        });
+        
+        if (res?.success) {
+          toast.success("ম্যাপ সফলভাবে সেভ করা হয়েছে!");
+          setIsSaveDialogOpen(false);
+          setMapName("");
+        } else {
+          toast.error("ম্যাপ সেভ করতে সমস্যা হয়েছে");
+        }
+      } catch {
+        toast.error("সার্ভার এরর");
+      }
     });
   };
 
@@ -168,12 +172,7 @@ export default function InteractiveMap() {
       <SavedMapsDrawer
         isOpen={isDrawerOpen}
         onClose={() => setIsDrawerOpen(false)}
-        savedMaps={[]} // TODO: Pass actual saved maps
         onLoadMap={handleLoadMap}
-        onDeleteMap={(id) => {
-          setMapToDelete(id);
-          setIsDeleteDialogOpen(true);
-        }}
       />
 
       <MapSaveDialog
@@ -182,13 +181,6 @@ export default function InteractiveMap() {
         mapName={mapName}
         setMapName={setMapName}
         onSave={handleSaveMap}
-        isPending={isPending}
-      />
-
-      <MapDeleteDialog
-        isOpen={isDeleteDialogOpen}
-        onOpenChange={setIsDeleteDialogOpen}
-        onDelete={handleDeleteMap}
         isPending={isPending}
       />
 
@@ -227,13 +219,13 @@ export default function InteractiveMap() {
 
       {/* Save Button for uploaded map */}
       {geoJsonData && (
-        <div className="absolute bottom-6 right-20 z-1000">
-          <button
+        <div className="absolute bottom-6 right-18 z-20">
+          <Button
+            size="lg"
             onClick={() => setIsSaveDialogOpen(true)}
-            className="bg-primary text-primary-foreground px-6 py-2 rounded-full shadow-lg font-bold hover:opacity-90 transition-opacity"
           >
             ম্যাপটি সেভ করুন
-          </button>
+          </Button>
         </div>
       )}
     </div>
