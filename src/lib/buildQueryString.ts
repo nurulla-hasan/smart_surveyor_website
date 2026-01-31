@@ -1,4 +1,4 @@
-export const buildQueryString = (query: Record<string, string | string[] | undefined>) => {
+export const buildQueryString = (query: Record<string, string | number | string[] | undefined>) => {
   const params = new URLSearchParams();
   Object.entries(query).forEach(([key, value]) => {
     if (value !== undefined && value !== null && value !== "") {

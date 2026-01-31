@@ -7,7 +7,7 @@ import { FieldValues } from "react-hook-form";
 import { updateTag } from "next/cache";
 import { GetBookingsResponse } from "@/types/bookings";
 
-export const getBookings = async (query: Record<string, string | string[] | undefined> = {}): Promise<GetBookingsResponse | null> => {
+export const getBookings = async (query: Record<string, string | number | string[] | undefined> = {}): Promise<GetBookingsResponse | null> => {
   try {
     const queryString = buildQueryString(query);
 

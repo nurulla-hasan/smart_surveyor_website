@@ -8,7 +8,7 @@ import { updateTag } from "next/cache";
 import { GetClientsResponse } from "@/types/clients";
 
 export const getClients = async (
-  query: Record<string, string | string[] | undefined> = {},
+  query: Record<string, string | number | string[] | undefined> = {},
 ): Promise<GetClientsResponse | null> => {
   try {
     const queryString = buildQueryString(query);

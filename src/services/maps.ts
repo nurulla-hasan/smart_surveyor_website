@@ -2,7 +2,7 @@
 "use server";
 
 import { serverFetch } from "@/lib/fetcher";
-import { revalidateTag } from "next/cache";
+import { updateTag } from "next/cache";
 import { MapsResponse, SaveMapPayload } from "@/types/maps";
 import { buildQueryString } from "@/lib/buildQueryString";
 
@@ -30,7 +30,7 @@ export const saveMap = async (data: SaveMapPayload) => {
       body: data,
     });
     if (response.success) {
-      revalidateTag("maps");
+      updateTag("maps");
     }
     return response;
   } catch (error) {
@@ -45,7 +45,7 @@ export const deleteMap = async (id: string) => {
       method: "DELETE",
     });
     if (response.success) {
-      revalidateTag("maps");
+      updateTag("maps");
     }
     return response;
   } catch (error) {
