@@ -55,6 +55,8 @@ export function CreateBookingModal({ onSuccess }: CreateBookingModalProps) {
   const [loading, setLoading] = useState(false);
   const searchParams = useSearchParams();
 
+  const [selectedClient, setSelectedClient] = useState<SearchableOption | null>(null);
+
   // Fetch clients for selection
   const fetchClientOptions = useCallback(async (search: string): Promise<SearchableOption[]> => {
     const res = await getClients({ search, pageSize: "10" });
@@ -67,8 +69,6 @@ export function CreateBookingModal({ onSuccess }: CreateBookingModalProps) {
     }
     return [];
   }, []);
-
-  const [selectedClient, setSelectedClient] = useState<SearchableOption | null>(null);
 
   // 1. Initialize form
   const form = useForm<FormValues>({
@@ -115,6 +115,7 @@ export function CreateBookingModal({ onSuccess }: CreateBookingModalProps) {
       if (res?.success) {
         SuccessToast("বুকিং সফলভাবে তৈরি করা হয়েছে");
         form.reset();
+        setSelectedClient(null);
         setIsOpen(false);
         onSuccess?.();
       } else {
@@ -132,7 +133,10 @@ export function CreateBookingModal({ onSuccess }: CreateBookingModalProps) {
       open={isOpen}
       onOpenChange={(open) => {
         setIsOpen(open);
-        if (!open) form.reset();
+        if (!open) {
+          form.reset();
+          setSelectedClient(null);
+        }
       }}
       title="নতুন বুকিং যোগ করুন"
       description="নতুন জরিপ বুকিং শিডিউল করতে বিস্তারিত তথ্য দিন।"
@@ -215,10 +219,8 @@ export function CreateBookingModal({ onSuccess }: CreateBookingModalProps) {
                         if (value) {
                           form.setValue("clientName", "");
                           form.setValue("clientPhone", "");
-                          setSelectedClient(option);
-                        } else {
-                          setSelectedClient(null);
                         }
+                        setSelectedClient(option);
                       }}
                       placeholder="ক্লায়েন্ট নির্বাচন করুন..."
                       searchPlaceholder="ক্লায়েন্ট খুঁজুন..."
@@ -332,7 +334,7 @@ export function CreateBookingModal({ onSuccess }: CreateBookingModalProps) {
             </Button>
           </div>
         </form>
-      </Form>
+        </Form>
     </ModalWrapper>
   );
 }
