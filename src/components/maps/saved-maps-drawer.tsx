@@ -35,7 +35,7 @@ export function SavedMapsDrawer({
   const fetchMaps = async (currentPage: number) => {
     setIsLoading(true);
     try {
-      const response = await getMaps(currentPage, 6);
+      const response = await getMaps({ page: currentPage, limit: 6 });
       if (response?.success) {
         setMaps(response.data.maps);
         setMeta(response.data.meta);

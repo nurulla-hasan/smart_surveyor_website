@@ -24,6 +24,21 @@ export const getBookings = async (query: Record<string, string | string[] | unde
   }
 };
 
+export const getBookingById = async (id: string) => {
+  try {
+    const response = await serverFetch(`/bookings/${id}`, {
+      next: {
+        revalidate: 86400,
+        tags: [`booking-${id}`],
+      },
+    } as any);
+    return response;
+  } catch (error) {
+    console.error("Error fetching booking:", error);
+    return null;
+  }
+};
+
 export const createBooking = async (data: FieldValues) => {
   try {
     const response = await serverFetch("/bookings", {

@@ -4,10 +4,14 @@
 import { serverFetch } from "@/lib/fetcher";
 import { revalidateTag } from "next/cache";
 import { MapsResponse, SaveMapPayload } from "@/types/maps";
+import { buildQueryString } from "@/lib/buildQueryString";
 
-export const getMaps = async (page = 1, limit = 10): Promise<MapsResponse | null> => {
+export const getMaps = async (
+  query: Record<string, string | string[] | number | undefined> = {}
+): Promise<MapsResponse | null> => {
   try {
-    const response = await serverFetch(`/maps?page=${page}&limit=${limit}`, {
+    const queryString = buildQueryString(query);
+    const response = await serverFetch(`/maps${queryString}`, {
       next: {
         tags: ["maps"],
       },

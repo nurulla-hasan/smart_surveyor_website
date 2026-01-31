@@ -16,7 +16,7 @@ export default async function DashboardLayout({
       {/* Main Content Area */}
       <div className="flex-1 flex flex-col overflow-hidden bg-sidebar">
         <Header/>
-        <ScrollArea className="flex-1 h-[calc(100vh-64px)] p-5 rounded-t-2xl bg-background">
+        <ScrollArea className="flex-1 h-[calc(100vh-64px)] p-5 rounded-t-xl bg-background">
           {children}
         </ScrollArea>
       </div>

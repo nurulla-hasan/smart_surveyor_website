@@ -1,3 +1,6 @@
+import { MapData } from "./maps";
+import { Calculation } from "./calculations";
+
 export interface Booking {
   id: string;
   userId: string;
@@ -20,6 +23,8 @@ export interface Booking {
     email: string;
     phone: string;
   };
+  savedMaps?: MapData[];
+  calculations?: Calculation[];
 }
 
 export interface GetBookingsResponse {

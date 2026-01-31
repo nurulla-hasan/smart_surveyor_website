@@ -4,10 +4,14 @@
 import { serverFetch } from "@/lib/fetcher";
 import { updateTag } from "next/cache";
 import { CalculationRequest, GetCalculationsResponse } from "@/types/calculations";
+import { buildQueryString } from "@/lib/buildQueryString";
 
-export const getCalculations = async (): Promise<GetCalculationsResponse | null> => {
+export const getCalculations = async (
+  query: Record<string, string | string[] | undefined> = {}
+): Promise<GetCalculationsResponse | null> => {
   try {
-    const response = await serverFetch("/calculations", {
+    const queryString = buildQueryString(query);
+    const response = await serverFetch(`/calculations${queryString}`, {
       next: {
         revalidate: 86400,
         tags: ["calculations"],
