@@ -18,6 +18,13 @@ export interface Report {
     id: string;
     name: string;
     email: string;
+    phone?: string;
+  };
+  booking?: {
+    id: string;
+    title: string;
+    bookingDate: string;
+    propertyAddress?: string;
   };
 }
 

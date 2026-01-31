@@ -1,5 +1,4 @@
-import { MapData } from "./maps";
-import { Calculation } from "./calculations";
+/* eslint-disable @typescript-eslint/no-explicit-any */
 
 export interface Booking {
   id: string;
@@ -23,8 +22,8 @@ export interface Booking {
     email: string;
     phone: string;
   };
-  savedMaps?: MapData[];
-  calculations?: Calculation[];
+  calculations: any[];
+  savedMaps: any[];
 }
 
 export interface GetBookingsResponse {

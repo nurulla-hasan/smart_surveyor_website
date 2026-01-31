@@ -34,6 +34,7 @@ interface SearchableSelectProps {
   value?: SearchableOption | null;
   className?: string;
   renderOption?: (option: SearchableOption) => React.ReactNode;
+  disabled?: boolean;
 }
 
 export function SearchableSelect({
@@ -45,6 +46,7 @@ export function SearchableSelect({
   value = null,
   className,
   renderOption,
+  disabled = false,
 }: SearchableSelectProps) {
   const [open, setOpen] = React.useState(false);
   const [searchTerm, setSearchTerm] = React.useState("");
@@ -69,13 +71,14 @@ export function SearchableSelect({
   }, [searchTerm, fetchOptions]);
 
   return (
-    <Popover open={open} onOpenChange={setOpen}>
+    <Popover open={open} onOpenChange={disabled ? undefined : setOpen}>
       <PopoverTrigger asChild>
         <Button
           variant="outline"
           role="combobox"
           aria-expanded={open}
           className={cn("w-full justify-between font-normal", className)}
+          disabled={disabled}
         >
           {value?.label || placeholder}
           <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />

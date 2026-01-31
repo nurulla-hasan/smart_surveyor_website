@@ -26,7 +26,22 @@ export const getReports = async (
   }
 };
 
-export const createReport = async (data: FieldValues) => {
+export const getReportById = async (id: string) => {
+  try {
+    const response = await serverFetch(`/reports/${id}`, {
+      next: {
+        revalidate: 3600,
+        tags: [`report-${id}`],
+      },
+    });
+    return response;
+  } catch (error) {
+    console.error("Error fetching report by id:", error);
+    return null;
+  }
+};
+
+export const createReport = async (data: FieldValues | FormData) => {
   try {
     const response = await serverFetch("/reports", {
       method: "POST",
@@ -42,7 +57,7 @@ export const createReport = async (data: FieldValues) => {
   }
 };
 
-export const updateReport = async (id: string, data: FieldValues) => {
+export const updateReport = async (id: string, data: any) => {
   try {
     const response = await serverFetch(`/reports/${id}`, {
       method: "PUT",

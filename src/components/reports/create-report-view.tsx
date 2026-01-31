@@ -93,6 +93,18 @@ export function CreateReportView({
   });
 
   const watchedValues = form.watch();
+  const [imagePreview, setImagePreview] = useState<string | null>(null);
+
+  // Handle image preview
+  useEffect(() => {
+    if (watchedValues.reportFile instanceof File) {
+      const objectUrl = URL.createObjectURL(watchedValues.reportFile);
+      setImagePreview(objectUrl);
+      return () => URL.revokeObjectURL(objectUrl);
+    } else {
+      setImagePreview(null);
+    }
+  }, [watchedValues.reportFile]);
 
   // Fetch bookings when client is selected
   useEffect(() => {
@@ -307,9 +319,9 @@ export function CreateReportView({
       </div>
 
       {/* Main Content */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         {/* Form Section */}
-        <div className="space-y-6">
+        <div className="lg:col-span-2 space-y-6">
           <Card>
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
@@ -376,14 +388,14 @@ export function CreateReportView({
                   <FormField
                     control={form.control}
                     name="reportFile"
-                    render={({ field: { onChange, onBlur, name, ref } }) => (
+                    render={({ field: { name, onBlur, ref, onChange } }) => (
                       <FormItem>
-                        <FormLabel>সার্ভে ম্যাপ / PDF আপলোড (ঐচ্ছিক)</FormLabel>
+                        <FormLabel>সার্ভে ম্যাপ / ইমেজ আপলোড (ঐচ্ছিক)</FormLabel>
                         <FormControl>
                           <div className="flex items-center gap-4">
                             <Input
                               type="file"
-                              accept="application/pdf,image/*"
+                              accept="image/*"
                               name={name}
                               onBlur={onBlur}
                               ref={ref}
@@ -441,7 +453,7 @@ export function CreateReportView({
                   <Separator />
 
                   {/* Land Details */}
-                  <div className="grid grid-cols-2 gap-4">
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                     <FormField
                       control={form.control}
                       name="mouzaName"
@@ -472,12 +484,7 @@ export function CreateReportView({
                         </FormItem>
                       )}
                     />
-                  </div>
 
-                  <Separator />
-
-                  {/* Area Measurements with Auto Convert */}
-                  <div className="space-y-4">
                     <FormField
                       control={form.control}
                       name="areaSqFt"
@@ -502,58 +509,61 @@ export function CreateReportView({
                         </FormItem>
                       )}
                     />
+                  </div>
 
-                    <div className="grid grid-cols-2 gap-4">
-                      <FormField
-                        control={form.control}
-                        name="areaKatha"
-                        render={({ field }) => (
-                          <FormItem>
-                            <FormLabel>কাঠা</FormLabel>
-                            <FormControl>
-                              <Input
-                                type="number"
-                                placeholder="0.0000"
-                                {...field}
-                                onChange={(e) =>
-                                  handleKathaChange(
-                                    e.target.value === ""
-                                      ? 0
-                                      : Number(e.target.value)
-                                  )
-                                }
-                              />
-                            </FormControl>
-                            <FormMessage />
-                          </FormItem>
-                        )}
-                      />
+                  <Separator />
 
-                      <FormField
-                        control={form.control}
-                        name="areaDecimal"
-                        render={({ field }) => (
-                          <FormItem>
-                            <FormLabel>শতাংশ</FormLabel>
-                            <FormControl>
-                              <Input
-                                type="number"
-                                placeholder="0.0000"
-                                {...field}
-                                onChange={(e) =>
-                                  handleDecimalChange(
-                                    e.target.value === ""
-                                      ? 0
-                                      : Number(e.target.value)
-                                  )
-                                }
-                              />
-                            </FormControl>
-                            <FormMessage />
-                          </FormItem>
-                        )}
-                      />
-                    </div>
+                  {/* Area Measurements with Auto Convert */}
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <FormField
+                      control={form.control}
+                      name="areaKatha"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>কাঠা</FormLabel>
+                          <FormControl>
+                            <Input
+                              type="number"
+                              placeholder="0.0000"
+                              {...field}
+                              onChange={(e) =>
+                                handleKathaChange(
+                                  e.target.value === ""
+                                    ? 0
+                                    : Number(e.target.value)
+                                )
+                              }
+                            />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+
+                    <FormField
+                      control={form.control}
+                      name="areaDecimal"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>শতাংশ</FormLabel>
+                          <FormControl>
+                            <Input
+                              type="number"
+                              placeholder="0.0000"
+                              {...field}
+                              onChange={(e) =>
+                                handleDecimalChange(
+                                  e.target.value === ""
+                                    ? 0
+                                    : Number(e.target.value)
+                                )
+                              }
+                            />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
                   </div>
 
                   <Separator />
@@ -680,6 +690,24 @@ export function CreateReportView({
                     </p>
                   </div>
                 </div>
+
+                {/* Survey Map Image Attachment */}
+                {imagePreview && (
+                  <div className="mb-4">
+                    <Separator className="my-3 bg-gray-300" />
+                    <h2 className="text-sm font-bold text-emerald-700 mb-2">
+                      Survey Map / Attachment
+                    </h2>
+                    <div className="relative aspect-video w-full overflow-hidden rounded-md border border-gray-200 bg-gray-50">
+                      {/* eslint-disable-next-line @next/next/no-img-element */}
+                      <img
+                        src={imagePreview}
+                        alt="Survey Map Preview"
+                        className="h-full w-full object-contain"
+                      />
+                    </div>
+                  </div>
+                )}
 
                 {/* Notes */}
                 {watchedValues.notes && (
