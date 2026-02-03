@@ -5,6 +5,9 @@ import { useState } from "react"
 import { Loader2, Ruler, Map as MapIcon } from "lucide-react"
 import { Button } from "@/components/ui/button"
 
+import { Booking } from "@/types/bookings"
+import { MapData } from "@/types/maps"
+
 // Dynamically import map components with no SSR
 const InteractiveMap = dynamic(
   () => import("@/components/maps/interactive-map"),
@@ -33,7 +36,12 @@ function MapLoading() {
   )
 }
 
-export function MapsView() {
+interface MapsViewProps {
+  initialBookings: Booking[];
+  initialMaps: MapData[];
+}
+
+export function MapsView({ initialBookings, initialMaps }: MapsViewProps) {
   const [mode, setMode] = useState<"interactive" | "survey">("interactive")
 
   return (
@@ -62,7 +70,11 @@ export function MapsView() {
         </div>
       </div>
 
-      {mode === "interactive" ? <InteractiveMap /> : <SurveyorMap />}
+      {mode === "interactive" ? (
+        <InteractiveMap initialBookings={initialBookings} initialMaps={initialMaps} />
+      ) : (
+        <SurveyorMap initialBookings={initialBookings} />
+      )}
     </div>
   )
 }

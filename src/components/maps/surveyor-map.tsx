@@ -29,28 +29,61 @@ function MapReference({ onReady }: { onReady: (map: L.Map) => void }) {
   return null;
 }
 
-export function SurveyorMap() {
+interface SurveyorMapProps {
+  initialBookings: Booking[];
+}
+
+export function SurveyorMap({ initialBookings }: SurveyorMapProps) {
   const [points, setPoints] = useState<L.LatLng[]>([]);
   const [userLocation, setUserLocation] = useState<[number, number] | null>(null);
+  const [defaultCenter] = useState<[number, number]>([25.6279, 88.6332]); // Dinajpur
   const [isLoadingLocation, setIsLoadingLocation] = useState(false);
   const [isSaveDialogOpen, setIsSaveDialogOpen] = useState(false);
   const [mapName, setMapName] = useState("");
   const [selectedBooking, setSelectedBooking] = useState<SearchableOption | null>(null);
-  const [bookings, setBookings] = useState<Booking[]>([]);
+  const [bookings, setBookings] = useState<Booking[]>(initialBookings);
   const [isPending, setIsPending] = useState(false);
   const [currentStats, setCurrentStats] = useState<{ area: number; perimeter: number } | undefined>(undefined);
   const mapRef = useRef<L.Map | null>(null);
 
+  const handleLocateMe = useCallback((showToast = true) => {
+    setIsLoadingLocation(true);
+    if (navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition(
+        (position) => {
+          const { latitude, longitude } = position.coords;
+          setUserLocation([latitude, longitude]);
+          setIsLoadingLocation(false);
+          if (showToast) toast.success("আপনার অবস্থান পাওয়া গেছে");
+        },
+        (error) => {
+          console.error("Geolocation error:", error);
+          setIsLoadingLocation(false);
+          if (showToast) toast.error("আপনার অবস্থান পাওয়া যায়নি। অনুগ্রহ করে পারমিশন দিন।");
+        }
+      );
+    } else {
+      if (showToast) toast.error("আপনার ব্রাউজার জিওলোকেশন সাপোর্ট করে না।");
+      setIsLoadingLocation(false);
+    }
+  }, []);
+
   // Fetch bookings for dropdown
   useEffect(() => {
-    const fetchBookings = async () => {
-      const res = await getBookings();
-      if (res?.success) {
-        setBookings(res.data.bookings || []);
-      }
-    };
-    fetchBookings();
-  }, []);
+    if (bookings.length === 0) {
+      const fetchBookings = async () => {
+        const res = await getBookings();
+        if (res?.success) {
+          setBookings(res.data.bookings || []);
+        }
+      };
+      fetchBookings();
+    }
+
+    // Auto-locate on load - silent (no toast)
+    handleLocateMe(false);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [handleLocateMe]);
 
   // Handlers
   const calculateStats = useCallback((pts: L.LatLng[]) => {
@@ -65,28 +98,6 @@ export function SurveyorMap() {
       area: Number((areaSqM / 40.47).toFixed(3)),
       perimeter: Math.round(perimeterM),
     };
-  }, []);
-
-  const handleLocateMe = useCallback(() => {
-    setIsLoadingLocation(true);
-    if (navigator.geolocation) {
-      navigator.geolocation.getCurrentPosition(
-        (position) => {
-          const { latitude, longitude } = position.coords;
-          setUserLocation([latitude, longitude]);
-          setIsLoadingLocation(false);
-          toast.success("আপনার অবস্থান পাওয়া গেছে");
-        },
-        (error) => {
-          console.error("Geolocation error:", error);
-          setIsLoadingLocation(false);
-          toast.error("আপনার অবস্থান পাওয়া যায়নি। অনুগ্রহ করে পারমিশন দিন।");
-        }
-      );
-    } else {
-      toast.error("আপনার ব্রাউজার জিওলোকেশন সাপোর্ট করে না।");
-      setIsLoadingLocation(false);
-    }
   }, []);
 
   const handleAddPoint = useCallback(() => {
@@ -169,8 +180,8 @@ export function SurveyorMap() {
       {/* 1. The Map */}
       <div className="flex-1 relative z-0">
         <MapContainer
-          center={[23.685, 90.3563]}
-          zoom={18} // High zoom for surveying
+          center={defaultCenter}
+          zoom={userLocation ? 18 : 16} // High zoom for surveying
           style={{ height: "100%", width: "100%" }}
           zoomControl={false}
           maxZoom={22}

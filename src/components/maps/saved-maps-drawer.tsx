@@ -20,14 +20,16 @@ interface SavedMapsDrawerProps {
   isOpen: boolean;
   onClose: () => void;
   onLoadMap: (data: any) => void;
+  initialMaps: MapData[];
 }
 
 export function SavedMapsDrawer({
   isOpen,
   onClose,
   onLoadMap,
+  initialMaps,
 }: SavedMapsDrawerProps) {
-  const [maps, setMaps] = useState<MapData[]>([]);
+  const [maps, setMaps] = useState<MapData[]>(initialMaps);
   const [meta, setMeta] = useState<MapMeta | null>(null);
   const [page, setPage] = useState(1);
   const [isLoading, setIsLoading] = useState(false);
@@ -49,7 +51,8 @@ export function SavedMapsDrawer({
   };
 
   useEffect(() => {
-    if (isOpen) {
+    // Only fetch if it's NOT the first page or we don't have initial maps
+    if (isOpen && (page > 1 || maps.length === 0)) {
       fetchMaps(page);
     }
   }, [isOpen, page]);

@@ -21,11 +21,18 @@ import { saveMap as saveMapService } from "@/services/maps";
 import { getBookings } from "@/services/bookings";
 import { SearchableOption } from "@/components/ui/custom/searchable-select";
 import { Booking } from "@/types/bookings";
+import { MapData } from "@/types/maps";
 import { useEffect } from "react";
 
-export default function InteractiveMap() {
+interface InteractiveMapProps {
+  initialBookings: Booking[];
+  initialMaps: MapData[];
+}
+
+export default function InteractiveMap({ initialBookings, initialMaps }: InteractiveMapProps) {
   // State
   const [userLocation, setUserLocation] = useState<[number, number] | null>(null);
+  const [defaultCenter] = useState<[number, number]>([25.6279, 88.6332]); // Dinajpur
   const [geoJsonData, setGeoJsonData] = useState<GeoJSON.GeoJsonObject | null>(null);
   const [searchQuery, setSearchQuery] = useState("");
   const [isLoadingLocation, setIsLoadingLocation] = useState(false);
@@ -38,26 +45,15 @@ export default function InteractiveMap() {
   const [isSaveDialogOpen, setIsSaveDialogOpen] = useState(false);
   const [mapName, setMapName] = useState("");
   const [selectedBooking, setSelectedBooking] = useState<SearchableOption | null>(null);
-  const [bookings, setBookings] = useState<Booking[]>([]);
+  const [bookings, setBookings] = useState<Booking[]>(initialBookings);
   const [isPending, startTransition] = useTransition();
-
-  // Fetch bookings for dropdown
-  useEffect(() => {
-    const fetchBookings = async () => {
-      const res = await getBookings();
-      if (res?.success) {
-        setBookings(res.data.bookings || []);
-      }
-    };
-    fetchBookings();
-  }, []);
 
   // Refs
   const fileInputRef = useRef<HTMLInputElement>(null);
   const mapRef = useRef<L.Map>(null);
 
   // Handlers
-  const handleLocateMe = () => {
+  const handleLocateMe = (showToast = true) => {
     setIsLoadingLocation(true);
     if (navigator.geolocation) {
       navigator.geolocation.getCurrentPosition(
@@ -65,18 +61,36 @@ export default function InteractiveMap() {
           const { latitude, longitude } = position.coords;
           setUserLocation([latitude, longitude]);
           setIsLoadingLocation(false);
+          if (showToast) toast.success("আপনার অবস্থান পাওয়া গেছে");
         },
         (error) => {
           console.error("Geolocation error:", error);
           setIsLoadingLocation(false);
-          toast.error("আপনার অবস্থান পাওয়া যায়নি। অনুগ্রহ করে পারমিশন দিন।");
+          if (showToast) toast.error("আপনার অবস্থান পাওয়া যায়নি। অনুগ্রহ করে পারমিশন দিন।");
         }
       );
     } else {
-      toast.error("আপনার ব্রাউজার জিওলোকেশন সাপোর্ট করে না।");
+      if (showToast) toast.error("আপনার ব্রাউজার জিওলোকেশন সাপোর্ট করে না।");
       setIsLoadingLocation(false);
     }
   };
+
+  // Fetch bookings for dropdown
+  useEffect(() => {
+    if (bookings.length === 0) {
+      const fetchBookings = async () => {
+        const res = await getBookings();
+        if (res?.success) {
+          setBookings(res.data.bookings || []);
+        }
+      };
+      fetchBookings();
+    }
+
+    // Auto-locate on load - silent
+    handleLocateMe(false);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   const handleFileUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
@@ -192,6 +206,7 @@ export default function InteractiveMap() {
         isOpen={isDrawerOpen}
         onClose={() => setIsDrawerOpen(false)}
         onLoadMap={handleLoadMap}
+        initialMaps={initialMaps}
       />
 
       <MapSaveDialog
@@ -208,8 +223,8 @@ export default function InteractiveMap() {
 
       <div className="flex-1 relative z-0">
         <MapContainer
-          center={[23.685, 90.3563]}
-          zoom={7}
+          center={defaultCenter}
+          zoom={userLocation ? 15 : 13}
           style={{ height: "100%", width: "100%" }}
           ref={mapRef}
           zoomControl={false}
