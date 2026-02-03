@@ -7,7 +7,6 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import * as zod from "zod";
 import { toast } from "sonner";
 import { User } from "lucide-react";
-import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import {
   Form,
@@ -46,7 +45,6 @@ export function EditProfileModal({ profileData }: EditProfileModalProps) {
     profileData?.profileImage || null,
   );
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
-  const router = useRouter();
 
   const form = useForm<zod.infer<typeof profileSchema>>({
     resolver: zodResolver(profileSchema),
@@ -78,9 +76,9 @@ export function EditProfileModal({ profileData }: EditProfileModalProps) {
     setLoading(true);
     try {
       const formData = new FormData();
-      Object.entries(values).forEach(([key, value]) => {
-        if (value !== undefined && value !== null) formData.append(key, value);
-      });
+      // Send the data as a JSON string in a "data" field to match backend's report/update logic
+      formData.append("data", JSON.stringify(values));
+      
       if (selectedFile) {
         formData.append("profileImage", selectedFile);
       }
@@ -88,7 +86,6 @@ export function EditProfileModal({ profileData }: EditProfileModalProps) {
       const res = await updateProfile(formData);
       if (res?.success) {
         toast.success("প্রোফাইল সফলভাবে আপডেট করা হয়েছে");
-        router.refresh();
         setIsOpen(false);
       } else {
         toast.error(res?.message || "আপডেট করতে সমস্যা হয়েছে");

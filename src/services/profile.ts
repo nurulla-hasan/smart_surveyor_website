@@ -2,11 +2,13 @@
 'use server';
 
 import { serverFetch } from '@/lib/fetcher';
+import { updateTag } from 'next/cache';
 
 export const getProfile = async (): Promise<any> => {
   try {
     const result = await serverFetch('/users/profile', {
       method: 'GET',
+      next: { tags: ['profile'] }
     });
     return result;
   } catch (error: any) {
@@ -19,10 +21,15 @@ export const updateProfile = async (formData: FormData): Promise<any> => {
     const result = await serverFetch('/users/profile', {
       method: 'PUT',
       body: formData,
-      // Note: serverFetch might need adjustment for FormData if it stringifies body
     });
+    
+    if (result?.success) {
+      updateTag('profile');
+    }
+    
     return result;
   } catch (error: any) {
+    console.error('Update Profile Service Error:', error);
     return { success: false, message: error?.message };
   }
 };

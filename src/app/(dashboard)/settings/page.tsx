@@ -5,7 +5,7 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/com
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { EditProfileModal } from "@/components/settings/edit-profile-modal";
 import { ChangePasswordModal } from "@/components/settings/change-password-modal";
-import { getCurrentUser } from "@/services/auth";
+import { getProfile } from "@/services/profile";
 
 export const metadata = {
   title: "সেটিংস | Smart Surveyor",
@@ -25,7 +25,8 @@ const InfoItem = ({ icon: Icon, label, value }: { icon: any, label: string, valu
 );
 
 export default async function SettingsPage() {
-  const profileData = await getCurrentUser();
+  const profileRes = await getProfile();
+  const profileData = profileRes?.data;
 
   return (
     <div className="space-y-6">

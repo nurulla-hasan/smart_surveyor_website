@@ -51,7 +51,7 @@ export function Header() {
     <header className="sticky top-0 z-50 w-full bg-sidebar backdrop-blur-md">
       <div className="flex h-16 items-center px-4 sm:px-8">
         {/* Client Navigation Links - Centered & Styled */}
-        {mounted && isClientRole && (
+        {isClientRole && (
           <nav className="flex items-center bg-muted/50 p-1 rounded-xl ml-8">
             <Link
               href="/portal"
