@@ -1,4 +1,4 @@
-import { getValidAccessToken } from "@/lib/getValidAccessToken";
+import { cookies } from "next/headers";
 
 export const serverFetch = async (
   endpoint: string,
@@ -8,7 +8,8 @@ export const serverFetch = async (
     revalidate?: number;
   } = {}
 ) => {
-  const accessToken = await getValidAccessToken();
+  const cookieStore = await cookies();
+  const accessToken = cookieStore.get("accessToken")?.value;
   const { tags, revalidate, headers, ...rest } = options;
   let body = options.body;
 

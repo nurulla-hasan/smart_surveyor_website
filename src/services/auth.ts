@@ -28,8 +28,16 @@ export const signInUser = async (userData: FieldValues): Promise<any> => {
       }
 
       const cookieStore = await cookies();
-      cookieStore.set('accessToken', accessToken);
-      cookieStore.set('refreshToken', result?.data?.refreshToken);
+      cookieStore.set('accessToken', accessToken, {
+        httpOnly: false,
+        secure: process.env.NODE_ENV === 'production',
+        sameSite: 'lax',
+      });
+      cookieStore.set('refreshToken', result?.data?.refreshToken, {
+        httpOnly: true,
+        secure: process.env.NODE_ENV === 'production',
+        sameSite: 'lax',
+      });
 
       // Return redirect path based on role
       return { 
@@ -62,15 +70,9 @@ export const registerUser = async (userData: FieldValues): Promise<any> => {
 export const changePassword = async (data: FieldValues): Promise<any> => {
   try {
     const result = await serverFetch('/auth/change-password', {
-      method: 'PATCH',
+      method: 'POST',
       body: data,
     });
-
-    if (result?.success) {
-      const cookieStore = await cookies();
-      cookieStore.set('accessToken', result?.data?.accessToken);
-      cookieStore.set('refreshToken', result?.data?.refreshToken);
-    }
 
     return result;
   } catch (error: any) {
