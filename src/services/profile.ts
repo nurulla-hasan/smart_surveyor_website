@@ -3,6 +3,7 @@
 
 import { serverFetch } from '@/lib/fetcher';
 import { updateTag } from 'next/cache';
+import { cookies } from 'next/headers';
 
 export const getProfile = async (): Promise<any> => {
   try {
@@ -24,6 +25,17 @@ export const updateProfile = async (formData: FormData): Promise<any> => {
     });
     
     if (result?.success) {
+      // Update the accessToken cookie with new data
+      const newAccessToken = result?.data?.accessToken;
+      if (newAccessToken) {
+        const cookieStore = await cookies();
+        cookieStore.set('accessToken', newAccessToken, {
+          httpOnly: false,
+          secure: process.env.NODE_ENV === 'production',
+          sameSite: 'lax',
+        });
+      }
+      
       updateTag('profile');
     }
     

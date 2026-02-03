@@ -5,7 +5,8 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/com
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { EditProfileModal } from "@/components/settings/edit-profile-modal";
 import { ChangePasswordModal } from "@/components/settings/change-password-modal";
-import { getProfile } from "@/services/profile";
+import { getCurrentUser } from "@/services/auth";
+import { getInitials } from "@/lib/utils";
 
 export const metadata = {
   title: "সেটিংস | Smart Surveyor",
@@ -25,8 +26,7 @@ const InfoItem = ({ icon: Icon, label, value }: { icon: any, label: string, valu
 );
 
 export default async function SettingsPage() {
-  const profileRes = await getProfile();
-  const profileData = profileRes?.data;
+  const profileData = await getCurrentUser();
 
   return (
     <div className="space-y-6">
@@ -43,11 +43,11 @@ export default async function SettingsPage() {
               <Avatar className="h-24 w-24 border-4 border-primary/10">
                 <AvatarImage src={profileData?.profileImage} />
                 <AvatarFallback className="text-2xl font-bold">
-                  {profileData?.name?.charAt(0) || 'U'}
+                  {getInitials(profileData?.name) || 'U'}
                 </AvatarFallback>
               </Avatar>
             </div>
-            <CardTitle className="text-xl font-black uppercase tracking-tighter">{profileData?.name}</CardTitle>
+            <CardTitle className="text-xl font-black uppercase">{profileData?.name}</CardTitle>
             <CardDescription>{profileData?.email}</CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">

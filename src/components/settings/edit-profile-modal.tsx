@@ -86,6 +86,8 @@ export function EditProfileModal({ profileData }: EditProfileModalProps) {
       const res = await updateProfile(formData);
       if (res?.success) {
         toast.success("প্রোফাইল সফলভাবে আপডেট করা হয়েছে");
+        // Dispatch custom event to update header and other components
+        window.dispatchEvent(new Event("profile-updated"));
         setIsOpen(false);
       } else {
         toast.error(res?.message || "আপডেট করতে সমস্যা হয়েছে");

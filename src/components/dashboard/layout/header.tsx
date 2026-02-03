@@ -17,7 +17,7 @@ import {
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import Link from "next/link";
 import { useTheme } from "next-themes";
-import { cn } from "@/lib/utils";
+import { cn, getInitials } from "@/lib/utils";
 import { logOut, getCurrentUser } from "@/services/auth";
 import { HeaderSearch } from "./header-search";
 import { HeaderNotifications } from "./header-notifications";
@@ -37,6 +37,14 @@ export function Header() {
       setUserData(user);
     };
     fetchData();
+
+    // Listen for custom profile update event
+    const handleProfileUpdate = () => {
+      fetchData();
+    };
+
+    window.addEventListener("profile-updated", handleProfileUpdate);
+    return () => window.removeEventListener("profile-updated", handleProfileUpdate);
   }, []);
 
   const isClientRole = userData?.role === "client";
@@ -105,14 +113,14 @@ export function Header() {
                 <Avatar className="h-10 w-10 border cursor-pointer">
                   <AvatarImage src={userData?.profileImage} alt={userData?.name} />
                   <AvatarFallback className="font-bold uppercase tracking-tighter">
-                    {userData?.name?.charAt(0) || "U"}
+                    {getInitials(userData?.name) || "U"}
                   </AvatarFallback>
                 </Avatar>
               </DropdownMenuTrigger>
               <DropdownMenuContent className="w-56" align="end" forceMount>
                 <DropdownMenuLabel className="font-normal">
                   <div className="flex flex-col space-y-1">
-                    <p className="text-sm font-black leading-none uppercase tracking-tighter">
+                    <p className="text-sm font-black leading-none">
                       {userData?.name || "Loading..."}
                     </p>
                     <p className="text-xs leading-none text-muted-foreground">
