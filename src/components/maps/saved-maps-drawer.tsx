@@ -10,11 +10,14 @@ import {
   SheetDescription,
 } from "@/components/ui/sheet";
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 import { format } from "date-fns";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { getMaps, deleteMap as deleteMapService } from "@/services/maps";
 import { MapData, MapMeta } from "@/types/maps";
 import { toast } from "sonner";
+import { useSmartFilter } from "@/hooks/useSmartFilter";
+import { Search } from "lucide-react";
 
 interface SavedMapsDrawerProps {
   isOpen: boolean;
@@ -29,15 +32,18 @@ export function SavedMapsDrawer({
   onLoadMap,
   initialMaps,
 }: SavedMapsDrawerProps) {
+  const { getFilter, updateFilter } = useSmartFilter();
+  const page = Number(getFilter("page")) || 1;
+  const search = getFilter("search") || "";
+
   const [maps, setMaps] = useState<MapData[]>(initialMaps);
   const [meta, setMeta] = useState<MapMeta | null>(null);
-  const [page, setPage] = useState(1);
   const [isLoading, setIsLoading] = useState(false);
 
-  const fetchMaps = async (currentPage: number) => {
+  const fetchMaps = useCallback(async (currentPage: number, search: string) => {
     setIsLoading(true);
     try {
-      const response = await getMaps({ page: currentPage, limit: 6 });
+      const response = await getMaps({ page: currentPage, limit: 6, search });
       if (response?.success) {
         setMaps(response.data.maps);
         setMeta(response.data.meta);
@@ -48,21 +54,25 @@ export function SavedMapsDrawer({
     } finally {
       setIsLoading(false);
     }
-  };
+  }, []);
 
   useEffect(() => {
-    // Only fetch if it's NOT the first page or we don't have initial maps
-    if (isOpen && (page > 1 || maps.length === 0)) {
-      fetchMaps(page);
+    if (isOpen) {
+      // Fetch if not the very first load with initial data
+      // OR if we are on a different page/searching
+      if (page > 1 || search !== "" || maps.length === 0) {
+        fetchMaps(page, search);
+      }
     }
-  }, [isOpen, page]);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isOpen, page, search, fetchMaps]);
 
   const handleDelete = async (id: string) => {
     try {
       const res = await deleteMapService(id);
       if (res?.success) {
         toast.success("ম্যাপ সফলভাবে মুছে ফেলা হয়েছে");
-        fetchMaps(page);
+        fetchMaps(page, search);
       } else {
         toast.error("ম্যাপ মুছতে সমস্যা হয়েছে");
       }
@@ -74,13 +84,23 @@ export function SavedMapsDrawer({
   return (
     <Sheet open={isOpen} onOpenChange={onClose}>
       <SheetContent side="left" className="sm:max-w-md flex flex-col h-full p-0 border-r-0">
-        <div className="p-2 border-b">
+        <div className="p-4 border-b space-y-4">
           <SheetHeader className="text-left">
             <SheetTitle className="text-xl font-bold">সংরক্ষিত ম্যাপ</SheetTitle>
             <SheetDescription>
               আপনার আগে সেভ করা ম্যাপগুলো লোড অথবা ডিলিট করুন।
             </SheetDescription>
           </SheetHeader>
+
+          <div className="relative">
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 size-4 text-muted-foreground" />
+            <Input
+              placeholder="ম্যাপের নাম বা ঠিকানা দিয়ে খুঁজুন..."
+              className="pl-9 bg-muted/50 border-none focus-visible:ring-1 focus-visible:ring-primary/50"
+              defaultValue={search}
+              onChange={(e) => updateFilter("search", e.target.value, 500)}
+            />
+          </div>
         </div>
 
         <div className="flex-1 overflow-y-auto min-h-0 px-4 py-4">
@@ -158,7 +178,7 @@ export function SavedMapsDrawer({
                 variant="outline"
                 size="sm"
                 disabled={page <= 1 || isLoading}
-                onClick={() => setPage((p) => p - 1)}
+                onClick={() => updateFilter("page", page - 1)}
                 className="gap-2 rounded-full px-4"
               >
                 <ChevronLeft className="size-4" />
@@ -174,7 +194,7 @@ export function SavedMapsDrawer({
                 variant="outline"
                 size="sm"
                 disabled={page >= meta.totalPages || isLoading}
-                onClick={() => setPage((p) => p + 1)}
+                onClick={() => updateFilter("page", page + 1)}
                 className="gap-2 rounded-full px-4"
               >
                 পরে
