@@ -55,8 +55,8 @@ export function BookingTabs({ activeTab, onTabChange, requestCount = 0 }: Bookin
                 {tab.label}
                 {tab.count !== undefined && tab.count > 0 && (
                   <span className={cn(
-                    "flex items-center justify-center min-w-4.5 h-4.5 text-[10px] font-semibold",
-                    activeTab === tab.id ? "bg-red-500 text-white" : "bg-red-500/20 text-red-500"
+                    "flex items-center justify-center min-w-4.5 h-4.5 text-[10px] font-semibold rounded-full",
+                    activeTab === tab.id ? "bg-red-600 text-white" : "bg-red-500/20 text-red-500"
                   )}>
                     {tab.count}
                   </span>

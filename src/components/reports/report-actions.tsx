@@ -154,12 +154,12 @@ export function ReportActions({ report }: ReportActionsProps) {
 
   return (
     <div className="flex items-center justify-end gap-2">
-      <Link href={`/reports/${report.id}`}>
+      <Link href={`/dashboard/reports/${report.id}`}>
         <Button variant="ghost" size="icon-sm" className="hover:text-foreground">
           <Eye />
         </Button>
       </Link>
-      <Link href={`/reports/${report.id}/edit`}>
+      <Link href={`/dashboard/reports/${report.id}/edit`}>
         <Button variant="ghost" size="icon-sm" className="hover:text-primary">
           <Pencil />
         </Button>

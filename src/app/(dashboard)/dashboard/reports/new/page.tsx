@@ -15,7 +15,7 @@ export default async function NewReportPage() {
 
   return (
     <CreateReportView
-      initialClients={clientsRes?.data?.clients || []}
+      initialClients={clientsRes?.clients || []}
       initialBookings={bookingsRes?.data?.bookings || []}
     />
   );

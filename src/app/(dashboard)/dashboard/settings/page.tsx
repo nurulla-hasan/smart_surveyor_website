@@ -47,7 +47,7 @@ export default async function SettingsPage() {
                 </AvatarFallback>
               </Avatar>
             </div>
-            <CardTitle className="text-xl font-black uppercase">{profileData?.name}</CardTitle>
+            <CardTitle className="text-xl uppercase">{profileData?.name}</CardTitle>
             <CardDescription>{profileData?.email}</CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">
@@ -64,7 +64,7 @@ export default async function SettingsPage() {
         {/* Detailed Info Card */}
         <Card className="lg:col-span-2">
           <CardHeader>
-            <CardTitle className="text-lg font-black uppercase tracking-tighter flex items-center gap-2">
+            <CardTitle className="text-lg uppercase tracking-wide flex items-center gap-2">
               <Briefcase className="h-5 w-5" />
               Personal & Professional Information
             </CardTitle>

@@ -120,7 +120,7 @@ export function BookingCard({ booking }: BookingCardProps) {
                 <Button 
                   size="sm" 
                   variant="success" 
-                  className="font-bold uppercase border-emerald-500/20 bg-emerald-500/10 text-emerald-500 hover:bg-emerald-500/20"
+                  className="font-bold text-xs uppercase border-emerald-500/20 bg-emerald-500/10 text-emerald-500 hover:bg-emerald-500/20"
                   onClick={() => handleStatusUpdate("scheduled")}
                   loading={loading}
                 >
@@ -140,7 +140,7 @@ export function BookingCard({ booking }: BookingCardProps) {
                     <Button 
                       size="sm" 
                       variant="outline" 
-                      className="font-bold uppercase border-red-500/20 text-red-500 hover:bg-red-500/10"
+                      className="font-bold text-xs uppercase border-red-500/20 text-red-500 hover:bg-red-500/10"
                       disabled={loading}
                       onClick={() => setIsConfirmOpen(true)}
                     >
@@ -214,11 +214,11 @@ export function BookingCard({ booking }: BookingCardProps) {
                     <Button 
                       size="icon" 
                       variant="ghost" 
-                      className="h-9 w-9 text-red-500/50 hover:text-red-500 hover:bg-red-500/10 rounded-lg"
+                      className="text-red-500/50 hover:text-red-500 hover:bg-red-500/10"
                       onClick={() => setIsConfirmOpen(true)}
                       loading={loading}
                     >
-                      <Trash2 className="h-4 w-4" />
+                      <Trash2 />
                     </Button>
                   }
                 />
@@ -243,7 +243,7 @@ export function BookingCard({ booking }: BookingCardProps) {
                       onClick={() => setIsConfirmOpen(true)}
                       loading={loading}
                     >
-                      <XCircle className="h-4 w-4" />
+                      <XCircle />
                     </Button>
                   }
                 />

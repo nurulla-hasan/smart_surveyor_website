@@ -35,6 +35,10 @@ export function HeaderNotifications() {
       }
     };
     fetchNotifications();
+
+    // Poll for new notifications every 30 seconds
+    const interval = setInterval(fetchNotifications, 30000);
+    return () => clearInterval(interval);
   }, []);
 
   const handleMarkAsRead = async (id: string) => {
@@ -68,7 +72,7 @@ export function HeaderNotifications() {
     let targetLink = notif.link;
     if (!targetLink) {
       if (notif.type === 'NEW_BOOKING' || notif.type === 'STATUS_UPDATE') {
-        targetLink = '/bookings'; // Fallback to bookings list
+        targetLink = '/dashboard/bookings'; // Fallback to bookings list
       }
     }
     

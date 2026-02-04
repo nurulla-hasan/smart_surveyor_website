@@ -7,8 +7,8 @@ import { updateTag } from "next/cache";
 export const getNotifications = async (): Promise<any> => {
   try {
     const response = await serverFetch("/notifications", {
+      cache: "no-store",
       next: {
-        revalidate: 60, // 1 minute
         tags: ["notifications"],
       },
     } as any);

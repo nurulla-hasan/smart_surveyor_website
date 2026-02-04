@@ -48,8 +48,8 @@ export function HeaderSearch() {
           ]);
           setSearchResults({
             bookings: bookingsRes?.data?.bookings || [],
-            clients: clientsRes?.data?.clients || [],
-            reports: reportsRes?.data?.reports || []
+            clients: clientsRes?.clients || [],
+            reports: reportsRes?.reports || []
           });
           setHasSearched(true);
         } catch (error) {

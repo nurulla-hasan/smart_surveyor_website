@@ -18,20 +18,8 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
-import {
-  Card,
-  CardContent,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
-import {
-  ArrowLeft,
-  Save,
-  FileText,
-  User,
-  MapPin,
-} from "lucide-react";
-import Link from "next/link";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Save, FileText, User, MapPin } from "lucide-react";
 import {
   SearchableSelect,
   SearchableOption,
@@ -44,6 +32,7 @@ import { Booking } from "@/types/bookings";
 import { Report } from "@/types/reports";
 import { SuccessToast, ErrorToast } from "@/lib/utils";
 import { Separator } from "@/components/ui/separator";
+import PageHeader from "../ui/custom/page-header";
 
 const reportSchema = z.object({
   title: z.string().min(1, "Title is required"),
@@ -70,17 +59,23 @@ export function EditReportView({
 }: EditReportViewProps) {
   const router = useRouter();
   const [loading, setLoading] = useState(false);
-  const [selectedClient, setSelectedClient] = useState<SearchableOption | null>({
-    value: report.clientId,
-    label: report.client.name,
-    original: report.client
-  });
+  const [selectedClient, setSelectedClient] = useState<SearchableOption | null>(
+    {
+      value: report.clientId,
+      label: report.client.name,
+      original: report.client,
+    },
+  );
   const [selectedBooking, setSelectedBooking] =
-    useState<SearchableOption | null>(report.bookingId ? {
-        value: report.bookingId,
-        label: "Linked Booking",
-        original: null
-    } : null);
+    useState<SearchableOption | null>(
+      report.bookingId
+        ? {
+            value: report.bookingId,
+            label: "Linked Booking",
+            original: null,
+          }
+        : null,
+    );
   const [clientBookings, setClientBookings] = useState<Booking[]>([]);
 
   const form = useForm<ReportFormValues>({
@@ -109,13 +104,15 @@ export function EditReportView({
         if (res?.success) {
           setClientBookings(res.data.bookings);
           // If the report's booking is in this list, update the label
-          const currentBooking = res.data.bookings.find((b: Booking) => b.id === report.bookingId);
+          const currentBooking = res.data.bookings.find(
+            (b: Booking) => b.id === report.bookingId,
+          );
           if (currentBooking) {
-              setSelectedBooking({
-                  value: currentBooking.id,
-                  label: currentBooking.title,
-                  original: currentBooking
-              });
+            setSelectedBooking({
+              value: currentBooking.id,
+              label: currentBooking.title,
+              original: currentBooking,
+            });
           }
         }
       };
@@ -156,8 +153,8 @@ export function EditReportView({
         }));
       }
       const res = await getClients({ search, pageSize: "10" });
-      if (res?.success) {
-        return res.data.clients.map((c: Client) => ({
+      if (res?.clients) {
+        return res.clients.map((c: Client) => ({
           value: c.id,
           label: c.name,
           original: c,
@@ -165,7 +162,7 @@ export function EditReportView({
       }
       return [];
     },
-    [initialClients]
+    [initialClients],
   );
 
   const fetchBookingOptions = useCallback(async (): Promise<
@@ -191,13 +188,13 @@ export function EditReportView({
         clientId: selectedClient.value,
         bookingId: selectedBooking?.value || null,
       };
-      
+
       // eslint-disable-next-line @typescript-eslint/no-unused-vars
       const { reportFile, ...jsonPayload } = payloadData;
 
       const formData = new FormData();
       formData.append("data", JSON.stringify(jsonPayload));
-      
+
       if (values.reportFile instanceof File) {
         formData.append("reportFile", values.reportFile);
       }
@@ -221,17 +218,10 @@ export function EditReportView({
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-4">
-          <Link href="/reports">
-            <Button variant="ghost" size="icon">
-              <ArrowLeft className="size-5" />
-            </Button>
-          </Link>
-          <div>
-            <h1 className="text-2xl font-bold">Edit Report</h1>
-            <p className="text-sm text-muted-foreground">
-              Modify information and save changes.
-            </p>
-          </div>
+          <PageHeader
+            title="Edit Report"
+            description="Modify information and save changes."
+          />
         </div>
         <Button onClick={form.handleSubmit(onSubmit)} disabled={loading}>
           <Save className="size-4" />
@@ -418,7 +408,7 @@ export function EditReportView({
                                 handleSqFtChange(
                                   e.target.value === ""
                                     ? 0
-                                    : Number(e.target.value)
+                                    : Number(e.target.value),
                                 )
                               }
                             />
@@ -443,7 +433,7 @@ export function EditReportView({
                                 handleKathaChange(
                                   e.target.value === ""
                                     ? 0
-                                    : Number(e.target.value)
+                                    : Number(e.target.value),
                                 )
                               }
                             />
@@ -468,7 +458,7 @@ export function EditReportView({
                                 handleDecimalChange(
                                   e.target.value === ""
                                     ? 0
-                                    : Number(e.target.value)
+                                    : Number(e.target.value),
                                 )
                               }
                             />

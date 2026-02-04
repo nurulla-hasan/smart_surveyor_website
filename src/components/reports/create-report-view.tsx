@@ -25,8 +25,7 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { ArrowLeft, Save, FileText, User, MapPin } from "lucide-react";
-import Link from "next/link";
+import { Save, FileText, User, MapPin } from "lucide-react";
 import {
   SearchableSelect,
   SearchableOption,
@@ -38,6 +37,7 @@ import { Client } from "@/types/clients";
 import { Booking } from "@/types/bookings";
 import { SuccessToast, ErrorToast } from "@/lib/utils";
 import { Separator } from "@/components/ui/separator";
+import PageHeader from "../ui/custom/page-header";
 
 const reportSchema = z.object({
   title: z.string().min(1, "Title is required"),
@@ -226,8 +226,8 @@ export function CreateReportView({
         }));
       }
       const res = await getClients({ search, pageSize: "10" });
-      if (res?.success) {
-        return res.data.clients.map((c: any) => ({
+      if (res?.clients) {
+        return res.clients.map((c: any) => ({
           value: c.id,
           label: c.name,
           original: c,
@@ -299,17 +299,11 @@ export function CreateReportView({
       {/* Header */}
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-4">
-          <Link href="/reports">
-            <Button variant="ghost" size="icon">
-              <ArrowLeft className="size-5" />
-            </Button>
-          </Link>
-          <div>
-            <h1 className="text-2xl font-bold">New Report</h1>
-            <p className="text-sm text-muted-foreground">
-              Fill in the information to generate a PDF.
-            </p>
-          </div>
+        
+          <PageHeader
+          title="New Report"
+          description="Fill in the information to generate a PDF."
+          />
         </div>
         <Button onClick={form.handleSubmit(onSubmit)} disabled={loading}>
           <Save className="size-4" />

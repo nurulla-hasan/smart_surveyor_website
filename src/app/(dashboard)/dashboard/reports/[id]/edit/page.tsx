@@ -27,7 +27,7 @@ export default async function EditReportPage({
   return (
     <EditReportView
       report={reportRes.data}
-      initialClients={clientsRes?.data?.clients || []}
+      initialClients={clientsRes?.clients || []}
     />
   );
 }
