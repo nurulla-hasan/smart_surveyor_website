@@ -288,11 +288,17 @@ export function CreateReportView({
     }
   };
 
-  const currentDate = new Date().toLocaleDateString("en-US", {
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  const currentDate = mounted ? new Date().toLocaleDateString("en-US", {
     year: "numeric",
     month: "long",
     day: "numeric",
-  });
+  }) : "";
 
   return (
     <div className="space-y-6">

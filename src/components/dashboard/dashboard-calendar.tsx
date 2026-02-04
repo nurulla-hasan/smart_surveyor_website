@@ -4,6 +4,7 @@ import { Calendar } from "@/components/ui/calendar";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { isSameDay } from "date-fns";
 import { useSmartFilter } from "@/hooks/useSmartFilter";
+import { useState, useEffect } from "react";
 
 interface DashboardCalendarProps {
   blockedDates?: { date: string; reason: string | null }[];
@@ -17,10 +18,16 @@ export function DashboardCalendar({ blockedDates = [], bookedDates = [] }: Dashb
   const urlMonth = getFilter("month");
   const urlYear = getFilter("year");
   
-  // Calculate current month from URL or default to now
-  const currentMonth = urlMonth && urlYear 
-    ? new Date(parseInt(urlYear), parseInt(urlMonth) - 1) 
-    : new Date();
+  const [currentMonth, setCurrentMonth] = useState<Date | undefined>(undefined);
+
+  useEffect(() => {
+    if (urlMonth && urlYear) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
+      setCurrentMonth(new Date(parseInt(urlYear), parseInt(urlMonth) - 1));
+    } else {
+      setCurrentMonth(new Date());
+    }
+  }, [urlMonth, urlYear]);
 
   const handleMonthChange = (newMonth: Date) => {
     updateBatch({
@@ -34,6 +41,8 @@ export function DashboardCalendar({ blockedDates = [], bookedDates = [] }: Dashb
     blocked: (date: Date) => blockedDates.some(d => isSameDay(new Date(d.date), date)),
     booked: (date: Date) => bookedDates.some(d => isSameDay(new Date(d.date), date)),
   };
+
+  if (!currentMonth) return null; // Avoid rendering on server or before mount to prevent hydration mismatch
 
   return (
     <Card className="border-border/50 shadow-sm overflow-hidden">

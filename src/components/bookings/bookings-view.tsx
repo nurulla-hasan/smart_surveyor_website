@@ -34,10 +34,9 @@ export function BookingsView({
   
   // Initialize selectedDate from URL or default to matching server logic (today)
   const dateParam = getFilter("date");
-  const initialDate = dateParam ? new Date(dateParam) : new Date();
-  const [selectedDate, setSelectedDate] = useState<Date | undefined>(initialDate);
+  const [selectedDate, setSelectedDate] = useState<Date | undefined>(undefined);
   
-  // Sync selectedDate state when URL changes
+  // Sync selectedDate state when URL changes or on initial mount
   useEffect(() => {
     if (dateParam) {
       setSelectedDate(new Date(dateParam));

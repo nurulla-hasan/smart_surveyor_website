@@ -24,9 +24,13 @@ export function BookingCalendar({
 }: BookingCalendarProps) {
   const [bookedDates, setBookedDates] = useState<Date[]>([]);
   const [blockedDates, setBlockedDates] = useState<Date[]>([]);
-  const [currentMonth, setCurrentMonth] = useState<Date>(new Date());
+  const [currentMonth, setCurrentMonth] = useState<Date | undefined>(undefined);
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [loading, setLoading] = useState(false);
+
+  useEffect(() => {
+    setCurrentMonth(new Date());
+  }, []);
 
   const fetchAvailability = useCallback(async (month: number, year: number) => {
     setLoading(true);
@@ -47,6 +51,7 @@ export function BookingCalendar({
 
   // Listen for custom refresh events
   useEffect(() => {
+    if (!currentMonth) return;
     const handleRefresh = () => {
       fetchAvailability(currentMonth.getMonth() + 1, currentMonth.getFullYear());
     };
@@ -56,7 +61,9 @@ export function BookingCalendar({
   }, [currentMonth, fetchAvailability]);
 
   useEffect(() => {
-    fetchAvailability(currentMonth.getMonth() + 1, currentMonth.getFullYear());
+    if (currentMonth) {
+      fetchAvailability(currentMonth.getMonth() + 1, currentMonth.getFullYear());
+    }
   }, [currentMonth, fetchAvailability]);
 
   const handleMonthChange = (date: Date) => {
@@ -82,6 +89,8 @@ export function BookingCalendar({
     booked: "bg-orange-500 text-white! font-bold rounded-full opacity-100!",
     blocked: "bg-rose-900 text-white! font-bold rounded-full opacity-100!",
   };
+
+  if (!currentMonth) return <Card className={`p-4 h-100 animate-pulse bg-muted/20 ${className}`} />;
 
   return (
     <Card className={`p-4 overflow-hidden ${className}`}>
