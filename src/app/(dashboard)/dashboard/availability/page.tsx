@@ -5,19 +5,24 @@ import { AvailabilityView } from "@/components/availability/availability-view";
 import PageHeader from "@/components/ui/custom/page-header";
 
 export const metadata = {
-  title: "প্রাপ্যতা ব্যবস্থাপনা | Smart Surveyor",
-  description: "আপনার অফ-ডে এবং বুকিং প্রাপ্যতা পরিচালনা করুন।",
+  title: "Availability Management | Smart Surveyor",
+  description: "Manage your off-days and booking availability.",
 };
 
-export default async function AvailabilityPage() {
+export default async function AvailabilityPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ month?: string; year?: string }>;
+}) {
+  const params = await searchParams;
   const now = new Date();
-  const month = now.getMonth() + 1;
-  const year = now.getFullYear();
+  const monthNum = params.month ? parseInt(params.month) : now.getMonth() + 1;
+  const yearNum = params.year ? parseInt(params.year) : now.getFullYear();
 
-  // Fetch initial data in parallel to save time
+  // Fetch data in parallel on the server using params directly
   const [blockedRes, calendarRes] = await Promise.all([
-    getBlockedDates(month, year),
-    getCalendarData(month, year),
+    getBlockedDates(params),
+    getCalendarData(params),
   ]);
 
   const initialBlockedDates = blockedRes?.data || [];
@@ -36,6 +41,8 @@ export default async function AvailabilityPage() {
         <AvailabilityView
           initialBlockedDates={initialBlockedDates}
           initialBookedDates={initialBookedDates}
+          currentMonth={monthNum}
+          currentYear={yearNum}
         />
       </div>
     </div>

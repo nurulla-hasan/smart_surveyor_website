@@ -1,4 +1,4 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
+ 
 "use client";
 
 import React, { useState, useEffect } from "react";
@@ -10,69 +10,53 @@ import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
 import { cn } from "@/lib/utils";
 import {
-  getBlockedDates,
   toggleBlockedDate,
   BlockedDate,
 } from "@/services/availability";
-import { getCalendarData } from "@/services/dashboard";
 import { ScrollArea } from "../ui/scroll-area";
+import { useRouter, usePathname, useSearchParams } from "next/navigation";
 
 interface AvailabilityViewProps {
   initialBlockedDates: BlockedDate[];
   initialBookedDates: string[];
+  currentMonth: number;
+  currentYear: number;
 }
 
 export function AvailabilityView({
   initialBlockedDates,
   initialBookedDates,
+  currentMonth: initialMonthNum,
+  currentYear: initialYearNum,
 }: AvailabilityViewProps) {
+  const router = useRouter();
+  const pathname = usePathname();
+  const searchParams = useSearchParams();
+
   const [blockedDates, setBlockedDates] =
     useState<BlockedDate[]>(initialBlockedDates);
   const [bookedDates, setBookedDates] = useState<Date[]>(
     initialBookedDates.map((d) => new Date(d)),
   );
-  const [currentMonth, setCurrentMonth] = useState<Date>(new Date());
-  const [loading, setLoading] = useState(false);
+  const [loading] = useState(false);
   const [togglingDate, setTogglingDate] = useState<string | null>(null);
-  const isInitialMount = React.useRef(true);
 
-  const fetchAvailability = async (date: Date) => {
-    if (isInitialMount.current) {
-      isInitialMount.current = false;
-      return;
-    }
-
-    setLoading(true);
-    try {
-      const month = date.getMonth() + 1;
-      const year = date.getFullYear();
-
-      const [blockedRes, calendarRes] = await Promise.all([
-        getBlockedDates(month, year),
-        getCalendarData(month, year),
-      ]);
-
-      if (blockedRes?.success) {
-        setBlockedDates(blockedRes.data);
-      }
-
-      if (calendarRes?.success) {
-        const booked = (calendarRes.data.bookedDates || []).map(
-          (d: any) => new Date(d.date),
-        );
-        setBookedDates(booked);
-      }
-    } catch (error) {
-      console.error("Error fetching availability:", error);
-      toast.error("Problem loading information");
-    } finally {
-      setLoading(false);
-    }
-  };
-
+  // Sync state with props when they change (due to server refresh or navigation)
   useEffect(() => {
-    fetchAvailability(currentMonth);
-  }, [currentMonth]);
+    setBlockedDates(initialBlockedDates);
+    setBookedDates(initialBookedDates.map((d) => new Date(d)));
+  }, [initialBlockedDates, initialBookedDates]);
+
+  const handleMonthChange = (date: Date) => {
+    const month = date.getMonth() + 1;
+    const year = date.getFullYear();
+    
+    const params = new URLSearchParams(searchParams.toString());
+    params.set("month", month.toString());
+    params.set("year", year.toString());
+    
+    router.push(`${pathname}?${params.toString()}`, { scroll: false });
+  };
 
   const handleToggleDate = async (date: Date) => {
     const dateStr = format(date, "yyyy-MM-dd");
@@ -90,10 +74,13 @@ export function AvailabilityView({
 
     setTogglingDate(dateStr);
     try {
-      const res = await toggleBlockedDate(dateStr);
+      const res = await toggleBlockedDate({ 
+        date: dateStr, 
+        reason: "Off-day" 
+      });
       if (res?.success) {
         toast.success(res.message || "Updated successfully");
-        fetchAvailability(currentMonth);
+        router.refresh();
       } else {
         toast.error(res?.message || "Something went wrong");
       }
@@ -103,6 +90,8 @@ export function AvailabilityView({
       setTogglingDate(null);
     }
   };
+
+  const currentMonthDate = new Date(initialYearNum, initialMonthNum - 1);
 
   const modifiers = {
     blocked: (date: Date) =>
@@ -137,11 +126,11 @@ export function AvailabilityView({
             <div className="flex justify-center p-8 bg-background/30 rounded-2xl border border-border/40">
               <Calendar
                 mode="single"
-                month={currentMonth}
-                onMonthChange={setCurrentMonth}
+                month={currentMonthDate}
+                onMonthChange={handleMonthChange}
                 onDayClick={handleToggleDate}
                 className={cn(
-                  "p-3 pointer-events-auto rounded-2xl relative",
+                  "pointer-events-auto rounded-2xl relative border border-border/50",
                   "[&_button[data-selected-single=true]]:bg-transparent!",
                   "[&_button[data-selected-single=true]]:text-foreground!",
                 )}

@@ -146,7 +146,7 @@ export function HeaderSearch() {
           )}
 
           {searchResults.clients.length > 0 && (
-            <CommandGroup heading="ক্লায়েন্ট (লিস্ট)">
+            <CommandGroup heading="Clients (List)">
               {searchResults.clients.map((client: any) => (
                 <CommandItem key={client.id} onSelect={() => handleSelect(`/clients`)}>
                   <User className="mr-2 h-4 w-4" />
@@ -157,7 +157,7 @@ export function HeaderSearch() {
           )}
 
           {searchResults.reports.length > 0 && (
-            <CommandGroup heading="রিপোর্ট (লিস্ট)">
+            <CommandGroup heading="Reports (List)">
               {searchResults.reports.map((report: any) => (
                 <CommandItem key={report.id} onSelect={() => handleSelect(`/reports`)}>
                   <FileText className="mr-2 h-4 w-4" />
@@ -171,10 +171,10 @@ export function HeaderSearch() {
           )}
 
           <CommandSeparator />
-          <CommandGroup heading="কুইক অ্যাকশন">
+          <CommandGroup heading="Quick Actions">
             <CommandItem onSelect={() => handleSelect('/bookings')}>
               <PlusCircle className="mr-2 h-4 w-4" />
-              <span>নতুন বুকিং</span>
+              <span>New Booking</span>
             </CommandItem>
             <CommandItem onSelect={() => handleSelect('/reports/new')}>
               <FileText className="mr-2 h-4 w-4" />

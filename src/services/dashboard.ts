@@ -2,6 +2,8 @@
 'use server';
 
 import { serverFetch } from "@/lib/fetcher";
+import { QueryParams } from "@/types/global.type";
+import { buildQueryString } from "@/lib/buildQueryString";
 
 export const getDashboardStats = async (): Promise<any> => {
   try {
@@ -18,9 +20,9 @@ export const getDashboardStats = async (): Promise<any> => {
   }
 };
 
-export const getMonthlyStats = async (year: number = new Date().getFullYear()): Promise<any> => {
+export const getMonthlyStats = async (query: QueryParams = {}): Promise<any> => {
   try {
-    const response = await serverFetch(`/dashboard/monthly-stats?year=${year}`, {
+    const response = await serverFetch(`/dashboard/monthly-stats${buildQueryString(query)}`, {
       next: {
         revalidate: 86400, // 24 hours
         tags: ["bookings"],
@@ -33,9 +35,9 @@ export const getMonthlyStats = async (year: number = new Date().getFullYear()): 
   }
 };
 
-export const getCalendarData = async (month: number, year: number): Promise<any> => {
+export const getCalendarData = async (query: QueryParams = {}): Promise<any> => {
   try {
-    const response = await serverFetch(`/bookings/calendar?month=${month}&year=${year}`, {
+    const response = await serverFetch(`/bookings/calendar${buildQueryString(query)}`, {
       next: {
         revalidate: 86400, // 24 hours
         tags: ["bookings"],

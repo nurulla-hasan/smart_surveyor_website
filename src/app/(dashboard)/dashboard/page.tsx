@@ -41,15 +41,11 @@ export default async function DashboardPage({
   searchParams: Promise<{ month?: string; year?: string }>;
 }) {
   const params = await searchParams;
-  const now = new Date();
-  const currentMonth = params.month ? parseInt(params.month) : now.getMonth() + 1;
-  const currentYear = params.year ? parseInt(params.year) : now.getFullYear();
-
-  // Fetch data in parallel since rate limits are removed
+  // Fetch data in parallel using params directly
   const [statsResponse, monthlyStatsResponse, calendarResponse] = await Promise.all([
     getDashboardStats(),
-    getMonthlyStats(currentYear),
-    getCalendarData(currentMonth, currentYear)
+    getMonthlyStats(params),
+    getCalendarData(params)
   ]);
 
   const stats = statsResponse?.data || {

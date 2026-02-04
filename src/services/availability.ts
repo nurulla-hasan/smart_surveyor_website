@@ -1,9 +1,11 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-'use server';
+"use server";
 
 import { serverFetch } from "@/lib/fetcher";
 import { updateTag } from "next/cache";
 import { buildQueryString } from "@/lib/buildQueryString";
+
+import { QueryParams } from "@/types/global.type";
 
 export interface BlockedDate {
   id: string;
@@ -11,19 +13,19 @@ export interface BlockedDate {
   reason: string | null;
 }
 
-export const getBlockedDates = async (month?: number, year?: number): Promise<any> => {
+export const getBlockedDates = async (
+  query: QueryParams = {},
+): Promise<any> => {
   try {
-    const queryString = buildQueryString({
-      month: month?.toString(),
-      year: year?.toString(),
-    });
-
-    const response = await serverFetch(`/blocked-dates${queryString}`, {
-      next: {
-        revalidate: 86400,
-        tags: ["blocked-dates"],
-      },
-    } as any);
+    const response = await serverFetch(
+      `/blocked-dates${buildQueryString(query)}`,
+      {
+        next: {
+          revalidate: 86400,
+          tags: ["blocked-dates"],
+        },
+      } as any,
+    );
     return response;
   } catch (error) {
     console.error("Error fetching blocked dates:", error);
@@ -31,18 +33,18 @@ export const getBlockedDates = async (month?: number, year?: number): Promise<an
   }
 };
 
-export const toggleBlockedDate = async (date: string, reason: string = "Off-day"): Promise<any> => {
+export const toggleBlockedDate = async (data: {date: string;reason: string;}): Promise<any> => {
   try {
     const response = await serverFetch("/blocked-dates/toggle", {
       method: "POST",
-      body: { date, reason },
+      body: data,
     });
-    
+
     if (response?.success) {
       updateTag("blocked-dates");
       updateTag("bookings"); // Also revalidate bookings as blocked dates affect calendar
     }
-    
+
     return response;
   } catch (error) {
     console.error("Error toggling blocked date:", error);
