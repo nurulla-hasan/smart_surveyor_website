@@ -10,9 +10,7 @@ import { QueryParams } from "@/types/global.type";
 
 export const getClients = async (query: QueryParams = {},): Promise<any> => {
   try {
-    const queryString = buildQueryString(query);
-
-    const response = await serverFetch(`/clients${queryString}`, {
+    const response = await serverFetch(`/clients${buildQueryString(query)}`, {
       next: {
         revalidate: 86400,
         tags: ["clients"],
@@ -27,7 +25,7 @@ export const getClients = async (query: QueryParams = {},): Promise<any> => {
     console.error("Error fetching clients:", error);
     return {
       clients: [],
-      meta: {},
+      meta: {}
     };
   }
 };

@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 
-import { Folder, Eye, Trash2, ChevronLeft, ChevronRight, Loader2, Ruler, SquareDashed } from "lucide-react";
+import { Folder, Eye, Trash2, ChevronLeft, ChevronRight, Loader2, SquareDashed } from "lucide-react";
 import {
   Sheet,
   SheetContent,
@@ -121,34 +121,39 @@ export function SavedMapsDrawer({
                   className="flex items-center justify-between p-5 rounded-2xl border bg-card/50 hover:bg-accent/50 transition-all duration-200 group shadow-sm hover:shadow-md"
                 >
                   <div className="grid gap-1 overflow-hidden">
-                    <p className="font-bold text-base tracking-tight truncate group-hover:text-primary transition-colors">
+                    <p className="font-bold capitalize text-base tracking-tight truncate group-hover:text-primary transition-colors">
                       {map.name}
                     </p>
                     <p className="text-xs text-muted-foreground/80 font-medium">
                       {format(new Date(map.createdAt), "MMM d, yyyy")}
                     </p>
                     
-                    <div className="flex items-center gap-2 mt-1">
+                    <div className="flex flex-wrap items-center gap-2 mt-2">
                       {map.area !== undefined && (
-                        <div className="flex items-center gap-1 text-[10px] bg-emerald-500/10 text-emerald-600 px-1.5 py-0.5 rounded border border-emerald-500/20 font-medium">
-                          <SquareDashed className="size-3" />
-                          <span>{Number(map.area).toFixed(2)}</span>
-                        </div>
+                        <>
+                          <div className="flex items-center gap-1 text-[10px] bg-emerald-500/10 text-emerald-600 px-1.5 py-0.5 rounded border border-emerald-500/20 font-medium">
+                            <SquareDashed className="size-3" />
+                            <span>{Number(map.area).toFixed(2)} শতক</span>
+                          </div>
+                          <div className="flex items-center gap-1 text-[10px] bg-orange-500/10 text-orange-600 px-1.5 py-0.5 rounded border border-orange-500/20 font-medium">
+                            <SquareDashed className="size-3" />
+                            <span>{Number(Number(map.area) * 435.6).toFixed(2)} Sq.Ft</span>
+                          </div>
+                        </>
                       )}
-                      {map.perimeter !== undefined && (
+                      {/* {map.perimeter !== undefined && (
                         <div className="flex items-center gap-1 text-[10px] bg-blue-500/10 text-blue-600 px-1.5 py-0.5 rounded border border-blue-500/20 font-medium">
                           <Ruler className="size-3" />
-                          <span>{Number(map.perimeter).toFixed(2)}</span>
+                          <span>{Number(map.perimeter).toFixed(2)} m</span>
                         </div>
-                      )}
+                      )} */}
                     </div>
                   </div>
 
                   <div className="flex items-center gap-1">
                     <Button
-                      size="icon"
-                      variant="ghost"
-                      className="size-9 rounded-full hover:bg-primary/10 hover:text-primary transition-colors"
+                      size="icon-sm"
+                      variant="outline"
                       onClick={() => {
                         onLoadMap(map.data);
                         onClose();
@@ -157,9 +162,9 @@ export function SavedMapsDrawer({
                       <Eye className="size-4" />
                     </Button>
                     <Button
-                      size="icon"
-                      variant="ghost"
-                      className="size-9 rounded-full hover:bg-destructive/10 hover:text-destructive transition-colors text-muted-foreground group-hover:text-destructive"
+                      size="icon-sm"
+                      variant="outline"
+                      className="text-destructive"
                       onClick={() => handleDelete(map.id)}
                     >
                       <Trash2 className="size-4" />

@@ -3,24 +3,29 @@
 
 import { serverFetch } from "@/lib/fetcher";
 import { updateTag } from "next/cache";
-import { CalculationRequest, GetCalculationsResponse } from "@/types/calculations";
+import { CalculationRequest } from "@/types/calculations";
+import { QueryParams } from "@/types/global.type";
 import { buildQueryString } from "@/lib/buildQueryString";
 
-export const getCalculations = async (
-  query: Record<string, string | string[] | undefined> = {}
-): Promise<GetCalculationsResponse | null> => {
+export const getCalculations = async (query: QueryParams = {},): Promise<any> => {
   try {
-    const queryString = buildQueryString(query);
-    const response = await serverFetch(`/calculations${queryString}`, {
+    const response = await serverFetch(`/calculations${buildQueryString(query)}`, {
       next: {
         revalidate: 86400,
         tags: ["calculations"],
       },
     } as any);
-    return response;
+
+    return {
+      calculations: response?.data?.calculations || [],
+      meta: response?.data?.meta || {},
+    };
   } catch (error) {
     console.error("Error fetching calculations:", error);
-    return null;
+    return {
+      calculations: [],
+      meta: {},
+    };
   }
 };
 

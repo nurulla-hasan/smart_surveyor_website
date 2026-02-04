@@ -9,8 +9,7 @@ import { QueryParams } from "@/types/global.type";
 
 export const getReports = async (query: QueryParams = {},): Promise<any> => {
   try {
-    const queryString = buildQueryString(query);
-    const response = await serverFetch(`/reports${queryString}`, {
+    const response = await serverFetch(`/reports${buildQueryString(query)}`, {
       next: {
         revalidate: 86400,
         tags: ["reports"],
