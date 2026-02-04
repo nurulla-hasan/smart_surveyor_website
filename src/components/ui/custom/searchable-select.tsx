@@ -39,9 +39,9 @@ interface SearchableSelectProps {
 
 export function SearchableSelect({
   onSelect,
-  placeholder = "নির্বাচন করুন...",
-  searchPlaceholder = "খুঁজুন...",
-  emptyMessage = "কোনো ফলাফল পাওয়া যায়নি।",
+  placeholder = "Select...",
+  searchPlaceholder = "Search...",
+  emptyMessage = "No results found.",
   fetchOptions,
   value = null,
   className,

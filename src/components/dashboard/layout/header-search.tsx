@@ -110,26 +110,26 @@ export function HeaderSearch() {
         shouldFilter={false}
       >
         <CommandInput
-          placeholder="ক্লায়েন্ট, বুকিং, রিপোর্ট খুঁজুন..."
+          placeholder="Search clients, bookings, reports..."
           value={searchTerm}
           onValueChange={setSearchTerm}
         />
         <CommandList>
           {isSearching && (
             <div className="p-4 text-center text-sm text-muted-foreground italic">
-              অনুসন্ধান করা হচ্ছে...
+              Searching...
             </div>
           )}
           
           {!isSearching && hasSearched && searchTerm.length > 2 && searchResults.bookings.length === 0 && searchResults.clients.length === 0 && searchResults.reports.length === 0 && (
             <div className="p-8 text-center">
-              <p className="text-sm text-muted-foreground">&quot;{searchTerm}&quot; এর জন্য কোনো ফলাফল পাওয়া যায়নি।</p>
-              <p className="text-xs text-muted-foreground mt-1">দয়া করে অন্য কোনো নাম বা ফোন নম্বর দিয়ে চেষ্টা করুন।</p>
+              <p className="text-sm text-muted-foreground">No results found for &quot;{searchTerm}&quot;.</p>
+              <p className="text-xs text-muted-foreground mt-1">Try searching with another name or phone number.</p>
             </div>
           )}
           
           {searchResults.bookings.length > 0 && (
-            <CommandGroup heading="বুকিং (লিস্ট)">
+            <CommandGroup heading="Bookings (List)">
               {searchResults.bookings.map((booking: any) => (
                 <CommandItem 
                   key={booking.id} 

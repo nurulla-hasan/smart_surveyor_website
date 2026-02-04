@@ -23,12 +23,12 @@ import { ModalWrapper } from "../ui/custom/modal-wrapper";
 
 const passwordSchema = zod
   .object({
-    currentPassword: zod.string().min(1, "বর্তমান পাসওয়ার্ড প্রয়োজন"),
-    newPassword: zod.string().min(6, "নতুন পাসওয়ার্ড অন্তত ৬ অক্ষরের হতে হবে"),
-    confirmPassword: zod.string().min(1, "পাসওয়ার্ড নিশ্চিত করুন"),
+    currentPassword: zod.string().min(1, "Current password required"),
+    newPassword: zod.string().min(6, "New password must be at least 6 characters"),
+    confirmPassword: zod.string().min(1, "Confirm password"),
   })
   .refine((data) => data.newPassword === data.confirmPassword, {
-    message: "পাসওয়ার্ড দুটি মিলছে না",
+    message: "Passwords do not match",
     path: ["confirmPassword"],
   });
 
@@ -54,7 +54,7 @@ export function ChangePasswordModal() {
       });
 
       if (res?.success) {
-        toast.success("পাসওয়ার্ড সফলভাবে পরিবর্তন করা হয়েছে");
+        toast.success("Password changed successfully");
         form.reset();
         setIsOpen(false);
       } else {
