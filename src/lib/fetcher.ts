@@ -6,16 +6,21 @@ export const serverFetch = async (
     body?: unknown;
     tags?: string[];
     revalidate?: number;
+    isPublic?: boolean;
   } = {}
 ) => {
-  const cookieStore = await cookies();
-  const accessToken = cookieStore.get("accessToken")?.value;
-  const { tags, revalidate, headers, ...rest } = options;
+  const { tags, revalidate, headers, isPublic, ...rest } = options;
   let body = options.body;
 
-  const defaultHeaders: Record<string, string> = {
-    Authorization: `Bearer ${accessToken}`,
-  };
+  const defaultHeaders: Record<string, string> = {};
+
+  if (!isPublic) {
+    const cookieStore = await cookies();
+    const accessToken = cookieStore.get("accessToken")?.value;
+    if (accessToken) {
+      defaultHeaders["Authorization"] = `Bearer ${accessToken}`;
+    }
+  }
 
   // Automatically handle body stringification and Content-Type
   if (body !== undefined && body !== null) {
