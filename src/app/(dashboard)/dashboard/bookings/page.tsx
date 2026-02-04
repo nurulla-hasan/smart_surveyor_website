@@ -2,8 +2,8 @@ import { getCalendarData } from "@/services/dashboard";
 import { getBookings } from "@/services/bookings";
 import { BookingsView } from "@/components/bookings/bookings-view";
 import { format } from "date-fns";
-import { Suspense } from "react";
 import { SearchParams } from "@/types/global.type";
+import { Suspense } from "react";
 
 export const metadata = {
   title: "বুকিং | Smart Surveyor",
@@ -73,7 +73,7 @@ export default async function BookingsPage({
   };
 
   return (
-    <Suspense fallback={<div>Loading...</div>}>
+    <Suspense fallback={<div>লোড হচ্ছে...</div>}>
       <BookingsView 
         bookedDates={bookedDates}
         blockedDates={blockedDates}

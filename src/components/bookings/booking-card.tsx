@@ -120,11 +120,11 @@ export function BookingCard({ booking }: BookingCardProps) {
                 <Button 
                   size="sm" 
                   variant="success" 
-                  className="font-bold uppercase text-[11px] h-9 px-4 border border-emerald-500/20 bg-emerald-500/10 text-emerald-500 hover:bg-emerald-500/20"
+                  className="font-bold uppercase border-emerald-500/20 bg-emerald-500/10 text-emerald-500 hover:bg-emerald-500/20"
                   onClick={() => handleStatusUpdate("scheduled")}
                   loading={loading}
                 >
-                  <CheckCircle2 className="h-4 w-4" /> অনুমোদন দিন
+                  <CheckCircle2 /> অনুমোদন দিন
                 </Button>
                 
                 <ConfirmationModal
@@ -140,11 +140,11 @@ export function BookingCard({ booking }: BookingCardProps) {
                     <Button 
                       size="sm" 
                       variant="outline" 
-                      className="font-bold uppercase text-[11px] h-9 px-4 border-red-500/20 text-red-500 hover:bg-red-500/10"
+                      className="font-bold uppercase border-red-500/20 text-red-500 hover:bg-red-500/10"
                       disabled={loading}
                       onClick={() => setIsConfirmOpen(true)}
                     >
-                      <XCircle className="h-4 w-4" /> প্রত্যাখ্যান
+                      <XCircle /> প্রত্যাখ্যান
                     </Button>
                   }
                 />

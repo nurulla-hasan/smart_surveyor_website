@@ -164,7 +164,7 @@ export function AvailabilityView({
                   modifiers={modifiers}
                   modifiersClassNames={{
                     blocked:
-                      "bg-purple-600 text-white font-bold rounded-full hover:bg-purple-700 transition-colors",
+                      "bg-rose-900 text-white font-bold rounded-full transition-colors",
                     booked:
                       "bg-orange-500 text-white font-bold rounded-full cursor-not-allowed",
                   }}
@@ -179,7 +179,7 @@ export function AvailabilityView({
               {/* Legend */}
               <div className="flex flex-wrap items-center justify-center gap-6 mt-8 pt-6 border-t border-border/40">
                 <div className="flex items-center gap-2">
-                  <div className="h-3 w-3 rounded-full bg-purple-600" />
+                  <div className="h-3 w-3 rounded-full bg-rose-900" />
                   <span className="text-xs font-medium text-muted-foreground">
                     ব্লক করা
                   </span>

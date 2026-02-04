@@ -80,7 +80,7 @@ export function BookingCalendar({
 
   const modifiersClassNames = {
     booked: "bg-orange-500 text-white! font-bold rounded-full opacity-100!",
-    blocked: "bg-purple-600 text-white! font-bold rounded-full opacity-100!",
+    blocked: "bg-rose-900 text-white! font-bold rounded-full opacity-100!",
   };
 
   return (
@@ -104,7 +104,7 @@ export function BookingCalendar({
       {showLegend && (
         <div className="pt-6 border-t space-y-3 px-2">
           <div className="flex items-center gap-3">
-            <div className="h-3 w-3 rounded-full bg-purple-600" />
+            <div className="h-3 w-3 rounded-full bg-rose-900" />
             <span className="text-[11px] font-semibold text-muted-foreground uppercase tracking-wider">
               অফ-ডে (ব্লক করা)
             </span>

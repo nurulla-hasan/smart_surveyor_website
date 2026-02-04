@@ -1,7 +1,7 @@
-import { Suspense } from "react";
 import { getClients } from "@/services/clients";
 import { ClientListView } from "@/components/clients/client-list-view";
 import { SearchParams } from "@/types/global.type";
+import { Suspense } from "react";
 
 export const metadata = {
   title: "ক্লায়েন্ট | Smart Surveyor",

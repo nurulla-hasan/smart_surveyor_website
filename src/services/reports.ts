@@ -5,24 +5,28 @@ import { serverFetch } from "@/lib/fetcher";
 import { buildQueryString } from "@/lib/buildQueryString";
 import { FieldValues } from "react-hook-form";
 import { updateTag } from "next/cache";
-import { GetReportsResponse } from "@/types/reports";
+import { QueryParams } from "@/types/global.type";
 
-export const getReports = async (
-  query: Record<string, string | string[] | undefined> = {},
-): Promise<GetReportsResponse | null> => {
+export const getReports = async (query: QueryParams = {},): Promise<any> => {
   try {
     const queryString = buildQueryString(query);
-
     const response = await serverFetch(`/reports${queryString}`, {
       next: {
         revalidate: 86400,
         tags: ["reports"],
       },
     } as any);
-    return response;
+
+    return {
+      reports: response?.data?.reports || [],
+      meta: response?.data?.meta || {},
+    };
   } catch (error) {
     console.error("Error fetching reports:", error);
-    return null;
+    return {
+      reports: [],
+      meta: {}
+    };
   }
 };
 
