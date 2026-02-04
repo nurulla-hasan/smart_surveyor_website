@@ -49,6 +49,21 @@ export const markAllAsRead = async (): Promise<any> => {
   }
 };
 
+export const clearAllNotifications = async (): Promise<any> => {
+  try {
+    const response = await serverFetch("/notifications/clear-all", {
+      method: "DELETE",
+    });
+    if (response.success) {
+      updateTag("notifications");
+    }
+    return response;
+  } catch (error) {
+    console.error("Error clearing all notifications:", error);
+    return null;
+  }
+};
+
 export const deleteNotification = async (id: string): Promise<any> => {
   try {
     const response = await serverFetch(`/notifications/${id}`, {

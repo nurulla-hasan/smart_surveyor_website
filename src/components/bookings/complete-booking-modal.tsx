@@ -77,7 +77,7 @@ export function CompleteBookingModal({ bookingId, trigger, onSuccess }: Complete
       description="জরিপটি সম্পন্ন হলে পেমেন্ট সংক্রান্ত তথ্য দিয়ে এটি ক্লোজ করুন।"
       actionTrigger={
         trigger || (
-          <Button size="sm" variant="outline" className="font-bold uppercase text-[11px] h-9 px-4 rounded-lg border-emerald-500/20 text-emerald-500 hover:bg-emerald-500/10 gap-2">
+          <Button size="sm" variant="outline" className="font-bold uppercase border-emerald-500/20 text-emerald-500 hover:bg-emerald-500/10 gap-2">
             <CheckCircle2 className="h-4 w-4" /> সম্পন্ন হিসেবে চিহ্নিত করুন
           </Button>
         )

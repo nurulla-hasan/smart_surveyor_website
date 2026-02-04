@@ -16,7 +16,7 @@ import { Bell } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { format } from "date-fns";
 import { cn } from "@/lib/utils";
-import { getNotifications, markAsRead, markAllAsRead } from "@/services/notifications";
+import { getNotifications, markAsRead, markAllAsRead, clearAllNotifications } from "@/services/notifications";
 
 export function HeaderNotifications() {
   const router = useRouter();
@@ -49,6 +49,14 @@ export function HeaderNotifications() {
     const res = await markAllAsRead();
     if (res?.success) {
       setNotifications(prev => prev.map(n => ({ ...n, isRead: true })));
+      setUnreadCount(0);
+    }
+  };
+
+  const handleClearAll = async () => {
+    const res = await clearAllNotifications();
+    if (res?.success) {
+      setNotifications([]);
       setUnreadCount(0);
     }
   };
@@ -137,17 +145,24 @@ export function HeaderNotifications() {
           )}
         </div>
         <DropdownMenuSeparator />
-        {unreadCount > 0 && (
-          <DropdownMenuItem 
-            className="justify-center text-xs text-primary font-medium cursor-pointer" 
-            onClick={handleMarkAllAsRead}
-          >
-            সব পঠিত হিসেবে মার্ক করুন
-          </DropdownMenuItem>
-        )}
-        <DropdownMenuItem className="justify-center text-xs text-muted-foreground cursor-pointer" onClick={() => router.push('/bookings')}>
-          সব বুকিং দেখুন
-        </DropdownMenuItem>
+        <div className="flex flex-col">
+          {unreadCount > 0 && (
+            <DropdownMenuItem 
+              className="justify-center text-xs text-primary font-medium cursor-pointer" 
+              onClick={handleMarkAllAsRead}
+            >
+              সব পঠিত হিসেবে মার্ক করুন
+            </DropdownMenuItem>
+          )}
+          {notifications.length > 0 && (
+            <DropdownMenuItem 
+              className="justify-center text-xs text-destructive font-medium cursor-pointer" 
+              onClick={handleClearAll}
+            >
+              সব মুছে ফেলুন
+            </DropdownMenuItem>
+          )}
+        </div>
       </DropdownMenuContent>
     </DropdownMenu>
   );

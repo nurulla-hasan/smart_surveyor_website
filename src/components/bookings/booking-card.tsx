@@ -178,13 +178,13 @@ export function BookingCard({ booking }: BookingCardProps) {
                   isLoading={loading}
                   trigger={
                     <Button 
-                      size="icon" 
+                      size="icon-sm" 
                       variant="outline" 
                       className="text-red-500/50 hover:text-red-500 hover:bg-red-500/10"
                       onClick={() => setIsConfirmOpen(true)}
                       loading={loading}
                     >
-                      <XCircle className="h-4 w-4" />
+                      <XCircle />
                     </Button>
                   }
                 />
