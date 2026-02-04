@@ -3,6 +3,8 @@ import { getReportById } from "@/services/reports";
 import { EditReportView } from "@/components/reports/edit-report-view";
 import { notFound } from "next/navigation";
 
+export const dynamic = "force-dynamic";
+
 export const metadata = {
   title: "Edit Report | Smart Surveyor",
   description: "Edit survey report.",

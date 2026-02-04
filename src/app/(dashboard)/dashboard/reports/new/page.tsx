@@ -2,6 +2,8 @@ import { getClients } from "@/services/clients";
 import { getBookings } from "@/services/bookings";
 import { CreateReportView } from "@/components/reports/create-report-view";
 
+export const dynamic = "force-dynamic";
+
 export const metadata = {
   title: "New Report | Smart Surveyor",
   description: "Create a new survey report.",

@@ -2,6 +2,8 @@ import { getReportById } from "@/services/reports";
 import { ReportDetailsView } from "@/components/reports/report-details-view";
 import { notFound } from "next/navigation";
 
+export const dynamic = "force-dynamic";
+
 export const metadata = {
   title: "Report Details | Smart Surveyor",
   description: "View detailed information of the survey report.",

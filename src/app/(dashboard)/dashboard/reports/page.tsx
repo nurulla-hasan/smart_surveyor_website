@@ -8,6 +8,8 @@ import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { SearchInput } from "@/components/ui/custom/search-input";
 
+export const dynamic = "force-dynamic";
+
 export const metadata = { 
   title: "Reports | Smart Surveyor",
   description: "View and manage survey reports.",

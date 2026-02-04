@@ -6,6 +6,8 @@ import { QueryParams } from "@/types/global.type";
 import PageHeader from "@/components/ui/custom/page-header";
 import { CreateBookingModal } from "@/components/bookings/create-booking-modal";
 
+export const dynamic = "force-dynamic";
+
 export const metadata = {
   title: "Bookings | Smart Surveyor",
   description: "Manage your survey appointments and requests.",

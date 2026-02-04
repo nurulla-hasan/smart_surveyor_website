@@ -153,13 +153,7 @@ export function Header() {
                 ) : (
                   <>
                     <DropdownMenuItem asChild>
-                      <Link href="/dashboard" className="flex items-center gap-2 cursor-pointer">
-                        <LayoutDashboard className="h-4 w-4" />
-                        Admin Dashboard
-                      </Link>
-                    </DropdownMenuItem>
-                    <DropdownMenuItem asChild>
-                      <Link href="/settings" className="flex items-center gap-2 cursor-pointer">
+                      <Link href="/dashboard/settings" className="flex items-center gap-2 cursor-pointer">
                         <Settings className="h-4 w-4" />
                         Settings
                       </Link>

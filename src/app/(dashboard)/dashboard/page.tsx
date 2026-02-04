@@ -20,6 +20,8 @@ import { DashboardCalendar } from "@/components/dashboard/dashboard-calendar";
 import { StatCard } from "@/components/dashboard/stat-card";
 import { getDashboardStats, getMonthlyStats, getCalendarData } from "@/services/dashboard";
 
+export const dynamic = "force-dynamic";
+
 interface RecentActivity {
   id: string;
   client?: { name: string };

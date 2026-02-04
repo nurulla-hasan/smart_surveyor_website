@@ -8,6 +8,8 @@ import { ChangePasswordModal } from "@/components/settings/change-password-modal
 import { getCurrentUser } from "@/services/auth";
 import { getInitials } from "@/lib/utils";
 
+export const dynamic = "force-dynamic";
+
 export const metadata = {
   title: "Settings | Smart Surveyor",
   description: "Manage your profile and security settings.",

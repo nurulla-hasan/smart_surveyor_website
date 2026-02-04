@@ -4,6 +4,8 @@ import { getCalendarData } from "@/services/dashboard";
 import { AvailabilityView } from "@/components/availability/availability-view";
 import PageHeader from "@/components/ui/custom/page-header";
 
+export const dynamic = "force-dynamic";
+
 export const metadata = {
   title: "Availability Management | Smart Surveyor",
   description: "Manage your off-days and booking availability.",
