@@ -54,16 +54,16 @@ export function SurveyorMap({ initialBookings }: SurveyorMapProps) {
           const { latitude, longitude } = position.coords;
           setUserLocation([latitude, longitude]);
           setIsLoadingLocation(false);
-          if (showToast) toast.success("আপনার অবস্থান পাওয়া গেছে");
+          if (showToast) toast.success("Your location has been found");
         },
         (error) => {
           console.error("Geolocation error:", error);
           setIsLoadingLocation(false);
-          if (showToast) toast.error("আপনার অবস্থান পাওয়া যায়নি। অনুগ্রহ করে পারমিশন দিন।");
+          if (showToast) toast.error("Unable to get your location. Please grant permission.");
         }
       );
     } else {
-      if (showToast) toast.error("আপনার ব্রাউজার জিওলোকেশন সাপোর্ট করে না।");
+      if (showToast) toast.error("Your browser does not support geolocation.");
       setIsLoadingLocation(false);
     }
   }, []);
@@ -104,7 +104,7 @@ export function SurveyorMap({ initialBookings }: SurveyorMapProps) {
     if (!mapRef.current) return;
     const center = mapRef.current.getCenter();
     setPoints((prev) => [...prev, center]);
-    toast.success("পয়েন্ট যোগ করা হয়েছে");
+    toast.success("Point added");
   }, []);
 
   const handleUndo = useCallback(() => {
@@ -113,7 +113,7 @@ export function SurveyorMap({ initialBookings }: SurveyorMapProps) {
 
   const handleReset = useCallback(() => {
     setPoints([]);
-    toast.info("সব পয়েন্ট মুছে ফেলা হয়েছে");
+    toast.info("All points cleared");
   }, []);
 
   const handleSave = async () => {
@@ -158,18 +158,18 @@ export function SurveyorMap({ initialBookings }: SurveyorMapProps) {
       });
 
       if (res?.success) {
-        toast.success("জরিপ সফলভাবে সেভ করা হয়েছে!");
+        toast.success("Survey saved successfully!");
         setPoints([]);
         setIsSaveDialogOpen(false);
         setMapName("");
         setSelectedBooking(null);
         setCurrentStats(undefined);
       } else {
-        toast.error("সেভ করতে সমস্যা হয়েছে"); 
+        toast.error("Problem saving"); 
       }
     } catch (error) {
       console.error("Save error:", error);
-      toast.error("সার্ভার এরর");
+      toast.error("Server error");
     } finally {
       setIsPending(false);
     }
@@ -200,7 +200,7 @@ export function SurveyorMap({ initialBookings }: SurveyorMapProps) {
           {userLocation && (
             <>
               <Marker position={userLocation}>
-                <Popup>আপনি এখানে আছেন</Popup>
+                <Popup>You are here</Popup>
               </Marker>
               <FlyToLocation location={userLocation} />
             </>

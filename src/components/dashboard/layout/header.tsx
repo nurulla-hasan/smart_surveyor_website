@@ -70,7 +70,7 @@ export function Header() {
                   : "text-muted-foreground hover:text-foreground"
               )}
             >
-              ড্যাশবোর্ড
+              Dashboard
             </Link>
             <Link
               href="/book-survey"
@@ -81,7 +81,7 @@ export function Header() {
                   : "text-muted-foreground hover:text-foreground"
               )}
             >
-              বুকিং করুন
+              Book Survey
             </Link>
           </nav>
         )}
@@ -134,19 +134,19 @@ export function Header() {
                     <DropdownMenuItem asChild>
                       <Link href="/portal" className="flex items-center gap-2 cursor-pointer">
                         <LayoutDashboard className="h-4 w-4" />
-                        পোর্টাল ড্যাশবোর্ড
+                        Portal Dashboard
                       </Link>
                     </DropdownMenuItem>
                     <DropdownMenuItem asChild>
                       <Link href="/book-survey" className="flex items-center gap-2 cursor-pointer">
                         <CalendarDays className="h-4 w-4" />
-                        সার্ভে বুকিং
+                        Survey Booking
                       </Link>
                     </DropdownMenuItem>
                     <DropdownMenuItem asChild>
                       <Link href="/portal/settings" className="flex items-center gap-2 cursor-pointer">
                         <Settings className="h-4 w-4" />
-                        প্রোফাইল সেটিংস
+                        Profile Settings
                       </Link>
                     </DropdownMenuItem>
                   </>
@@ -155,13 +155,13 @@ export function Header() {
                     <DropdownMenuItem asChild>
                       <Link href="/dashboard" className="flex items-center gap-2 cursor-pointer">
                         <LayoutDashboard className="h-4 w-4" />
-                        অ্যাডমিন ড্যাশবোর্ড
+                        Admin Dashboard
                       </Link>
                     </DropdownMenuItem>
                     <DropdownMenuItem asChild>
                       <Link href="/settings" className="flex items-center gap-2 cursor-pointer">
                         <Settings className="h-4 w-4" />
-                        সেটিংস
+                        Settings
                       </Link>
                     </DropdownMenuItem>
                   </>
@@ -171,7 +171,7 @@ export function Header() {
                   className="text-red-600 focus:text-red-600 cursor-pointer"
                   onClick={handleLogout}
                 >
-                  লগ আউট
+                  Logout
                 </DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>

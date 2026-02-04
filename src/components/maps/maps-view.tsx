@@ -56,7 +56,7 @@ export function MapsView({ initialBookings, initialMaps }: MapsViewProps) {
             className="rounded-full"
           >
             <MapIcon className="size-4" />
-            <span className="text-xs font-medium">ম্যাপ</span>
+            <span className="text-xs font-medium">Map</span>
           </Button>
           <Button
             variant={mode === "survey" ? "default" : "ghost"}
@@ -65,7 +65,7 @@ export function MapsView({ initialBookings, initialMaps }: MapsViewProps) {
             className="rounded-full"
           >
             <Ruler className="size-4" />
-            <span className="text-xs font-medium">জরিপ</span>
+            <span className="text-xs font-medium">Survey</span>
           </Button>
         </div>
       </div>

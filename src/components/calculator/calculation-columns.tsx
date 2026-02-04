@@ -4,13 +4,13 @@ import { ColumnDef } from "@tanstack/react-table";
 import { Calculation } from "@/types/calculations";
 import { Calculator, Calendar, User } from "lucide-react";
 import { format } from "date-fns";
-import { bn } from "date-fns/locale";
+import { enUS } from "date-fns/locale";
 import { CalculationActions } from "./calculation-actions";
 
 export const calculationColumns: ColumnDef<Calculation>[] = [
   {
     accessorKey: "resultData.areaSqFt",
-    header: "ক্ষেত্রফল (বর্গফুট)",
+    header: "Area (Square Feet)",
     cell: ({ row }) => {
       const sqft = row.original.resultData.areaSqFt;
       return (
@@ -25,7 +25,7 @@ export const calculationColumns: ColumnDef<Calculation>[] = [
   },
   {
     accessorKey: "booking",
-    header: "বুকিং/ক্লায়েন্ট",
+    header: "Booking/Client",
     cell: ({ row }) => {
       const booking = row.original.booking;
       if (!booking) return <span className="text-muted-foreground/50">-</span>;
@@ -44,45 +44,45 @@ export const calculationColumns: ColumnDef<Calculation>[] = [
   },
   {
     accessorKey: "resultData.areaDecimal",
-    header: "শতক/কাঠা",
+    header: "Shotok/Katha",
     cell: ({ row }) => {
       const { areaDecimal, areaKatha } = row.original.resultData;
       return (
         <div className="flex flex-col">
-          <span className="text-sm font-medium">{areaDecimal} শতক</span>
-          <span className="text-[10px] text-muted-foreground">{areaKatha} কাঠা</span>
+          <span className="text-sm font-medium">{areaDecimal} Shotok</span>
+          <span className="text-[10px] text-muted-foreground">{areaKatha} Katha</span>
         </div>
       );
     },
   },
   {
     accessorKey: "inputData",
-    header: "পরিমাপ (ফুট)",
+    header: "Measurements (feet)",
     cell: ({ row }) => {
       const sides = row.original.inputData?.sides || [];
       return (
         <div className="text-[10px] text-muted-foreground grid grid-cols-2 gap-x-2">
-          <span>উ: {sides[0] ?? 0}</span>
-          <span>দ: {sides[1] ?? 0}</span>
-          <span>পূ: {sides[2] ?? 0}</span>
-          <span>প: {sides[3] ?? 0}</span>
+          <span>N: {sides[0] ?? 0}</span>
+          <span>S: {sides[1] ?? 0}</span>
+          <span>E: {sides[2] ?? 0}</span>
+          <span>W: {sides[3] ?? 0}</span>
         </div>
       );
     },
   },
   {
     accessorKey: "createdAt",
-    header: "তারিখ",
+    header: "Date",
     cell: ({ row }) => (
       <div className="flex items-center gap-2 text-muted-foreground text-xs">
         <Calendar className="size-3" />
-        <span>{format(new Date(row.original.createdAt), "d MMM, yyyy", { locale: bn })}</span>
+        <span>{format(new Date(row.original.createdAt), "d MMM, yyyy", { locale: enUS })}</span>
       </div>
     ),
   },
   {
     id: "actions",
-    header: () => <div className="text-right mr-3">পদক্ষেপ</div>,
+    header: () => <div className="text-right mr-3">Actions</div>,
     cell: ({ row }) => <CalculationActions calculation={row.original} />,
   },
 ];

@@ -7,8 +7,8 @@ import { AddClientModal } from "@/components/clients/add-client-modal";
 import { SearchInput } from "@/components/ui/custom/search-input";
 
 export const metadata = {
-  title: "ক্লায়েন্ট | Smart Surveyor",
-  description: "আপনার কাস্টমার ডাটাবেস পরিচালনা করুন।",
+  title: "Clients | Smart Surveyor",
+  description: "Manage your customer database.",
 };
 
 export default async function ClientsPage({
@@ -23,8 +23,8 @@ export default async function ClientsPage({
     <div className="space-y-6">
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <PageHeader
-          title="ক্লায়েন্ট"
-          description="আপনার কাস্টমার ডাটাবেস পরিচালনা করুন।"
+          title="Clients"
+          description="Manage your customer database."
         />
         <AddClientModal />
       </div>
@@ -32,7 +32,7 @@ export default async function ClientsPage({
       <div className="bg-card border border-border/50 rounded-2xl p-6 shadow-xl backdrop-blur-sm relative overflow-hidden">
         
         <div className="relative space-y-6">
-          <SearchInput placeholder="ক্লায়েন্ট খুঁজুন..." />
+          <SearchInput placeholder="Search clients..." />
 
           <DataTable
             columns={clientColumns}

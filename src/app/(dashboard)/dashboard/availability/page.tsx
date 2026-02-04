@@ -4,6 +4,7 @@ import { getCalendarData } from "@/services/dashboard";
 import { AvailabilityView } from "@/components/availability/availability-view";
 import { Suspense } from "react";
 import { Loader2 } from "lucide-react";
+import PageHeader from "@/components/ui/custom/page-header";
 
 export const metadata = {
   title: "প্রাপ্যতা ব্যবস্থাপনা | Smart Surveyor",
@@ -27,15 +28,21 @@ export default async function AvailabilityPage() {
     : [];
 
   return (
-    <Suspense fallback={
-      <div className="flex h-100 items-center justify-center">
-        <Loader2 className="h-8 w-8 animate-spin text-primary" />
-      </div>
-    }>
-      <AvailabilityView 
-        initialBlockedDates={initialBlockedDates} 
-        initialBookedDates={initialBookedDates}
+    <div className="space-y-8">
+      <PageHeader
+        title="Availability Management"
+        description="Block dates to keep clients from booking."
       />
-    </Suspense>
+      <Suspense fallback={
+        <div className="flex h-100 items-center justify-center">
+          <Loader2 className="h-8 w-8 animate-spin text-primary" />
+        </div>
+      }>
+        <AvailabilityView 
+          initialBlockedDates={initialBlockedDates} 
+          initialBookedDates={initialBookedDates}
+        />
+      </Suspense>
+    </div>
   );
 }

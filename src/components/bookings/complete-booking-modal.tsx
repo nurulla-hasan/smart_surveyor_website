@@ -21,8 +21,8 @@ import { updateBooking } from "@/services/bookings";
 import { SuccessToast, ErrorToast } from "@/lib/utils";
 
 const formSchema = z.object({
-  amountReceived: z.coerce.number().min(0, "সঠিক অংক দিন"),
-  amountDue: z.coerce.number().min(0, "সঠিক অংক দিন"),
+  amountReceived: z.coerce.number().min(0, "Enter valid amount"),
+  amountDue: z.coerce.number().min(0, "Enter valid amount"),
   paymentNote: z.string().default(""),
 });
 
@@ -56,14 +56,14 @@ export function CompleteBookingModal({ bookingId, trigger, onSuccess }: Complete
       });
 
       if (res?.success) {
-        SuccessToast("বুকিং সফলভাবে সম্পন্ন হিসেবে চিহ্নিত করা হয়েছে");
+        SuccessToast("Booking marked as completed successfully");
         setIsOpen(false);
         onSuccess?.();
       } else {
-        ErrorToast(res?.message || "আপডেট করতে সমস্যা হয়েছে");
+        ErrorToast(res?.message || "Problem updating");
       }
     } catch {
-      ErrorToast("সার্ভারে সমস্যা হয়েছে");
+      ErrorToast("Server problem");
     } finally {
       setLoading(false);
     }
@@ -73,12 +73,12 @@ export function CompleteBookingModal({ bookingId, trigger, onSuccess }: Complete
     <ModalWrapper
       open={isOpen}
       onOpenChange={setIsOpen}
-      title="বুকিং সম্পন্ন করুন"
-      description="জরিপটি সম্পন্ন হলে পেমেন্ট সংক্রান্ত তথ্য দিয়ে এটি ক্লোজ করুন।"
+      title="Complete Booking"
+      description="Close this survey by providing payment-related information."
       actionTrigger={
         trigger || (
           <Button size="sm" variant="outline" className="font-bold uppercase border-emerald-500/20 text-emerald-500 hover:bg-emerald-500/10 gap-2">
-            <CheckCircle2 className="h-4 w-4" /> সম্পন্ন হিসেবে চিহ্নিত করুন
+            <CheckCircle2 className="h-4 w-4" /> Mark Complete
           </Button>
         )
       }
@@ -91,7 +91,7 @@ export function CompleteBookingModal({ bookingId, trigger, onSuccess }: Complete
               name="amountReceived"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel className="text-sm font-semibold uppercase">প্রাপ্ত টাকা (৳)</FormLabel>
+                  <FormLabel className="text-sm font-semibold uppercase">Received (৳)</FormLabel>
                   <FormControl>
                     <Input type="number" placeholder="0" {...field} />
                   </FormControl>
@@ -105,7 +105,7 @@ export function CompleteBookingModal({ bookingId, trigger, onSuccess }: Complete
               name="amountDue"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel className="text-sm font-semibold uppercase">বাকি টাকা (৳)</FormLabel>
+                  <FormLabel className="text-sm font-semibold uppercase">Due (৳)</FormLabel>
                   <FormControl>
                     <Input type="number" placeholder="0" {...field} />
                   </FormControl>
@@ -120,7 +120,7 @@ export function CompleteBookingModal({ bookingId, trigger, onSuccess }: Complete
             name="paymentNote"
             render={({ field }) => (
               <FormItem>
-                <FormLabel className="text-sm font-semibold uppercase">পেমেন্ট নোট</FormLabel>
+                <FormLabel className="text-sm font-semibold uppercase">Payment Note</FormLabel>
                 <FormControl>
                   <Input placeholder="e.g. Full payment cleared" {...field} />
                 </FormControl>
@@ -137,15 +137,15 @@ export function CompleteBookingModal({ bookingId, trigger, onSuccess }: Complete
               className="flex-1 font-semibold uppercase"
               disabled={loading}
             >
-              বাতিল
+              Cancel
             </Button>
             <Button 
               type="submit" 
               className="flex-1 font-semibold uppercase bg-emerald-600 hover:bg-emerald-700"
               loading={loading}
-              loadingText="আপডেট হচ্ছে..."
+              loadingText="Updating..."
             >
-              সম্পন্ন করুন
+              Complete
             </Button>
           </div>
         </form>

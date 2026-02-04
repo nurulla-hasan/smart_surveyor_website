@@ -9,8 +9,8 @@ import { SearchParams } from "@/types/global.type";
 import {History } from "lucide-react";
 
 export const metadata = {
-  title: "ল্যান্ড ক্যালকুলেটর | Smart Surveyor",
-  description: "গড় পার্শ্ব পরিমাপের ভিত্তিতে জমির ক্ষেত্রফল গণনা করুন।",
+  title: "Land Calculator | Smart Surveyor",
+  description: "Calculate land area based on average side measurements.",
 };
 
 export default async function CalculatorPage({
@@ -32,8 +32,8 @@ export default async function CalculatorPage({
   return (
     <div className="space-y-8">
       <PageHeader
-        title="ল্যান্ড ক্যালকুলেটর"
-        description="গড় পার্শ্ব পরিমাপের ভিত্তিতে জমির ক্ষেত্রফল গণনা করুন।"
+        title="Land Calculator"
+        description="Calculate land area based on average side measurements."
       />
 
       <CalculatorForm initialBookings={initialBookings} />
@@ -44,14 +44,14 @@ export default async function CalculatorPage({
             <div className="size-8 rounded-lg bg-primary/10 flex items-center justify-center">
               <History className="size-4 text-primary" />
             </div>
-            <h3 className="text-lg font-bold uppercase tracking-tight">ইতিহাস</h3>
+            <h3 className="text-lg font-bold uppercase tracking-tight">History</h3>
           </div>
         </div>
 
         <div className="bg-card border border-border/50 rounded-2xl p-6 shadow-xl backdrop-blur-sm relative overflow-hidden">
           
           <div className="relative space-y-6">
-            <SearchInput placeholder="ইতিহাস খুঁজুন..." />
+            <SearchInput placeholder="Search history..." />
 
             <DataTable
               columns={calculationColumns}

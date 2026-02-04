@@ -50,7 +50,7 @@ export function SavedMapsDrawer({
       }
     } catch (error) {
       console.error("Error fetching maps:", error);
-      toast.error("ম্যাপ লোড করতে সমস্যা হয়েছে");
+      toast.error("Problem loading map");
     } finally {
       setIsLoading(false);
     }
@@ -71,13 +71,13 @@ export function SavedMapsDrawer({
     try {
       const res = await deleteMapService(id);
       if (res?.success) {
-        toast.success("ম্যাপ সফলভাবে মুছে ফেলা হয়েছে");
+        toast.success("Map deleted successfully");
         fetchMaps(page, search);
       } else {
-        toast.error("ম্যাপ মুছতে সমস্যা হয়েছে");
+        toast.error("Problem deleting map");
       }
     } catch {
-      toast.error("সার্ভার এরর");
+      toast.error("Server error");
     }
   };
 
@@ -86,16 +86,16 @@ export function SavedMapsDrawer({
       <SheetContent side="left" className="sm:max-w-md flex flex-col h-full p-0 border-r-0">
         <div className="p-4 border-b space-y-4">
           <SheetHeader className="text-left">
-            <SheetTitle className="text-xl font-bold">সংরক্ষিত ম্যাপ</SheetTitle>
+            <SheetTitle className="text-xl font-bold">Saved Maps</SheetTitle>
             <SheetDescription>
-              আপনার আগে সেভ করা ম্যাপগুলো লোড অথবা ডিলিট করুন।
+              Load or delete your previously saved maps.
             </SheetDescription>
           </SheetHeader>
 
           <div className="relative">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 size-4 text-muted-foreground" />
             <Input
-              placeholder="ম্যাপের নাম বা ঠিকানা দিয়ে খুঁজুন..."
+              placeholder="Search by map name or address..."
               className="pl-9 bg-muted/50 border-none focus-visible:ring-1 focus-visible:ring-primary/50"
               defaultValue={search}
               onChange={(e) => updateFilter("search", e.target.value, 500)}
@@ -111,7 +111,7 @@ export function SavedMapsDrawer({
           ) : maps.length === 0 ? (
             <div className="flex h-full flex-col items-center justify-center text-muted-foreground opacity-50">
               <Folder className="size-12" />
-              <p className="mt-4 font-medium">কোনো সংরক্ষিত ম্যাপ পাওয়া যায়নি।</p>
+              <p className="mt-4 font-medium">No saved maps found.</p>
             </div>
           ) : (
             <div className="grid gap-4">
@@ -133,7 +133,7 @@ export function SavedMapsDrawer({
                         <>
                           <div className="flex items-center gap-1 text-[10px] bg-emerald-500/10 text-emerald-600 px-1.5 py-0.5 rounded border border-emerald-500/20 font-medium">
                             <SquareDashed className="size-3" />
-                            <span>{Number(map.area).toFixed(2)} শতক</span>
+                            <span>{Number(map.area).toFixed(2)} Shotok</span>
                           </div>
                           <div className="flex items-center gap-1 text-[10px] bg-orange-500/10 text-orange-600 px-1.5 py-0.5 rounded border border-orange-500/20 font-medium">
                             <SquareDashed className="size-3" />
@@ -187,10 +187,10 @@ export function SavedMapsDrawer({
                 className="gap-2 rounded-full px-4"
               >
                 <ChevronLeft className="size-4" />
-                আগে
+                Previous
               </Button>
               <div className="flex flex-col items-center">
-                <span className="text-xs text-muted-foreground font-medium uppercase tracking-wider">পেইজ</span>
+                <span className="text-xs text-muted-foreground font-medium uppercase tracking-wider">Page</span>
                 <span className="text-sm font-bold">
                   {page} / {meta.totalPages}
                 </span>
@@ -202,7 +202,7 @@ export function SavedMapsDrawer({
                 onClick={() => updateFilter("page", page + 1)}
                 className="gap-2 rounded-full px-4"
               >
-                পরে
+                Next
                 <ChevronRight className="size-4" />
               </Button>
             </div>

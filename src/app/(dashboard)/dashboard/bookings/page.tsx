@@ -6,8 +6,8 @@ import { SearchParams } from "@/types/global.type";
 import { Suspense } from "react";
 
 export const metadata = {
-  title: "বুকিং | Smart Surveyor",
-  description: "আপনার জরিপের অ্যাপয়েন্টমেন্ট এবং অনুরোধগুলো পরিচালনা করুন।",
+  title: "Bookings | Smart Surveyor",
+  description: "Manage your survey appointments and requests.",
 };
 
 export default async function BookingsPage({
@@ -73,7 +73,7 @@ export default async function BookingsPage({
   };
 
   return (
-    <Suspense fallback={<div>লোড হচ্ছে...</div>}>
+    <Suspense fallback={<div>Loading...</div>}>
       <BookingsView 
         bookedDates={bookedDates}
         blockedDates={blockedDates}

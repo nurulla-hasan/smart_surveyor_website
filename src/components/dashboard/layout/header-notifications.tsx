@@ -106,16 +106,16 @@ export function HeaderNotifications() {
       </DropdownMenuTrigger>
       <DropdownMenuContent className="w-80" align="end">
         <DropdownMenuLabel className="flex items-center justify-between">
-          বিজ্ঞপ্তি
+          Notifications
           {unreadCount > 0 && (
-            <Badge variant="secondary" className="font-normal">{unreadCount} নতুন</Badge>
+            <Badge variant="secondary" className="font-normal">{unreadCount} new</Badge>
           )}
         </DropdownMenuLabel>
         <DropdownMenuSeparator />
         <div className="max-h-75 overflow-y-auto p-1 space-y-2">
           {notifications.length === 0 ? (
             <div className="p-4 text-center text-sm text-muted-foreground">
-              কোনো বিজ্ঞপ্তি নেই।
+              No notifications.
             </div>
           ) : (
             notifications.map((notif) => (
@@ -151,7 +151,7 @@ export function HeaderNotifications() {
               className="justify-center text-xs text-primary font-medium cursor-pointer" 
               onClick={handleMarkAllAsRead}
             >
-              সব পঠিত হিসেবে মার্ক করুন
+              Mark all as read
             </DropdownMenuItem>
           )}
           {notifications.length > 0 && (
@@ -159,7 +159,7 @@ export function HeaderNotifications() {
               className="justify-center text-xs text-destructive font-medium cursor-pointer" 
               onClick={handleClearAll}
             >
-              সব মুছে ফেলুন
+              Clear all
             </DropdownMenuItem>
           )}
         </div>

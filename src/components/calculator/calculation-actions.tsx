@@ -21,13 +21,13 @@ export function CalculationActions({ calculation }: CalculationActionsProps) {
     try {
       const res = await deleteCalculation(calculation.id);
       if (res?.success) {
-        SuccessToast("রেকর্ড সফলভাবে ডিলিট করা হয়েছে");
+        SuccessToast("Record deleted successfully");
         setOpen(false);
       } else {
-        ErrorToast(res?.message || "ডিলিট করতে সমস্যা হয়েছে");
+        ErrorToast(res?.message || "Problem deleting record");
       }
     } catch {
-      ErrorToast("কিছু ভুল হয়েছে");
+      ErrorToast("Something went wrong");
     } finally {
       setIsDeleting(false);
     }
@@ -38,8 +38,8 @@ export function CalculationActions({ calculation }: CalculationActionsProps) {
       <ConfirmationModal
         open={open}
         onOpenChange={setOpen}
-        title="আপনি কি নিশ্চিত?"
-        description="এই গণনাটি ডিলিট করলে তা আর ফিরিয়ে আনা সম্ভব হবে না।"
+        title="Are you sure?"
+        description="This calculation cannot be restored once deleted."
         onConfirm={handleDelete}
         isLoading={isDeleting}
         trigger={

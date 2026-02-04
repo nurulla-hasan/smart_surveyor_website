@@ -24,7 +24,7 @@ import { ModalWrapper } from "../ui/custom/modal-wrapper";
 import { ScrollArea } from "../ui/scroll-area";
 
 const profileSchema = zod.object({
-  name: zod.string().min(2, "নাম অন্তত ২ অক্ষরের হতে হবে"),
+  name: zod.string().min(2, "Name must be at least 2 characters"),
   phone: zod.string().optional(),
   companyName: zod.string().optional(),
   licenseNo: zod.string().optional(),
@@ -85,15 +85,15 @@ export function EditProfileModal({ profileData }: EditProfileModalProps) {
 
       const res = await updateProfile(formData);
       if (res?.success) {
-        toast.success("প্রোফাইল সফলভাবে আপডেট করা হয়েছে");
+        toast.success("Profile updated successfully");
         // Dispatch custom event to update header and other components
         window.dispatchEvent(new Event("profile-updated"));
         setIsOpen(false);
       } else {
-        toast.error(res?.message || "আপডেট করতে সমস্যা হয়েছে");
+        toast.error(res?.message || "Problem updating");
       }
     } catch (error: any) {
-      toast.error(error?.message || "কিছু একটা ভুল হয়েছে");
+      toast.error(error?.message || "Something went wrong");
     } finally {
       setLoading(false);
     }
@@ -103,12 +103,12 @@ export function EditProfileModal({ profileData }: EditProfileModalProps) {
     <ModalWrapper
       open={isOpen}
       onOpenChange={setIsOpen}
-      title="প্রোফাইল এডিট করুন"
-      description="আপনার প্রোফাইল তথ্য পরিবর্তন করুন।"
+      title="Edit Profile"
+      description="Change your profile information."
       actionTrigger={
         <Button>
           <User />
-          প্রোফাইল এডিট করুন
+          Edit Profile
         </Button>
       }
     >
@@ -129,7 +129,7 @@ export function EditProfileModal({ profileData }: EditProfileModalProps) {
                     htmlFor="profile-image-upload"
                     className="cursor-pointer bg-secondary px-4 py-2 rounded-md hover:bg-secondary/80 transition-colors"
                   >
-                    ছবি পরিবর্তন করুন
+                    Change Photo
                   </FormLabel>
                   <Input
                     id="profile-image-upload"
@@ -139,7 +139,7 @@ export function EditProfileModal({ profileData }: EditProfileModalProps) {
                     onChange={handleImageChange}
                   />
                   <p className="text-xs text-muted-foreground">
-                    JPG, PNG অথবা WebP ফরম্যাট (সর্বোচ্চ ২ মেগাবাইট)
+                    JPG, PNG or WebP format (max 2MB)
                   </p>
                 </div>
               </div>
@@ -150,9 +150,9 @@ export function EditProfileModal({ profileData }: EditProfileModalProps) {
                   name="name"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>পুরো নাম</FormLabel>
+                      <FormLabel>Full Name</FormLabel>
                       <FormControl>
-                        <Input placeholder="আপনার নাম লিখুন" {...field} />
+                        <Input placeholder="Enter your name" {...field} />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -163,9 +163,9 @@ export function EditProfileModal({ profileData }: EditProfileModalProps) {
                   name="phone"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>ফোন নম্বর</FormLabel>
+                      <FormLabel>Phone Number</FormLabel>
                       <FormControl>
-                        <Input placeholder="০১৭XXXXXXXX" {...field} />
+                        <Input placeholder="01XXXXXXXX" {...field} />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -176,10 +176,10 @@ export function EditProfileModal({ profileData }: EditProfileModalProps) {
                   name="companyName"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>কোম্পানির নাম</FormLabel>
+                      <FormLabel>Company Name</FormLabel>
                       <FormControl>
                         <Input
-                          placeholder="কোম্পানির নাম (ঐচ্ছিক)"
+                          placeholder="Company name (optional)"
                           {...field}
                         />
                       </FormControl>
@@ -192,10 +192,10 @@ export function EditProfileModal({ profileData }: EditProfileModalProps) {
                   name="licenseNo"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>লাইসেন্স নম্বর</FormLabel>
+                      <FormLabel>License Number</FormLabel>
                       <FormControl>
                         <Input
-                          placeholder="লাইসেন্স নম্বর (ঐচ্ছিক)"
+                          placeholder="License number (optional)"
                           {...field}
                         />
                       </FormControl>
@@ -208,7 +208,7 @@ export function EditProfileModal({ profileData }: EditProfileModalProps) {
                   name="experience"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>অভিজ্ঞতা (বছর)</FormLabel>
+                      <FormLabel>Experience (years)</FormLabel>
                       <FormControl>
                         <Input type="number" {...field} />
                       </FormControl>
@@ -221,9 +221,9 @@ export function EditProfileModal({ profileData }: EditProfileModalProps) {
                   name="location"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>অবস্থান</FormLabel>
+                      <FormLabel>Location</FormLabel>
                       <FormControl>
-                        <Input placeholder="ঢাকা, বাংলাদেশ" {...field} />
+                        <Input placeholder="Dhaka, Bangladesh" {...field} />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -236,12 +236,12 @@ export function EditProfileModal({ profileData }: EditProfileModalProps) {
                 name="address"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>ঠিকানা</FormLabel>
-                    <FormControl>
-                      <Textarea
-                        placeholder="আপনার বিস্তারিত ঠিকানা লিখুন"
-                        {...field}
-                      />
+                      <FormLabel>Address</FormLabel>
+                      <FormControl>
+                        <Textarea
+                          placeholder="Enter your detailed address"
+                          {...field}
+                        />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -253,12 +253,12 @@ export function EditProfileModal({ profileData }: EditProfileModalProps) {
                 name="bio"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>বায়ো</FormLabel>
-                    <FormControl>
-                      <Textarea
-                        placeholder="আপনার সম্পর্কে কিছু লিখুন"
-                        {...field}
-                      />
+                      <FormLabel>Bio</FormLabel>
+                      <FormControl>
+                        <Textarea
+                          placeholder="Write something about yourself"
+                          {...field}
+                        />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -269,10 +269,10 @@ export function EditProfileModal({ profileData }: EditProfileModalProps) {
                 <Button
                   type="submit"
                   loading={loading}
-                  loadingText="আপডেট হচ্ছে..."
+                  loadingText="Updating..."
                   className="w-full md:w-auto font-bold uppercase tracking-tighter"
                 >
-                  সেভ করুন
+                  Save
                 </Button>
               </div>
             </form>

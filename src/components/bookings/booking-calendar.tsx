@@ -106,13 +106,13 @@ export function BookingCalendar({
           <div className="flex items-center gap-3">
             <div className="h-3 w-3 rounded-full bg-rose-900" />
             <span className="text-[11px] font-semibold text-muted-foreground uppercase tracking-wider">
-              অফ-ডে (ব্লক করা)
+              Off-Day (Blocked)
             </span>
           </div>
           <div className="flex items-center gap-3">
             <div className="h-3 w-3 rounded-full bg-orange-500" />
             <span className="text-[11px] font-semibold text-muted-foreground uppercase tracking-wider">
-              বুকিং আছে
+              Booked
             </span>
           </div>
         </div>

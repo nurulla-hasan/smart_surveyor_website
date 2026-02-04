@@ -12,7 +12,7 @@ interface SearchInputProps {
 }
 
 function SearchInputContent({
-  placeholder = "খুঁজুন...",
+  placeholder = "Search...",
   className = "max-w-64",
   filterKey = "search",
 }: SearchInputProps) {

@@ -26,56 +26,56 @@ export function Sidebar({ className, onItemClick }: SidebarProps) {
 
   const routes = [
     {
-      label: "ড্যাশবোর্ড",
+      label: "Dashboard",
       icon: LayoutDashboard,
       href: "/dashboard",
       active: pathname === "/dashboard",
       color: "text-sky-500",
     },
     {
-      label: "বুকিং",
+      label: "Bookings",
       icon: CalendarDays,
       href: "/dashboard/bookings",
       active: pathname.startsWith("/dashboard/bookings"),
       color: "text-violet-500",
     },
     {
-      label: "প্রাপ্যতা",
+      label: "Availability",
       icon: CalendarX,
       href: "/dashboard/availability",
       active: pathname === "/dashboard/availability",
       color: "text-red-500",
     },
     {
-      label: "ক্যালকুলেটর",
+      label: "Calculator",
       icon: Calculator,
       href: "/dashboard/calculator",
       active: pathname.startsWith("/dashboard/calculator"),
       color: "text-pink-700",
     },
     {
-      label: "ম্যাপ",
+      label: "Maps",
       icon: MapIcon,
       href: "/dashboard/maps",
       active: pathname.startsWith("/dashboard/maps"),
       color: "text-orange-500",
     },
     {
-      label: "ক্লায়েন্ট",
+      label: "Clients",
       icon: Users,
       href: "/dashboard/clients",
       active: pathname.startsWith("/dashboard/clients"),
       color: "text-emerald-500",
     },
     {
-      label: "রিপোর্ট",
+      label: "Reports",
       icon: FileText,
       href: "/dashboard/reports",
       active: pathname.startsWith("/dashboard/reports"),
       color: "text-green-700",
     },
     {
-      label: "সেটিংস",
+      label: "Settings",
       icon: Settings,
       href: "/dashboard/settings",
       active: pathname.startsWith("/dashboard/settings"),
@@ -130,7 +130,7 @@ export function Sidebar({ className, onItemClick }: SidebarProps) {
             }}
         >
           <LogOut className="h-4 w-4 mr-3" />
-          লগআউট
+          Logout
         </Button>
       </div>
     </div>

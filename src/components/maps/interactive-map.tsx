@@ -61,16 +61,16 @@ export default function InteractiveMap({ initialBookings, initialMaps }: Interac
           const { latitude, longitude } = position.coords;
           setUserLocation([latitude, longitude]);
           setIsLoadingLocation(false);
-          if (showToast) toast.success("আপনার অবস্থান পাওয়া গেছে");
+          if (showToast) toast.success("Your location has been found");
         },
         (error) => {
           console.error("Geolocation error:", error);
           setIsLoadingLocation(false);
-          if (showToast) toast.error("আপনার অবস্থান পাওয়া যায়নি। অনুগ্রহ করে পারমিশন দিন।");
+          if (showToast) toast.error("Unable to get your location. Please grant permission.");
         }
       );
     } else {
-      if (showToast) toast.error("আপনার ব্রাউজার জিওলোকেশন সাপোর্ট করে না।");
+      if (showToast) toast.error("Your browser does not support geolocation.");
       setIsLoadingLocation(false);
     }
   };
@@ -107,10 +107,10 @@ export default function InteractiveMap({ initialBookings, initialMaps }: Interac
         if (geoJsonLayer.getLayers().length > 0) {
           setMapBounds(geoJsonLayer.getBounds());
         } else {
-          toast.error("ফাইলে কোনো বৈধ ম্যাপ ডাটা পাওয়া যায়নি।");
+          toast.error("No valid map data found in the file.");
         }
       } catch (error) {
-        toast.error("অকার্যকর GeoJSON ফাইল।");
+        toast.error("Invalid GeoJSON file.");
         console.error(error);
       }
     };
@@ -142,7 +142,7 @@ export default function InteractiveMap({ initialBookings, initialMaps }: Interac
       const layer = L.geoJSON(foundFeature);
       setMapBounds(layer.getBounds());
     } else {
-      toast.error("আপলোড করা ম্যাপে প্লটটি পাওয়া যায়নি।");
+      toast.error("Plot not found in the uploaded map.");
     }
   };
 
@@ -168,15 +168,15 @@ export default function InteractiveMap({ initialBookings, initialMaps }: Interac
         });
         
         if (res?.success) {
-          toast.success("ম্যাপ সফলভাবে সেভ করা হয়েছে!");
+          toast.success("Map saved successfully!");
           setIsSaveDialogOpen(false);
           setMapName("");
           setSelectedBooking(null);
         } else {
-          toast.error("ম্যাপ সেভ করতে সমস্যা হয়েছে");
+          toast.error("Problem saving map");
         }
       } catch {
-        toast.error("সার্ভার এরর");
+        toast.error("Server error");
       }
     });
   };
@@ -243,7 +243,7 @@ export default function InteractiveMap({ initialBookings, initialMaps }: Interac
           {userLocation && (
             <>
               <Marker position={userLocation}>
-                <Popup>আপনি এখানে আছেন</Popup>
+                <Popup>You are here</Popup>
               </Marker>
               <FlyToLocation location={userLocation} />
             </>
@@ -264,7 +264,7 @@ export default function InteractiveMap({ initialBookings, initialMaps }: Interac
             size="lg"
             onClick={() => setIsSaveDialogOpen(true)}
           >
-            ম্যাপটি সেভ করুন
+            Save Map
           </Button>
         </div>
       )}

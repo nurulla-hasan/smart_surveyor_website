@@ -42,10 +42,10 @@ import { saveCalculation } from "@/services/calculations";
 import { Booking } from "@/types/bookings";
 
 const formSchema = z.object({
-  north: z.number().min(0, "সঠিক মাপ দিন"),
-  south: z.number().min(0, "সঠিক মাপ দিন"),
-  east: z.number().min(0, "সঠিক মাপ দিন"),
-  west: z.number().min(0, "সঠিক মাপ দিন"),
+  north: z.number().min(0, "Please enter valid measurement"),
+  south: z.number().min(0, "Please enter valid measurement"),
+  east: z.number().min(0, "Please enter valid measurement"),
+  west: z.number().min(0, "Please enter valid measurement"),
 });
 
 type FormValues = z.infer<typeof formSchema>;
@@ -111,7 +111,7 @@ export function CalculatorForm({ initialBookings = [] }: CalculatorFormProps) {
 
       const res = await saveCalculation(payload);
       if (res?.success) {
-        SuccessToast("গণনা সফলভাবে সেভ করা হয়েছে");
+        SuccessToast("Calculation saved successfully");
         handleReset();
       }
     } catch (error) {
@@ -150,10 +150,10 @@ export function CalculatorForm({ initialBookings = [] }: CalculatorFormProps) {
         <Card className="border-border/60 shadow-lg backdrop-blur-sm bg-card/50">
           <CardHeader>
             <CardTitle className="flex items-center gap-2 text-lg font-bold">
-              <Map className="h-5 w-5 text-primary" /> পরিমাপ ইনপুট
+              <Map className="h-5 w-5 text-primary" /> Measurement Input
             </CardTitle>
             <CardDescription className="font-medium">
-              দৈর্ঘ্য ও প্রস্থ ফুটে প্রদান করুন
+              Enter length and width in feet
             </CardDescription>
           </CardHeader>
           <CardContent className="space-y-6">
@@ -169,7 +169,7 @@ export function CalculatorForm({ initialBookings = [] }: CalculatorFormProps) {
                     render={({ field }) => (
                       <FormItem>
                         <FormLabel className="font-bold text-xs uppercase tracking-wider text-muted-foreground">
-                          উত্তর (ফুট)
+                          North (feet)
                         </FormLabel>
                         <FormControl>
                           <Input
@@ -196,7 +196,7 @@ export function CalculatorForm({ initialBookings = [] }: CalculatorFormProps) {
                     render={({ field }) => (
                       <FormItem>
                         <FormLabel className="font-bold text-xs uppercase tracking-wider text-muted-foreground">
-                          দক্ষিণ (ফুট)
+                          South (feet)
                         </FormLabel>
                         <FormControl>
                           <Input
@@ -223,7 +223,7 @@ export function CalculatorForm({ initialBookings = [] }: CalculatorFormProps) {
                     render={({ field }) => (
                       <FormItem>
                         <FormLabel className="font-bold text-xs uppercase tracking-wider text-muted-foreground">
-                          পূর্ব (ফুট)
+                          East (feet)
                         </FormLabel>
                         <FormControl>
                           <Input
@@ -250,7 +250,7 @@ export function CalculatorForm({ initialBookings = [] }: CalculatorFormProps) {
                     render={({ field }) => (
                       <FormItem>
                         <FormLabel className="font-bold text-xs uppercase tracking-wider text-muted-foreground">
-                          পশ্চিম (ফুট)
+                          West (feet)
                         </FormLabel>
                         <FormControl>
                           <Input
@@ -279,10 +279,10 @@ export function CalculatorForm({ initialBookings = [] }: CalculatorFormProps) {
                     className="flex-1 font-bold"
                     onClick={handleReset}
                   >
-                    <RotateCcw className="mr-2 h-4 w-4" /> রিসেট
+                    <RotateCcw className="mr-2 h-4 w-4" /> Reset
                   </Button>
                   <Button type="submit" className="flex-1 font-bold">
-                    <Calculator className="mr-2 h-4 w-4" /> গণনা
+                    <Calculator className="mr-2 h-4 w-4" /> Calculate
                   </Button>
                 </div>
               </form>
@@ -293,7 +293,7 @@ export function CalculatorForm({ initialBookings = [] }: CalculatorFormProps) {
                 <div className="flex flex-col items-center justify-center p-4 rounded-2xl border border-border/50 bg-emerald-500/5 hover:bg-emerald-500/10 hover:border-emerald-500/30 transition-all group text-center cursor-pointer h-full">
                   <FileText className="h-6 w-6 mb-2 text-emerald-600 group-hover:scale-110 transition-transform" />
                   <span className="text-xs font-bold uppercase tracking-tight text-emerald-700">
-                    নতুন রিপোর্ট
+                    New Report
                   </span>
                 </div>
               </Link>
@@ -301,7 +301,7 @@ export function CalculatorForm({ initialBookings = [] }: CalculatorFormProps) {
                 <div className="flex flex-col items-center justify-center p-4 rounded-2xl border border-border/50 bg-orange-500/5 hover:bg-orange-500/10 hover:border-orange-500/30 transition-all group text-center cursor-pointer h-full">
                   <PlusCircle className="h-6 w-6 mb-2 text-orange-600 group-hover:scale-110 transition-transform" />
                   <span className="text-xs font-bold uppercase tracking-tight text-orange-700">
-                    নতুন বুকিং
+                    New Booking
                   </span>
                 </div>
               </Link>
@@ -314,30 +314,30 @@ export function CalculatorForm({ initialBookings = [] }: CalculatorFormProps) {
       <Card className="border-border/60 bg-primary/5 shadow-lg backdrop-blur-sm relative overflow-hidden">
         <div className="absolute top-0 right-0 -mr-10 -mt-10 w-40 h-40 bg-primary/10 rounded-full blur-3xl pointer-events-none" />
         <CardHeader>
-          <CardTitle className="text-lg font-bold">হিসাবকৃত ফলাফল</CardTitle>
+          <CardTitle className="text-lg font-bold">Calculated Results</CardTitle>
         </CardHeader>
         <CardContent className="space-y-6 relative">
           <div className="bg-background/80 backdrop-blur-sm p-6 rounded-2xl border shadow-inner text-center">
             <p className="text-xs font-bold text-muted-foreground uppercase tracking-widest mb-1">
-              মোট ক্ষেত্রফল
+              Total Area
             </p>
             <h2 className="text-4xl font-black text-primary">
               {results.areaSqFt}{" "}
               <span className="text-sm text-muted-foreground font-normal">
-                বর্গফুট
+                Square Feet
               </span>
             </h2>
           </div>
           <div className="grid grid-cols-2 gap-4">
             <div className="bg-background/80 backdrop-blur-sm p-4 rounded-xl border shadow-sm">
               <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider mb-1">
-                কাঠা
+                Katha
               </p>
               <p className="text-xl font-black">{results.katha}</p>
             </div>
             <div className="bg-background/80 backdrop-blur-sm p-4 rounded-xl border shadow-sm">
               <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider mb-1">
-                শতাংশ (শতক)
+                Decimal (Shotok)
               </p>
               <p className="text-xl font-black">{results.decimal}</p>
             </div>
@@ -346,7 +346,7 @@ export function CalculatorForm({ initialBookings = [] }: CalculatorFormProps) {
           <div className="space-y-4">
             <div className="space-y-2">
               <Label className="text-xs font-bold uppercase tracking-tight text-muted-foreground">
-                বুকিং ট্যাগ করুন (ঐচ্ছিক)
+                Tag Booking (Optional)
               </Label>
               <SearchableSelect
                 onSelect={setSelectedBooking}
@@ -367,9 +367,9 @@ export function CalculatorForm({ initialBookings = [] }: CalculatorFormProps) {
               onClick={handleSave}
               className="w-full"
               loading={loading}
-              loadingText="রেকর্ড সেভ হচ্ছে..."
+              loadingText="Saving record..."
             >
-              <Save /> রেকর্ড সেভ করুন
+              <Save /> Save Record
             </Button>
           </div>
         </CardContent>

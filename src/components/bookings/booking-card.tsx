@@ -31,15 +31,15 @@ export function BookingCard({ booking }: BookingCardProps) {
     try {
       const res = await updateBooking(booking.id, { status });
       if (res?.success) {
-        SuccessToast(status === "scheduled" ? "বুকিং অনুমোদন করা হয়েছে" : "বুকিং স্ট্যাটাস আপডেট করা হয়েছে");
+        SuccessToast(status === "scheduled" ? "Booking approved" : "Booking status updated");
         // Trigger calendar refresh
         window.dispatchEvent(new CustomEvent("refresh-calendar"));
         setIsConfirmOpen(false);
       } else {
-        ErrorToast(res?.message || "স্ট্যাটাস আপডেট করতে সমস্যা হয়েছে");
+        ErrorToast(res?.message || "Problem updating status");
       }
     } catch {
-      ErrorToast("সার্ভারে সমস্যা হয়েছে");
+      ErrorToast("Server problem");
     } finally {
       setLoading(false);
     }
@@ -50,15 +50,15 @@ export function BookingCard({ booking }: BookingCardProps) {
     try {
       const res = await deleteBooking(booking.id);
       if (res?.success) {
-        SuccessToast("বুকিং সফলভাবে ডিলিট করা হয়েছে");
+        SuccessToast("Booking deleted successfully");
         // Trigger calendar refresh to update markers
         window.dispatchEvent(new CustomEvent("refresh-calendar"));
         setIsConfirmOpen(false);
       } else {
-        ErrorToast(res?.message || "ডিলিট করতে সমস্যা হয়েছে");
+        ErrorToast(res?.message || "Problem deleting");
       }
     } catch {
-      ErrorToast("কিছু ভুল হয়েছে");
+      ErrorToast("Something went wrong");
     } finally {
       setLoading(false);
     }
@@ -85,19 +85,19 @@ export function BookingCard({ booking }: BookingCardProps) {
               </h3>
               {isMissed && (
                 <Badge variant="destructive" className="text-[10px] uppercase font-bold py-0.5 px-2 rounded-full">
-                  মিস করা জরিপ
+                  Missed Survey
                 </Badge>
               )}
               {isRequest && (
                 <Badge variant="warning" className="text-[10px] uppercase font-bold py-0.5 px-2 rounded-full">
-                  পদক্ষেপ প্রয়োজন
+                  Action Required
                 </Badge>
               )}
             </div>
 
             <div className="flex items-center gap-x-4 text-sm text-muted-foreground">
               <p className="flex items-center gap-1.5">
-                ক্লায়েন্ট: <span className={cn("font-medium", !isCompleted && "text-foreground")}>{booking.client?.name}</span>
+                Client: <span className={cn("font-medium", !isCompleted && "text-foreground")}>{booking.client?.name}</span>
               </p>
               <div className="h-1 w-1 rounded-full bg-border" />
               <p className="flex items-center gap-1.5">
@@ -107,7 +107,7 @@ export function BookingCard({ booking }: BookingCardProps) {
                 <>
                   <div className="h-1 w-1 rounded-full bg-border" />
                   <p className="flex items-center gap-1.5 font-bold text-emerald-500">
-                    প্রাপ্তি: ৳{booking.amountReceived}
+                    Received: ৳{booking.amountReceived}
                   </p>
                 </>
               )}
@@ -124,16 +124,16 @@ export function BookingCard({ booking }: BookingCardProps) {
                   onClick={() => handleStatusUpdate("scheduled")}
                   loading={loading}
                 >
-                  <CheckCircle2 /> অনুমোদন দিন
+                  <CheckCircle2 /> Approve
                 </Button>
                 
                 <ConfirmationModal
                   open={isConfirmOpen}
                   onOpenChange={setIsConfirmOpen}
-                  title="বুকিং প্রত্যাখ্যান করুন"
-                  description="আপনি কি নিশ্চিত যে আপনি এই বুকিং অনুরোধটি প্রত্যাখ্যান করতে চান?"
-                  confirmText="প্রত্যাখ্যান করুন"
-                  cancelText="বাতিল"
+                  title="Reject Booking"
+                  description="Are you sure you want to reject this booking request?"
+                  confirmText="Reject"
+                  cancelText="Cancel"
                   onConfirm={() => handleStatusUpdate("cancelled")}
                   isLoading={loading}
                   trigger={
@@ -144,7 +144,7 @@ export function BookingCard({ booking }: BookingCardProps) {
                       disabled={loading}
                       onClick={() => setIsConfirmOpen(true)}
                     >
-                      <XCircle /> প্রত্যাখ্যান
+                      <XCircle /> Reject
                     </Button>
                   }
                 />
@@ -162,7 +162,7 @@ export function BookingCard({ booking }: BookingCardProps) {
                   onConfirm={(id, date) => console.log(`Rescheduled ${id} to ${date}`)}
                   trigger={
                     <Button variant="outline" size="sm" className="font-bold uppercase text-xs px-4 border-border/50 text-foreground/80 hover:bg-accent gap-2">
-                      <Calendar /> নতুন সময় দিন
+                      <Calendar /> Reschedule
                     </Button>
                   }
                 />
@@ -170,10 +170,10 @@ export function BookingCard({ booking }: BookingCardProps) {
                 <ConfirmationModal
                   open={isConfirmOpen}
                   onOpenChange={setIsConfirmOpen}
-                  title="বুকিং বাতিল করুন"
-                  description="আপনি কি নিশ্চিত যে আপনি এই বুকিংটি বাতিল করতে চান? এটি 'ইতিহাস' ট্যাবে জমা থাকবে।"
-                  confirmText="বাতিল করুন"
-                  cancelText="না"
+                  title="Cancel Booking"
+                  description="Are you sure you want to cancel this booking? It will remain in the History tab."
+                  confirmText="Cancel"
+                  cancelText="No"
                   onConfirm={() => handleStatusUpdate("cancelled")}
                   isLoading={loading}
                   trigger={
@@ -204,10 +204,10 @@ export function BookingCard({ booking }: BookingCardProps) {
                 <ConfirmationModal
                   open={isConfirmOpen}
                   onOpenChange={setIsConfirmOpen}
-                  title="বুকিং ডিলিট করুন"
-                  description="আপনি কি নিশ্চিত যে আপনি এই বাতিল করা বুকিংটি পুরোপুরি ডিলিট করতে চান?"
-                  confirmText="ডিলিট করুন"
-                  cancelText="না"
+                  title="Delete Booking"
+                  description="Are you sure you want to permanently delete this cancelled booking?"
+                  confirmText="Delete"
+                  cancelText="No"
                   onConfirm={handleDelete}
                   isLoading={loading}
                   trigger={
@@ -229,10 +229,10 @@ export function BookingCard({ booking }: BookingCardProps) {
                 <ConfirmationModal
                   open={isConfirmOpen}
                   onOpenChange={setIsConfirmOpen}
-                  title="বুকিং বাতিল করুন"
-                  description="আপনি কি নিশ্চিত যে আপনি এটি বাতিল করতে চান?"
-                  confirmText="বাতিল করুন"
-                  cancelText="না"
+                  title="Cancel Booking"
+                  description="Are you sure you want to cancel this?"
+                  confirmText="Cancel"
+                  cancelText="No"
                   onConfirm={() => handleStatusUpdate("cancelled")}
                   isLoading={loading}
                   trigger={

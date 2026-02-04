@@ -9,8 +9,8 @@ import { Button } from "@/components/ui/button";
 import { SearchInput } from "@/components/ui/custom/search-input";
 
 export const metadata = { 
-  title: "রিপোর্ট | Smart Surveyor",
-  description: "জরিপ রিপোর্ট দেখুন এবং পরিচালনা করুন।",
+  title: "Reports | Smart Surveyor",
+  description: "View and manage survey reports.",
 };
 
 export default async function ReportsPage({
@@ -25,20 +25,20 @@ export default async function ReportsPage({
     <div className="space-y-6">
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <PageHeader
-          title="রিপোর্ট"
-          description="জরিপ রিপোর্ট দেখুন এবং পরিচালনা করুন।"
+          title="Reports"
+          description="View and manage survey reports."
         />
         <Link href="/reports/new">
           <Button>
             <Plus/>
-            রিপোর্ট তৈরি করুন
+            Create Report
           </Button>
         </Link>
       </div>
 
       <div className="bg-card border border-border/50 rounded-2xl p-6 shadow-xl backdrop-blur-sm relative overflow-hidden">
         <div className="relative space-y-6">
-          <SearchInput placeholder="রিপোর্ট খুঁজুন..." />
+          <SearchInput placeholder="Search reports..." />
           <DataTable
             columns={reportColumns}
             data={reports}

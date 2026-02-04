@@ -10,8 +10,8 @@ import {
   CardDescription,
 } from "@/components/ui/card";
 import { Info, Calendar as CalendarIcon, Trash2, Loader2 } from "lucide-react";
-import { format, isSameDay } from "date-fns";
-import { bn } from "date-fns/locale";
+import { format, isSameDay, isBefore, startOfDay } from "date-fns";
+import { enUS } from "date-fns/locale";
 import { Calendar } from "@/components/ui/calendar";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
@@ -71,7 +71,7 @@ export function AvailabilityView({
       }
     } catch (error) {
       console.error("Error fetching availability:", error);
-      toast.error("তথ্য লোড করতে সমস্যা হয়েছে");
+      toast.error("Problem loading information");
     } finally {
       setLoading(false);
     }
@@ -86,7 +86,12 @@ export function AvailabilityView({
 
     const isBooked = bookedDates.some((d) => isSameDay(d, date));
     if (isBooked) {
-      toast.error("এই তারিখে অলরেডি বুকিং আছে, তাই ব্লক করা যাবে না।");
+      toast.error("This date already has a booking, so it cannot be blocked.");
+      return;
+    }
+
+    if (isBefore(date, startOfDay(new Date()))) {
+      toast.error("You cannot block past dates.");
       return;
     }
 
@@ -94,13 +99,13 @@ export function AvailabilityView({
     try {
       const res = await toggleBlockedDate(dateStr);
       if (res?.success) {
-        toast.success(res.message || "সফলভাবে আপডেট করা হয়েছে");
+        toast.success(res.message || "Updated successfully");
         fetchAvailability(currentMonth);
       } else {
-        toast.error(res?.message || "কিছু একটা ভুল হয়েছে");
+        toast.error(res?.message || "Something went wrong");
       }
     } catch {
-      toast.error("সার্ভারে সমস্যা হয়েছে");
+      toast.error("Server problem");
     } finally {
       setTogglingDate(null);
     }
@@ -110,6 +115,7 @@ export function AvailabilityView({
     blocked: (date: Date) =>
       blockedDates.some((d) => isSameDay(new Date(d.date), date)),
     booked: (date: Date) => bookedDates.some((d) => isSameDay(d, date)),
+    past: (date: Date) => isBefore(date, startOfDay(new Date())),
   };
 
   return (
@@ -122,21 +128,10 @@ export function AvailabilityView({
               <div className="h-12 w-12 rounded-full border-4 border-emerald-500/20" />
               <div className="absolute inset-0 h-12 w-12 rounded-full border-4 border-emerald-500 border-t-transparent animate-spin" />
             </div>
-            <p className="text-sm font-bold text-foreground">
-              আপডেট করা হচ্ছে...
-            </p>
+            <p className="text-sm font-bold text-foreground">Updating...</p>
           </div>
         </div>
       )}
-
-      <div>
-        <h2 className="text-3xl font-bold tracking-tight">
-          প্রাপ্যতা ব্যবস্থাপনা
-        </h2>
-        <p className="text-muted-foreground">
-          ক্লায়েন্টদের বুকিং থেকে বিরত রাখতে তারিখগুলো ব্লক করুন।
-        </p>
-      </div>
 
       <div className="grid gap-6 grid-cols-1 lg:grid-cols-12">
         <div className="lg:col-span-7 space-y-6">
@@ -145,7 +140,7 @@ export function AvailabilityView({
               <div className="flex items-center gap-2">
                 <CalendarIcon className="h-5 w-5 text-emerald-500" />
                 <CardTitle className="text-xl font-bold">
-                  অফ-ডে ম্যানেজমেন্ট
+                  Off-Day Management
                 </CardTitle>
               </div>
             </CardHeader>
@@ -159,7 +154,7 @@ export function AvailabilityView({
                   className={cn(
                     "p-0 pointer-events-auto",
                     "[&_button[data-selected-single=true]]:bg-transparent!",
-                    "[&_button[data-selected-single=true]]:text-foreground!"
+                    "[&_button[data-selected-single=true]]:text-foreground!",
                   )}
                   modifiers={modifiers}
                   modifiersClassNames={{
@@ -167,11 +162,13 @@ export function AvailabilityView({
                       "bg-rose-900 text-white font-bold rounded-full transition-colors",
                     booked:
                       "bg-orange-500 text-white font-bold rounded-full cursor-not-allowed",
+                    past: "text-muted-foreground opacity-50 pointer-events-none",
                   }}
                   classNames={{
                     day_selected:
                       "bg-transparent! text-foreground! border-2 border-primary z-30",
-                    day_today: "bg-accent text-accent-foreground font-bold border-2 border-primary/20",
+                    day_today:
+                      "bg-accent text-accent-foreground font-bold border-2 border-primary/20",
                   }}
                 />
               </div>
@@ -181,25 +178,25 @@ export function AvailabilityView({
                 <div className="flex items-center gap-2">
                   <div className="h-3 w-3 rounded-full bg-rose-900" />
                   <span className="text-xs font-medium text-muted-foreground">
-                    ব্লক করা
+                    Blocked
                   </span>
                 </div>
                 <div className="flex items-center gap-2">
                   <div className="h-3 w-3 rounded-full bg-orange-500" />
                   <span className="text-xs font-medium text-muted-foreground">
-                    বুক করা
+                    Booked
                   </span>
                 </div>
                 <div className="flex items-center gap-2">
                   <div className="h-3 w-3 rounded-full border border-border" />
                   <span className="text-xs font-medium text-muted-foreground">
-                    এভেইলএবল
+                    Available
                   </span>
                 </div>
                 <div className="flex items-center gap-2">
                   <div className="h-3 w-3 rounded-full border-2 border-primary" />
                   <span className="text-xs font-medium text-muted-foreground">
-                    সিলেক্টেড
+                    Selected
                   </span>
                 </div>
               </div>
@@ -213,25 +210,21 @@ export function AvailabilityView({
               <div className="flex items-center gap-2">
                 <Info className="h-4 w-4 text-muted-foreground" />
                 <CardTitle className="text-sm font-semibold">
-                  নির্দেশনা
+                  Instructions
                 </CardTitle>
               </div>
+              <CardDescription>
+                Set off-days from here to avoid bookings on holidays or
+                personal work days.
+              </CardDescription>
             </CardHeader>
-            <CardContent>
-              <p className="text-xs leading-relaxed text-muted-foreground">
-                ছুটি বা ব্যক্তিগত কাজের দিনে বুকিং এড়াতে এখান থেকে অফ-ডে সেট
-                করুন।
-              </p>
-            </CardContent>
           </Card>
 
           <Card>
             <CardHeader>
-              <CardTitle className="text-lg font-bold">
-                ব্লক করা তারিখসমূহ
-              </CardTitle>
+              <CardTitle className="text-lg font-bold">Blocked Dates</CardTitle>
               <CardDescription>
-                {blockedDates.length}টি তারিখ অফ হিসেবে আছে
+                {blockedDates.length} dates are marked as off
               </CardDescription>
             </CardHeader>
             <CardContent>
@@ -240,7 +233,7 @@ export function AvailabilityView({
                   {loading && blockedDates.length === 0 ? (
                     <div className="flex flex-col items-center justify-center py-12 text-muted-foreground">
                       <Loader2 className="h-8 w-8 animate-spin mb-4" />
-                      <p className="text-sm">লোড হচ্ছে...</p>
+                      <p className="text-sm">Loading...</p>
                     </div>
                   ) : blockedDates.length > 0 ? (
                     blockedDates.map((item) => (
@@ -251,7 +244,7 @@ export function AvailabilityView({
                         <div className="flex flex-col">
                           <span className="text-sm font-bold">
                             {format(new Date(item.date), "MMMM dd, yyyy", {
-                              locale: bn,
+                              locale: enUS,
                             })}
                           </span>
                           {item.reason && (
@@ -278,9 +271,7 @@ export function AvailabilityView({
                   ) : (
                     <div className="flex flex-col items-center justify-center py-12 text-center opacity-40">
                       <CalendarIcon className="h-12 w-12 mb-4" />
-                      <p className="text-sm font-medium">
-                        কোনো তারিখ ব্লক করা নেই
-                      </p>
+                      <p className="text-sm font-medium">No dates blocked</p>
                     </div>
                   )}
                 </div>
