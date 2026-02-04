@@ -35,18 +35,24 @@ export const getMonthlyStats = async (query: QueryParams = {}): Promise<any> => 
   }
 };
 
-export const getCalendarData = async (month?: number | string | QueryParams, year?: number | string): Promise<any> => {
+export const getCalendarData = async (month?: number | string | (QueryParams & { surveyorId?: string; isPublic?: boolean }), year?: number | string): Promise<any> => {
   try {
     let m: any = month;
     let y: any = year;
+    let surveyorId: string | undefined;
+    let isPublic = false;
 
     if (typeof month === 'object' && month !== null) {
-      m = (month as QueryParams).month;
-      y = (month as QueryParams).year;
+      const params = month as (QueryParams & { surveyorId?: string; isPublic?: boolean });
+      m = params.month;
+      y = params.year;
+      surveyorId = params.surveyorId;
+      isPublic = params.isPublic || false;
     }
 
-    const query = buildQueryString({ month: m, year: y });
+    const query = buildQueryString({ month: m, year: y, surveyorId });
     const response = await serverFetch(`/bookings/calendar${query}`, {
+      isPublic,
       next: {
         revalidate: 86400, // 24 hours
         tags: ["bookings"],
