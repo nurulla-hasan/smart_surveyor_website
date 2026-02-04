@@ -11,7 +11,7 @@ import Link from "next/link";
 import { toPng } from "html-to-image";
 import jsPDF from "jspdf";
 import { format } from "date-fns";
-import { bn } from "date-fns/locale";
+import { enUS } from "date-fns/locale";
 
 interface ReportActionsProps {
   report: Report;
@@ -44,7 +44,7 @@ export function ReportActions({ report }: ReportActionsProps) {
               </div>
               <div style="text-align: right;">
                 <p style="margin: 0; font-weight: bold; font-size: 18px;">Smart Surveyor</p>
-                <p style="margin: 5px 0 0; font-size: 12px; opacity: 0.9;">Date: ${format(new Date(report.createdAt), "dd MMMM, yyyy", { locale: bn })}</p>
+                <p style="margin: 5px 0 0; font-size: 12px; opacity: 0.9;">Date: ${format(new Date(report.createdAt), "dd MMMM, yyyy", { locale: enUS })}</p>
               </div>
             </div>
           </div>
@@ -126,10 +126,10 @@ export function ReportActions({ report }: ReportActionsProps) {
       pdf.save(`report-${report.id.slice(-6)}.pdf`);
       
       document.body.removeChild(container);
-      SuccessToast("PDF ডাউনলোড সফল হয়েছে");
+      SuccessToast("PDF downloaded successfully");
     } catch (error) {
       console.error("PDF generation failed:", error);
-      ErrorToast("PDF তৈরি করতে সমস্যা হয়েছে");
+      ErrorToast("Problem creating PDF");
     } finally {
       setIsDownloading(false);
     }
@@ -140,13 +140,13 @@ export function ReportActions({ report }: ReportActionsProps) {
     try {
       const res = await deleteReport(report.id);
       if (res?.success) {
-        SuccessToast("রিপোর্ট সফলভাবে ডিলিট করা হয়েছে");
+        SuccessToast("Report deleted successfully");
         setOpen(false);
       } else {
-        ErrorToast(res?.message || "ডিলিট করতে সমস্যা হয়েছে");
+        ErrorToast(res?.message || "Problem deleting report");
       }
     } catch {
-      ErrorToast("কিছু ভুল হয়েছে");
+      ErrorToast("Something went wrong");
     } finally {
       setIsDeleting(false);
     }
@@ -176,8 +176,8 @@ export function ReportActions({ report }: ReportActionsProps) {
       <ConfirmationModal
         open={open}
         onOpenChange={setOpen}
-        title="আপনি কি নিশ্চিত?"
-        description="এই রিপোর্টটি ডিলিট করলে তা আর ফিরিয়ে আনা সম্ভব হবে না।"
+        title="Are you sure?"
+        description="This report will be permanently deleted and cannot be recovered."
         onConfirm={handleDelete}
         isLoading={isDeleting}
         trigger={

@@ -23,10 +23,10 @@ export default function NotFound() {
         {/* Text Content */}
         <div className="space-y-3">
           <h1 className="text-3xl font-bold tracking-tight text-foreground uppercase italic">
-            রাস্তা হারিয়ে ফেলেছেন?
+            Lost your way?
           </h1>
           <p className="text-muted-foreground text-lg font-medium leading-relaxed">
-            দুঃখিত, আপনি যে পাতাটি খুঁজছেন সেটি খুঁজে পাওয়া যায়নি। সম্ভবত লিংকটি ভুল অথবা পাতাটি সরিয়ে ফেলা হয়েছে।
+            Sorry, the page you are looking for was not found. The link might be broken or the page has been moved.
           </p>
         </div>
 
@@ -34,11 +34,11 @@ export default function NotFound() {
         <div className="grid grid-cols-2 gap-4 py-4">
           <div className="p-4 rounded-2xl bg-muted/50 border border-border/50 hover:border-primary/30 transition-colors group cursor-default">
             <Search className="h-5 w-5 mb-2 text-muted-foreground group-hover:text-primary transition-colors" />
-            <p className="text-xs font-bold uppercase text-muted-foreground group-hover:text-foreground transition-colors">ভুল লিংক</p>
+            <p className="text-xs font-bold uppercase text-muted-foreground group-hover:text-foreground transition-colors">Broken Link</p>
           </div>
           <div className="p-4 rounded-2xl bg-muted/50 border border-border/50 hover:border-primary/30 transition-colors group cursor-default">
             <Map className="h-5 w-5 mb-2 text-muted-foreground group-hover:text-primary transition-colors" />
-            <p className="text-xs font-bold uppercase text-muted-foreground group-hover:text-foreground transition-colors">ম্যাপে নেই</p>
+            <p className="text-xs font-bold uppercase text-muted-foreground group-hover:text-foreground transition-colors">Not on Map</p>
           </div>
         </div>
 
@@ -47,13 +47,13 @@ export default function NotFound() {
           <Button asChild variant="outline" size="lg" className="w-full sm:w-auto font-bold uppercase tracking-wider rounded-xl hover:bg-muted group">
             <Link href="javascript:history.back()" className="flex items-center gap-2">
               <ArrowLeft className="h-4 w-4 group-hover:-translate-x-1 transition-transform" />
-              পিছনে যান
+              Go Back
             </Link>
           </Button>
           <Button asChild size="lg" className="w-full sm:w-auto font-bold uppercase tracking-wider rounded-xl shadow-lg shadow-primary/20 group">
             <Link href="/" className="flex items-center gap-2">
               <Home className="h-4 w-4 group-hover:scale-110 transition-transform" />
-              হোমপেজে ফিরুন
+              Return Home
             </Link>
           </Button>
         </div>

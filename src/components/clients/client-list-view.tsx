@@ -30,8 +30,8 @@ export function ClientListView({ initialData }: ClientListViewProps) {
     <div className="space-y-6">
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <PageHeader
-          title="ক্লায়েন্ট"
-          description="আপনার কাস্টমার ডাটাবেস পরিচালনা করুন।"
+          title="Clients"
+          description="Manage your customer database."
         />
         <AddClientModal />
       </div>
@@ -43,7 +43,7 @@ export function ClientListView({ initialData }: ClientListViewProps) {
           <div className="relative max-w-64">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
             <Input
-              placeholder="ক্লায়েন্ট খুঁজুন..."
+              placeholder="Search clients..."
               className="pl-10 bg-muted/20"
               defaultValue={searchParam}
               onChange={(e) => updateFilter("search", e.target.value, 500)}

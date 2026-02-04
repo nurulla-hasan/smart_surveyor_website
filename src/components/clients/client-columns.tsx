@@ -11,7 +11,7 @@ import { getInitials } from "@/lib/utils";
 export const clientColumns: ColumnDef<Client>[] = [
   {
     accessorKey: "name",
-    header: "নাম",
+    header: "Name",
     cell: ({ row }) => {
       const name = row.original.name;
       return (
@@ -28,12 +28,12 @@ export const clientColumns: ColumnDef<Client>[] = [
   },
   {
     accessorKey: "phone",
-    header: "ফোন",
+    header: "Phone",
     cell: ({ row }) => <span className="text-muted-foreground">{row.original.phone}</span>,
   },
   {
     accessorKey: "email",
-    header: "ইমেইল",
+    header: "Email",
     cell: ({ row }) => (
       <span className="text-muted-foreground">
         {row.original.email || "N/A"}
@@ -42,7 +42,7 @@ export const clientColumns: ColumnDef<Client>[] = [
   },
   {
     accessorKey: "address",
-    header: "ঠিকানা",
+    header: "Address",
     cell: ({ row }) => (
       <span className="text-muted-foreground">
         {row.original.address || "N/A"}
@@ -51,7 +51,7 @@ export const clientColumns: ColumnDef<Client>[] = [
   },
   {
     accessorKey: "createdAt",
-    header: "যুক্ত হয়েছেন",
+    header: "Joined At",
     cell: ({ row }) => (
       <div className="flex items-center gap-2 text-muted-foreground">
         <span>{format(new Date(row.original.createdAt), "MMM d, yyyy")}</span>
@@ -60,7 +60,7 @@ export const clientColumns: ColumnDef<Client>[] = [
   },
   {
     id: "actions",
-    header:()=><><div className="text-right mr-3">পদক্ষেপ</div></>,
+    header:()=><><div className="text-right mr-3">Actions</div></>,
     cell: ({ row }) => <ClientActions client={row.original} />,
   },
 ];

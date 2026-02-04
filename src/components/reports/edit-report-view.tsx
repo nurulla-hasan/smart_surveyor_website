@@ -46,13 +46,13 @@ import { SuccessToast, ErrorToast } from "@/lib/utils";
 import { Separator } from "@/components/ui/separator";
 
 const reportSchema = z.object({
-  title: z.string().min(1, "শিরোনাম প্রয়োজন"),
-  content: z.string().min(1, "বিবরণ প্রয়োজন"),
-  mouzaName: z.string().min(1, "মৌজার নাম প্রয়োজন"),
-  plotNo: z.string().min(1, "দাগ নং প্রয়োজন"),
-  areaSqFt: z.number().min(0, "সঠিক মাপ দিন"),
-  areaKatha: z.number().min(0, "সঠিক মাপ দিন"),
-  areaDecimal: z.number().min(0, "সঠিক মাপ দিন"),
+  title: z.string().min(1, "Title is required"),
+  content: z.string().min(1, "Description is required"),
+  mouzaName: z.string().min(1, "Mouza name is required"),
+  plotNo: z.string().min(1, "Plot No is required"),
+  areaSqFt: z.number().min(0, "Enter valid area"),
+  areaKatha: z.number().min(0, "Enter valid area"),
+  areaDecimal: z.number().min(0, "Enter valid area"),
   notes: z.string().optional(),
   reportFile: z.any().optional(),
 });
@@ -78,7 +78,7 @@ export function EditReportView({
   const [selectedBooking, setSelectedBooking] =
     useState<SearchableOption | null>(report.bookingId ? {
         value: report.bookingId,
-        label: "সংযুক্ত বুকিং",
+        label: "Linked Booking",
         original: null
     } : null);
   const [clientBookings, setClientBookings] = useState<Booking[]>([]);
@@ -109,7 +109,7 @@ export function EditReportView({
         if (res?.success) {
           setClientBookings(res.data.bookings);
           // If the report's booking is in this list, update the label
-          const currentBooking = res.data.bookings.find(b => b.id === report.bookingId);
+          const currentBooking = res.data.bookings.find((b: Booking) => b.id === report.bookingId);
           if (currentBooking) {
               setSelectedBooking({
                   value: currentBooking.id,
@@ -157,7 +157,7 @@ export function EditReportView({
       }
       const res = await getClients({ search, pageSize: "10" });
       if (res?.success) {
-        return res.data.clients.map((c) => ({
+        return res.data.clients.map((c: Client) => ({
           value: c.id,
           label: c.name,
           original: c,
@@ -180,7 +180,7 @@ export function EditReportView({
 
   const onSubmit = async (values: ReportFormValues) => {
     if (!selectedClient) {
-      ErrorToast("ক্লায়েন্ট সিলেক্ট করুন");
+      ErrorToast("Please select a client");
       return;
     }
 
@@ -204,14 +204,14 @@ export function EditReportView({
 
       const res = await updateReport(report.id, formData as any);
       if (res?.success) {
-        SuccessToast("রিপোর্ট সফলভাবে আপডেট করা হয়েছে");
+        SuccessToast("Report updated successfully");
         router.push("/reports");
       } else {
-        ErrorToast(res?.message || "আপডেট করতে সমস্যা হয়েছে");
+        ErrorToast(res?.message || "Problem updating report");
       }
     } catch (error) {
       console.error("Update report error:", values, error);
-      ErrorToast("কিছু ভুল হয়েছে");
+      ErrorToast("Something went wrong");
     } finally {
       setLoading(false);
     }
@@ -227,15 +227,15 @@ export function EditReportView({
             </Button>
           </Link>
           <div>
-            <h1 className="text-2xl font-bold">রিপোর্ট এডিট করুন</h1>
+            <h1 className="text-2xl font-bold">Edit Report</h1>
             <p className="text-sm text-muted-foreground">
-              প্রয়োজনীয় তথ্য পরিবর্তন করে সেভ করুন।
+              Modify information and save changes.
             </p>
           </div>
         </div>
         <Button onClick={form.handleSubmit(onSubmit)} disabled={loading}>
           <Save className="size-4" />
-          {loading ? "আপডেট হচ্ছে..." : "আপডেট করুন"}
+          {loading ? "Updating..." : "Update Report"}
         </Button>
       </div>
 
@@ -247,7 +247,7 @@ export function EditReportView({
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
                 <FileText className="size-5 text-primary" />
-                রিপোর্টের তথ্য
+                Report Information
               </CardTitle>
             </CardHeader>
             <CardContent>
@@ -258,13 +258,13 @@ export function EditReportView({
                     <div className="space-y-2">
                       <Label className="flex items-center gap-2">
                         <User className="size-4" />
-                        ক্লায়েন্ট
+                        Client
                       </Label>
                       <SearchableSelect
                         onSelect={setSelectedClient}
                         fetchOptions={fetchClientOptions}
                         value={selectedClient}
-                        placeholder="ক্লায়েন্ট সিলেক্ট করুন..."
+                        placeholder="Select client..."
                         renderOption={(option) => (
                           <div className="flex flex-col py-1">
                             <span className="font-bold text-sm">
@@ -279,15 +279,15 @@ export function EditReportView({
                     </div>
 
                     <div className="space-y-2">
-                      <Label>বুকিং (ঐচ্ছিক)</Label>
+                      <Label>Booking (Optional)</Label>
                       <SearchableSelect
                         onSelect={setSelectedBooking}
                         fetchOptions={fetchBookingOptions}
                         value={selectedBooking}
                         placeholder={
                           selectedClient
-                            ? "বুকিং সিলেক্ট করুন..."
-                            : "প্রথমে ক্লায়েন্ট সিলেক্ট করুন"
+                            ? "Select booking..."
+                            : "Select a client first"
                         }
                         disabled={!selectedClient}
                         renderOption={(option) => (
@@ -309,7 +309,7 @@ export function EditReportView({
                       render={({ field: { name, onBlur, ref, onChange } }) => (
                         <FormItem>
                           <FormLabel>
-                            নতুন সার্ভে ম্যাপ / ইমেজ আপলোড (ঐচ্ছিক)
+                            Upload New Survey Map / Image (Optional)
                           </FormLabel>
                           <FormControl>
                             <div className="space-y-2">
@@ -327,14 +327,14 @@ export function EditReportView({
                               />
                               {report.fileUrl && (
                                 <div className="text-[10px] text-muted-foreground">
-                                  বর্তমান ফাইল:{" "}
+                                  Current file:{" "}
                                   <a
                                     href={report.fileUrl}
                                     target="_blank"
                                     rel="noopener noreferrer"
                                     className="text-primary hover:underline"
                                   >
-                                    ডাউনলোড করুন
+                                    Download
                                   </a>
                                 </div>
                               )}
@@ -355,7 +355,7 @@ export function EditReportView({
                       name="title"
                       render={({ field }) => (
                         <FormItem>
-                          <FormLabel>শিরোনাম</FormLabel>
+                          <FormLabel>Title</FormLabel>
                           <FormControl>
                             <Input
                               placeholder="e.g. Survey Report - Plot 102"
@@ -374,7 +374,7 @@ export function EditReportView({
                         <FormItem>
                           <FormLabel className="flex items-center gap-2">
                             <MapPin className="size-3" />
-                            মৌজার নাম
+                            Mouza Name
                           </FormLabel>
                           <FormControl>
                             <Input placeholder="e.g. Uttara" {...field} />
@@ -389,7 +389,7 @@ export function EditReportView({
                       name="plotNo"
                       render={({ field }) => (
                         <FormItem>
-                          <FormLabel>দাগ নং</FormLabel>
+                          <FormLabel>Plot No</FormLabel>
                           <FormControl>
                             <Input placeholder="e.g. 102" {...field} />
                           </FormControl>
@@ -408,7 +408,7 @@ export function EditReportView({
                       name="areaSqFt"
                       render={({ field }) => (
                         <FormItem>
-                          <FormLabel>বর্গফুট (Sq. Ft)</FormLabel>
+                          <FormLabel>Total Area (Sq. Ft)</FormLabel>
                           <FormControl>
                             <Input
                               type="number"
@@ -433,7 +433,7 @@ export function EditReportView({
                       name="areaKatha"
                       render={({ field }) => (
                         <FormItem>
-                          <FormLabel>কাঠা</FormLabel>
+                          <FormLabel>Total Area (Katha)</FormLabel>
                           <FormControl>
                             <Input
                               type="number"
@@ -458,7 +458,7 @@ export function EditReportView({
                       name="areaDecimal"
                       render={({ field }) => (
                         <FormItem>
-                          <FormLabel>শতাংশ</FormLabel>
+                          <FormLabel>Total Area (Decimal)</FormLabel>
                           <FormControl>
                             <Input
                               type="number"
@@ -487,10 +487,10 @@ export function EditReportView({
                     name="content"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>বিবরণ</FormLabel>
+                        <FormLabel>Description</FormLabel>
                         <FormControl>
                           <Textarea
-                            placeholder="জরিপের বিস্তারিত বিবরণ..."
+                            placeholder="Detailed survey description..."
                             className="min-h-25"
                             {...field}
                           />
@@ -508,10 +508,10 @@ export function EditReportView({
                     name="notes"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>অতিরিক্ত মন্তব্য (ঐচ্ছিক)</FormLabel>
+                        <FormLabel>Additional Notes (Optional)</FormLabel>
                         <FormControl>
                           <Textarea
-                            placeholder="অতিরিক্ত মন্তব্য..."
+                            placeholder="Additional notes..."
                             className="min-h-20"
                             {...field}
                           />

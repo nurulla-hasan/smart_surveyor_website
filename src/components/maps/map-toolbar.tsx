@@ -37,7 +37,7 @@ export function MapToolbar({
       {/* Search Bar */}
       <div className="pointer-events-auto flex items-center bg-background backdrop-blur border rounded-lg shadow-md max-w-xs overflow-hidden">
         <Input
-          placeholder="দাগ নং..."
+          placeholder="Plot/Dag No..."
           value={searchQuery}
           onChange={(e) => setSearchQuery(e.target.value)}
           onKeyDown={(e) => e.key === "Enter" && onSearch()}
@@ -62,7 +62,7 @@ export function MapToolbar({
           className="bg-background text-foreground"
         >
           <Folder className="text-orange-500" />
-          সংরক্ষিত ম্যাপ
+          Saved Maps
         </Button>
 
         <Button
@@ -77,7 +77,7 @@ export function MapToolbar({
           ) : (
             <Navigation className="h-4 w-4 text-blue-500 fill-blue-500" />
           )}
-          অবস্থান
+          Location
         </Button>
 
         <Button
@@ -87,7 +87,7 @@ export function MapToolbar({
           className="bg-background text-foreground"
         >
           <Upload />
-          আপলোড
+          Upload
         </Button>
 
         <Button

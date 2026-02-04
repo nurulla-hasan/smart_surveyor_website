@@ -22,12 +22,12 @@ export function ClientActions({ client }: ClientActionsProps) {
     try {
       const res = await deleteClient(client.id);
       if (res?.success) {
-        SuccessToast("ক্লায়েন্ট সফলভাবে ডিলিট করা হয়েছে");
+        SuccessToast("Client deleted successfully");
       } else {
-        ErrorToast(res?.message || "ডিলিট করতে সমস্যা হয়েছে");
+        ErrorToast(res?.message || "Problem deleting client");
       }
     } catch (error) {
-      ErrorToast("কিছু ভুল হয়েছে");
+      ErrorToast("Something went wrong");
     } finally {
       setIsDeleting(false);
     }
@@ -44,8 +44,8 @@ export function ClientActions({ client }: ClientActionsProps) {
         }
       />
       <ConfirmationModal
-        title="আপনি কি নিশ্চিত?"
-        description="এই ক্লায়েন্টটি ডিলিট করলে তা আর ফিরিয়ে আনা সম্ভব হবে না।"
+        title="Are you sure?"
+        description="This client will be permanently deleted and cannot be recovered."
         onConfirm={handleDelete}
         isLoading={isDeleting}
         trigger={

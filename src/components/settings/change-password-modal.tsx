@@ -58,10 +58,10 @@ export function ChangePasswordModal() {
         form.reset();
         setIsOpen(false);
       } else {
-        toast.error(res?.message || "পাসওয়ার্ড পরিবর্তন করতে সমস্যা হয়েছে");
+        toast.error(res?.message || "Failed to change password");
       }
     } catch (error: any) {
-      toast.error(error?.message || "কিছু একটা ভুল হয়েছে");
+      toast.error(error?.message || "Something went wrong");
     } finally {
       setLoading(false);
     }
@@ -71,12 +71,12 @@ export function ChangePasswordModal() {
     <ModalWrapper
       open={isOpen}
       onOpenChange={setIsOpen}
-      title="পাসওয়ার্ড পরিবর্তন করুন"
-      description="আপনার অ্যাকাউন্টের নিরাপত্তা নিশ্চিত করতে নতুন পাসওয়ার্ড দিন।"
+      title="Change Password"
+      description="Enter a new password to ensure your account security."
       actionTrigger={
         <Button variant="outline">
           <Lock className="h-4 w-4" />
-          পাসওয়ার্ড পরিবর্তন
+          Change Password
         </Button>
       }
     >
@@ -89,7 +89,7 @@ export function ChangePasswordModal() {
                 name="currentPassword"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>বর্তমান পাসওয়ার্ড</FormLabel>
+                    <FormLabel>Current Password</FormLabel>
                     <FormControl>
                       <Input
                         type="password"
@@ -106,7 +106,7 @@ export function ChangePasswordModal() {
                 name="newPassword"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>নতুন পাসওয়ার্ড</FormLabel>
+                    <FormLabel>New Password</FormLabel>
                     <FormControl>
                       <Input
                         type="password"
@@ -123,7 +123,7 @@ export function ChangePasswordModal() {
                 name="confirmPassword"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>পাসওয়ার্ড নিশ্চিত করুন</FormLabel>
+                    <FormLabel>Confirm Password</FormLabel>
                     <FormControl>
                       <Input
                         type="password"
@@ -141,7 +141,7 @@ export function ChangePasswordModal() {
                   disabled={loading}
                   className="w-full md:w-auto font-bold uppercase tracking-tighter"
                 >
-                  {loading ? "পরিবর্তন হচ্ছে..." : "পাসওয়ার্ড পরিবর্তন করুন"}
+                  {loading ? "Changing..." : "Change Password"}
                 </Button>
               </div>
             </form>

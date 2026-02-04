@@ -74,11 +74,11 @@ export function DashboardCalendar({ blockedDates = [], bookedDates = [] }: Dashb
         <div className="space-y-3 pt-6 border-t border-border/40">
             <div className="flex items-center gap-3 group transition-all">
                 <div className="h-2.5 w-2.5 rounded-full bg-red-600/80 shadow-[0_0_8px_rgba(220,38,38,0.3)]" />
-                <span className="text-xs text-muted-foreground/90 font-medium group-hover:text-foreground transition-colors">অফ-ডে (ব্লক করা)</span>
+                <span className="text-xs text-muted-foreground/90 font-medium group-hover:text-foreground transition-colors">Off-day (Blocked)</span>
             </div>
             <div className="flex items-center gap-3 group transition-all">
                 <div className="h-2.5 w-2.5 rounded-full bg-[#FF6B00] shadow-[0_0_8px_rgba(255,107,0,0.3)]" />
-                <span className="text-xs text-muted-foreground/90 font-medium group-hover:text-foreground transition-colors">বুকিং আছে</span>
+                <span className="text-xs text-muted-foreground/90 font-medium group-hover:text-foreground transition-colors">Booked</span>
             </div>
         </div>
       </CardContent>

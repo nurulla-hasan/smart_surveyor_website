@@ -132,7 +132,7 @@ export function CalculatorForm({ initialBookings = [] }: CalculatorFormProps) {
       }
       const res = await getBookings({ search, pageSize: "10" });
       if (res?.success) {
-        return res.data.bookings.map((b) => ({
+        return res.data.bookings.map((b: Booking) => ({
           value: b.id,
           label: b.title,
           original: b,

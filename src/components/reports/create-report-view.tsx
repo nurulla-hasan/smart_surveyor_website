@@ -25,13 +25,7 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import {
-  ArrowLeft,
-  Save,
-  FileText,
-  User,
-  MapPin,
-} from "lucide-react";
+import { ArrowLeft, Save, FileText, User, MapPin } from "lucide-react";
 import Link from "next/link";
 import {
   SearchableSelect,
@@ -46,13 +40,13 @@ import { SuccessToast, ErrorToast } from "@/lib/utils";
 import { Separator } from "@/components/ui/separator";
 
 const reportSchema = z.object({
-  title: z.string().min(1, "শিরোনাম প্রয়োজন"),
-  content: z.string().min(1, "বিবরণ প্রয়োজন"),
-  mouzaName: z.string().min(1, "মৌজার নাম প্রয়োজন"),
-  plotNo: z.string().min(1, "দাগ নং প্রয়োজন"),
-  areaSqFt: z.number().min(0, "সঠিক মাপ দিন"),
-  areaKatha: z.number().min(0, "সঠিক মাপ দিন"),
-  areaDecimal: z.number().min(0, "সঠিক মাপ দিন"),
+  title: z.string().min(1, "Title is required"),
+  content: z.string().min(1, "Description is required"),
+  mouzaName: z.string().min(1, "Mouza name is required"),
+  plotNo: z.string().min(1, "Plot No is required"),
+  areaSqFt: z.number().min(0, "Enter valid area"),
+  areaKatha: z.number().min(0, "Enter valid area"),
+  areaDecimal: z.number().min(0, "Enter valid area"),
   notes: z.string().optional(),
   reportFile: z.any().optional(),
 });
@@ -71,7 +65,7 @@ export function CreateReportView({
   const router = useRouter();
   const [loading, setLoading] = useState(false);
   const [selectedClient, setSelectedClient] = useState<SearchableOption | null>(
-    null
+    null,
   );
   const [selectedBooking, setSelectedBooking] =
     useState<SearchableOption | null>(null);
@@ -132,7 +126,7 @@ export function CreateReportView({
         try {
           // Fetch full booking details
           const res = await getBookingById(selectedBooking.value);
-          
+
           if (res?.success && res.data) {
             const booking = res.data;
             let foundData = false;
@@ -140,47 +134,57 @@ export function CreateReportView({
             // 1. Try savedMaps first
             if (booking.savedMaps && booking.savedMaps.length > 0) {
               const latestMap = booking.savedMaps[0]; // Assuming latest first or take first
-              
+
               if (latestMap.area || latestMap.perimeter) {
                 // Populate from Map
                 const decimal = Number(latestMap.area || 0);
                 form.setValue("areaDecimal", decimal);
-                
+
                 // Convert to others
                 const sqft = decimal * 435.6;
                 form.setValue("areaSqFt", Number(sqft.toFixed(2)));
                 form.setValue("areaKatha", Number((sqft / 720).toFixed(4)));
-                
+
                 // If calculations exist, try to overwrite sqft with more precise calc data
                 if (booking.calculations && booking.calculations.length > 0) {
-                   const latestCalc = booking.calculations[0];
-                   if (latestCalc.resultData?.areaSqFt) {
-                     form.setValue("areaSqFt", latestCalc.resultData.areaSqFt);
-                     // Re-calculate Katha to be consistent with SqFt
-                     form.setValue("areaKatha", Number((latestCalc.resultData.areaSqFt / 720).toFixed(4)));
-                   }
+                  const latestCalc = booking.calculations[0];
+                  if (latestCalc.resultData?.areaSqFt) {
+                    form.setValue("areaSqFt", latestCalc.resultData.areaSqFt);
+                    // Re-calculate Katha to be consistent with SqFt
+                    form.setValue(
+                      "areaKatha",
+                      Number((latestCalc.resultData.areaSqFt / 720).toFixed(4)),
+                    );
+                  }
                 }
-                
+
                 form.setValue("mouzaName", latestMap.name || "");
                 foundData = true;
-                SuccessToast("ম্যাপ থেকে ডাটা লোড করা হয়েছে");
+                SuccessToast("Data loaded from Map");
               }
             }
 
             // 2. If no map data, try Calculations
-            if (!foundData && booking.calculations && booking.calculations.length > 0) {
+            if (
+              !foundData &&
+              booking.calculations &&
+              booking.calculations.length > 0
+            ) {
               const latestCalc = booking.calculations[0];
               if (latestCalc.resultData) {
                 form.setValue("areaSqFt", latestCalc.resultData.areaSqFt);
                 form.setValue("areaKatha", latestCalc.resultData.areaKatha);
-                form.setValue("areaDecimal", latestCalc.resultData.areaDecimal || 0);
+                form.setValue(
+                  "areaDecimal",
+                  latestCalc.resultData.areaDecimal || 0,
+                );
                 foundData = true;
-                SuccessToast("ক্যালকুলেটর থেকে ডাটা লোড করা হয়েছে");
+                SuccessToast("Data loaded from Calculator");
               }
             }
 
             if (!foundData) {
-               // Optional: InfoToast("এই বুকিংয়ের জন্য কোনো পরিমাপ পাওয়া যায়নি");
+              // Optional: InfoToast("No measurements found for this booking");
             }
           }
         } catch (error) {
@@ -223,7 +227,7 @@ export function CreateReportView({
       }
       const res = await getClients({ search, pageSize: "10" });
       if (res?.success) {
-        return res.data.clients.map((c) => ({
+        return res.data.clients.map((c: any) => ({
           value: c.id,
           label: c.name,
           original: c,
@@ -231,7 +235,7 @@ export function CreateReportView({
       }
       return [];
     },
-    [initialClients]
+    [initialClients],
   );
 
   const fetchBookingOptions = useCallback(async (): Promise<
@@ -246,7 +250,7 @@ export function CreateReportView({
 
   const onSubmit = async (values: ReportFormValues) => {
     if (!selectedClient) {
-      ErrorToast("ক্লায়েন্ট সিলেক্ট করুন");
+      ErrorToast("Please select a client");
       return;
     }
 
@@ -258,38 +262,33 @@ export function CreateReportView({
         clientId: selectedClient.value,
         bookingId: selectedBooking?.value || null,
       };
-      
+
       // Remove file from payloadData to avoid sending it in JSON
       // eslint-disable-next-line @typescript-eslint/no-unused-vars
       const { reportFile, ...jsonPayload } = payloadData;
 
-      console.log("📤 Sending Report Payload:", {
-        jsonPayload,
-        reportFile: values.reportFile,
-      });
-
       const formData = new FormData();
       formData.append("data", JSON.stringify(jsonPayload));
-      
+
       if (values.reportFile instanceof File) {
         formData.append("reportFile", values.reportFile);
       }
 
       const res = await createReport(formData as any);
       if (res?.success) {
-        SuccessToast("রিপোর্ট সফলভাবে তৈরি করা হয়েছে");
+        SuccessToast("Report created successfully");
         router.push("/reports");
       } else {
-        ErrorToast(res?.message || "তৈরি করতে সমস্যা হয়েছে");
+        ErrorToast(res?.message || "Problem creating report");
       }
     } catch {
-      ErrorToast("কিছু ভুল হয়েছে");
+      ErrorToast("Something went wrong");
     } finally {
       setLoading(false);
     }
   };
 
-  const currentDate = new Date().toLocaleDateString("bn-BD", {
+  const currentDate = new Date().toLocaleDateString("en-US", {
     year: "numeric",
     month: "long",
     day: "numeric",
@@ -306,15 +305,15 @@ export function CreateReportView({
             </Button>
           </Link>
           <div>
-            <h1 className="text-2xl font-bold">নতুন রিপোর্ট</h1>
+            <h1 className="text-2xl font-bold">New Report</h1>
             <p className="text-sm text-muted-foreground">
-              PDF তৈরি করতে তথ্য পূরণ করুন।
+              Fill in the information to generate a PDF.
             </p>
           </div>
         </div>
         <Button onClick={form.handleSubmit(onSubmit)} disabled={loading}>
           <Save className="size-4" />
-          {loading ? "সেভ হচ্ছে..." : "রিপোর্ট সেভ করুন"}
+          {loading ? "Saving..." : "Save Report"}
         </Button>
       </div>
 
@@ -326,10 +325,10 @@ export function CreateReportView({
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
                 <FileText className="size-5 text-primary" />
-                রিপোর্টের তথ্য
+                Report Information
               </CardTitle>
               <CardDescription>
-                জরিপ এবং ক্লায়েন্টের তথ্য প্রদান করুন।
+                Provide survey and client information.
               </CardDescription>
             </CardHeader>
             <CardContent>
@@ -339,13 +338,13 @@ export function CreateReportView({
                   <div className="space-y-2">
                     <Label className="flex items-center gap-2">
                       <User className="size-4" />
-                      ক্লায়েন্ট
+                      Client
                     </Label>
                     <SearchableSelect
                       onSelect={setSelectedClient}
                       fetchOptions={fetchClientOptions}
                       value={selectedClient}
-                      placeholder="ক্লায়েন্ট সিলেক্ট করুন..."
+                      placeholder="Select client..."
                       renderOption={(option) => (
                         <div className="flex flex-col py-1">
                           <span className="font-bold text-sm">
@@ -362,12 +361,12 @@ export function CreateReportView({
                   {/* Booking Selection - shows after client is selected */}
                   {selectedClient && (
                     <div className="space-y-2">
-                      <Label>বুকিং (ঐচ্ছিক)</Label>
+                      <Label>Booking (Optional)</Label>
                       <SearchableSelect
                         onSelect={setSelectedBooking}
                         fetchOptions={fetchBookingOptions}
                         value={selectedBooking}
-                        placeholder="বুকিং সিলেক্ট করুন..."
+                        placeholder="Select booking..."
                         renderOption={(option) => (
                           <div className="flex flex-col py-1">
                             <span className="font-bold text-sm">
@@ -390,7 +389,9 @@ export function CreateReportView({
                     name="reportFile"
                     render={({ field: { name, onBlur, ref, onChange } }) => (
                       <FormItem>
-                        <FormLabel>সার্ভে ম্যাপ / ইমেজ আপলোড (ঐচ্ছিক)</FormLabel>
+                        <FormLabel>
+                          Survey Map / Image Upload (Optional)
+                        </FormLabel>
                         <FormControl>
                           <div className="flex items-center gap-4">
                             <Input
@@ -420,7 +421,7 @@ export function CreateReportView({
                     name="title"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>শিরোনাম</FormLabel>
+                        <FormLabel>Title</FormLabel>
                         <FormControl>
                           <Input
                             placeholder="e.g. Survey Report - Plot 102"
@@ -437,10 +438,10 @@ export function CreateReportView({
                     name="content"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>বিবরণ</FormLabel>
+                        <FormLabel>Description</FormLabel>
                         <FormControl>
                           <Textarea
-                            placeholder="জরিপের বিস্তারিত বিবরণ..."
+                            placeholder="Detailed description of the survey..."
                             rows={3}
                             {...field}
                           />
@@ -461,7 +462,7 @@ export function CreateReportView({
                         <FormItem>
                           <FormLabel className="flex items-center gap-2">
                             <MapPin className="size-3" />
-                            মৌজার নাম
+                            Mouza Name
                           </FormLabel>
                           <FormControl>
                             <Input placeholder="e.g. Uttara" {...field} />
@@ -476,7 +477,7 @@ export function CreateReportView({
                       name="plotNo"
                       render={({ field }) => (
                         <FormItem>
-                          <FormLabel>দাগ নং</FormLabel>
+                          <FormLabel>Plot No</FormLabel>
                           <FormControl>
                             <Input placeholder="e.g. 102" {...field} />
                           </FormControl>
@@ -490,7 +491,7 @@ export function CreateReportView({
                       name="areaSqFt"
                       render={({ field }) => (
                         <FormItem>
-                          <FormLabel>বর্গফুট (Sq. Ft)</FormLabel>
+                          <FormLabel>Area (Sq. Ft)</FormLabel>
                           <FormControl>
                             <Input
                               type="number"
@@ -500,7 +501,7 @@ export function CreateReportView({
                                 handleSqFtChange(
                                   e.target.value === ""
                                     ? 0
-                                    : Number(e.target.value)
+                                    : Number(e.target.value),
                                 )
                               }
                             />
@@ -520,7 +521,7 @@ export function CreateReportView({
                       name="areaKatha"
                       render={({ field }) => (
                         <FormItem>
-                          <FormLabel>কাঠা</FormLabel>
+                          <FormLabel>Katha</FormLabel>
                           <FormControl>
                             <Input
                               type="number"
@@ -530,7 +531,7 @@ export function CreateReportView({
                                 handleKathaChange(
                                   e.target.value === ""
                                     ? 0
-                                    : Number(e.target.value)
+                                    : Number(e.target.value),
                                 )
                               }
                             />
@@ -545,7 +546,7 @@ export function CreateReportView({
                       name="areaDecimal"
                       render={({ field }) => (
                         <FormItem>
-                          <FormLabel>শতাংশ</FormLabel>
+                          <FormLabel>Decimal</FormLabel>
                           <FormControl>
                             <Input
                               type="number"
@@ -555,7 +556,7 @@ export function CreateReportView({
                                 handleDecimalChange(
                                   e.target.value === ""
                                     ? 0
-                                    : Number(e.target.value)
+                                    : Number(e.target.value),
                                 )
                               }
                             />
@@ -574,10 +575,10 @@ export function CreateReportView({
                     name="notes"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>সার্ভেয়র নোটস (ঐচ্ছিক)</FormLabel>
+                        <FormLabel>Surveyor Notes (Optional)</FormLabel>
                         <FormControl>
                           <Textarea
-                            placeholder="অতিরিক্ত মন্তব্য..."
+                            placeholder="Additional comments..."
                             rows={2}
                             {...field}
                           />
@@ -597,7 +598,7 @@ export function CreateReportView({
           <Card className="h-fit">
             <CardHeader className="pb-2">
               <CardTitle className="text-sm text-muted-foreground">
-                লাইভ প্রিভিউ
+                Live Preview
               </CardTitle>
             </CardHeader>
             <CardContent>
@@ -673,9 +674,13 @@ export function CreateReportView({
                   </h2>
                   <div className="grid grid-cols-2 gap-2 text-xs">
                     <p>
-                      <span className="text-gray-600">Total Area (Sq. Ft):</span>
+                      <span className="text-gray-600">
+                        Total Area (Sq. Ft):
+                      </span>
                     </p>
-                    <p className="font-bold">{watchedValues.areaSqFt || "0.00"}</p>
+                    <p className="font-bold">
+                      {watchedValues.areaSqFt || "0.00"}
+                    </p>
                     <p>
                       <span className="text-gray-600">Total Area (Katha):</span>
                     </p>
@@ -683,7 +688,9 @@ export function CreateReportView({
                       {watchedValues.areaKatha || "0.0000"}
                     </p>
                     <p>
-                      <span className="text-gray-600">Total Area (Decimal):</span>
+                      <span className="text-gray-600">
+                        Total Area (Decimal):
+                      </span>
                     </p>
                     <p className="font-bold">
                       {watchedValues.areaDecimal || "0.0000"}

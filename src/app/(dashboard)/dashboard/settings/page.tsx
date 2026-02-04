@@ -9,8 +9,8 @@ import { getCurrentUser } from "@/services/auth";
 import { getInitials } from "@/lib/utils";
 
 export const metadata = {
-  title: "সেটিংস | Smart Surveyor",
-  description: "আপনার প্রোফাইল এবং সিকিউরিটি সেটিংস পরিচালনা করুন।",
+  title: "Settings | Smart Surveyor",
+  description: "Manage your profile and security settings.",
 };
 
 const InfoItem = ({ icon: Icon, label, value }: { icon: any, label: string, value: string | number | undefined }) => (
@@ -31,8 +31,8 @@ export default async function SettingsPage() {
   return (
     <div className="space-y-6">
       <PageHeader 
-        title="সেটিংস" 
-        description="আপনার প্রোফাইল এবং সিকিউরিটি সেটিংস পরিচালনা করুন।"
+        title="Settings" 
+        description="Manage your profile and security settings."
       />
       
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
@@ -52,7 +52,7 @@ export default async function SettingsPage() {
           </CardHeader>
           <CardContent className="space-y-4">
             <div className="p-4 rounded-lg bg-muted/50 border italic text-sm text-center">
-              &quot;{profileData?.bio || 'আপনার বায়ো এখনো যুক্ত করা হয়নি।'}&quot;
+              &quot;{profileData?.bio || 'Your bio has not been added yet.'}&quot;
             </div>
             <div className="flex flex-col gap-2 pt-4">
               <EditProfileModal profileData={profileData} />
@@ -66,20 +66,20 @@ export default async function SettingsPage() {
           <CardHeader>
             <CardTitle className="text-lg font-black uppercase tracking-tighter flex items-center gap-2">
               <Briefcase className="h-5 w-5" />
-              ব্যক্তিগত ও পেশাদার তথ্য
+              Personal & Professional Information
             </CardTitle>
           </CardHeader>
           <CardContent>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <InfoItem icon={Mail} label="ইমেইল" value={profileData?.email} />
-              <InfoItem icon={Phone} label="ফোন নম্বর" value={profileData?.phone} />
-              <InfoItem icon={Building2} label="কোম্পানি" value={profileData?.companyName} />
-              <InfoItem icon={Award} label="লাইসেন্স নম্বর" value={profileData?.licenseNo} />
-              <InfoItem icon={Briefcase} label="অভিজ্ঞতা" value={profileData?.experience ? `${profileData.experience} বছর` : undefined} />
-              <InfoItem icon={MapPin} label="অবস্থান" value={profileData?.location} />
+              <InfoItem icon={Mail} label="Email" value={profileData?.email} />
+              <InfoItem icon={Phone} label="Phone Number" value={profileData?.phone} />
+              <InfoItem icon={Building2} label="Company" value={profileData?.companyName} />
+              <InfoItem icon={Award} label="License Number" value={profileData?.licenseNo} />
+              <InfoItem icon={Briefcase} label="Experience" value={profileData?.experience ? `${profileData.experience} years` : undefined} />
+              <InfoItem icon={MapPin} label="Location" value={profileData?.location} />
             </div>
             <div className="mt-4 p-4 rounded-lg border bg-card/50">
-              <p className="text-xs text-muted-foreground font-medium mb-1">ঠিকানা</p>
+              <p className="text-xs text-muted-foreground font-medium mb-1">Address</p>
               <p className="text-sm font-semibold">{profileData?.address || 'N/A'}</p>
             </div>
           </CardContent>

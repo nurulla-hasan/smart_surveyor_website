@@ -29,7 +29,7 @@ interface OverviewChartProps {
 
 const chartConfig = {
   total: {
-    label: "বুকিং",
+    label: "Booking",
     color: "#3b82f6",
   },
 } satisfies ChartConfig;
@@ -43,14 +43,14 @@ export function OverviewChart({ data = [] }: OverviewChartProps) {
     <Card className="flex flex-col">
       <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-6">
         <div className="space-y-1">
-          <CardTitle className="text-xl font-bold">পরিসংখ্যান</CardTitle>
-          <CardDescription className="text-xs">বছরের মাসিক বুকিং এক্টিভিটি।</CardDescription>
+          <CardTitle className="text-xl font-bold">Statistics</CardTitle>
+          <CardDescription className="text-xs">Monthly booking activity of the year.</CardDescription>
         </div>
         <Select
           value={currentYear}
           onValueChange={(value) => updateFilter("year", value)}
         >
-          <SelectTrigger className="w-[110px] h-8 text-xs border-border/50">
+          <SelectTrigger className="w-27.5 h-8 text-xs border-border/50">
             <SelectValue placeholder="Year" />
           </SelectTrigger>
           <SelectContent>
@@ -64,7 +64,7 @@ export function OverviewChart({ data = [] }: OverviewChartProps) {
       </CardHeader>
       <CardContent className="flex-1 pb-0">
         {data.length > 0 ? (
-          <ChartContainer config={chartConfig} className="mx-auto aspect-video max-h-[300px] w-full">
+          <ChartContainer config={chartConfig} className="mx-auto aspect-video max-h-75 w-full">
             <LineChart
               accessibilityLayer
               data={data}
@@ -125,8 +125,8 @@ export function OverviewChart({ data = [] }: OverviewChartProps) {
             </LineChart>
           </ChartContainer>
         ) : (
-          <div className="flex h-[300px] items-center justify-center text-muted-foreground  text-sm">
-            কোনো তথ্য পাওয়া যায়নি
+          <div className="flex h-75 items-center justify-center text-muted-foreground  text-sm">
+            No data found
           </div>
         )}
       </CardContent>

@@ -67,33 +67,33 @@ export default async function DashboardPage({
       {/* Stats Cards Row */}
       <div className="grid gap-4 grid-cols-1 sm:grid-cols-2 lg:grid-cols-4">
         <StatCard
-          title="মোট আয়"
-          value={`৳${stats.totalIncome}`}
-          description="নগদ সংগ্রহ"
+          title="Total Income"
+          value={`TK ${stats.totalIncome}`}
+          description="Cash collection"
           icon={TrendingUp}
           color="text-emerald-500"
         />
 
         <StatCard
-          title="বকেয়া টাকা"
-          value={`৳${stats.totalDue}`}
-          description="সংগ্রহ করতে হবে"
+          title="Total Due"
+          value={`TK ${stats.totalDue}`}
+          description="To be collected"
           icon={ActivityIcon}
           color="text-red-500"
         />
 
         <StatCard
-          title="মোট বুকিং"
+          title="Total Bookings"
           value={stats.totalBookings}
-          description="সর্বমোট"
+          description="Grand total"
           icon={CalendarDays}
           color="text-emerald-500"
         />
 
         <StatCard
-          title="সম্পন্ন"
+          title="Completed"
           value={stats.completedBookings}
-          description="শেষ কাজ"
+          description="Finished tasks"
           icon={CheckCircle2}
           color="text-emerald-500"
         />
@@ -106,7 +106,7 @@ export default async function DashboardPage({
 
           <Card>
             <CardHeader className="flex items-center justify-between">
-              <CardTitle>সাম্প্রতিক কার্যক্রম</CardTitle>
+              <CardTitle>Recent Activities</CardTitle>
               <Badge 
                 variant="success" 
                 className="uppercase flex gap-1.5 items-center"
@@ -115,7 +115,7 @@ export default async function DashboardPage({
                   <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
                   <span className="relative inline-flex rounded-full h-1.5 w-1.5 bg-emerald-500"></span>
                 </span>
-                রিয়েল-টাইম
+                Real-time
               </Badge>
             </CardHeader>
             <CardContent>
@@ -147,7 +147,7 @@ export default async function DashboardPage({
                   ))
                 ) : (
                   <div className="text-center py-8 text-muted-foreground text-sm">
-                    কোনো সাম্প্রতিক কার্যক্রম পাওয়া যায়নি
+                    No recent activities found
                   </div>
                 )}
               </div>
@@ -166,10 +166,10 @@ export default async function DashboardPage({
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
                 <Inbox className="h-5 w-5 text-orange-500" />
-                অপেক্ষমান অনুরোধ
+                Pending Requests
               </CardTitle>
               <CardDescription className="text-xs">
-                পাবলিক পেজ থেকে নতুন জরিপ অনুরোধ।
+                New survey requests from public page.
               </CardDescription>
             </CardHeader>
             <CardContent className="flex flex-col items-center justify-center">
@@ -182,7 +182,7 @@ export default async function DashboardPage({
                               <p className="text-sm font-bold uppercase tracking-tight">{request.title}</p>
                               <div className="flex items-center justify-between mt-1">
                                  <p className="text-xs text-muted-foreground">
-                                   ক্লায়েন্ট: <span className="font-semibold text-foreground">{request.client?.name || "N/A"}</span>
+                                   Client: <span className="font-semibold text-foreground">{request.client?.name || "N/A"}</span>
                                  </p>
                                  {request.bookingDate && (
                                    <p className="text-[10px] text-muted-foreground">
@@ -194,12 +194,12 @@ export default async function DashboardPage({
                         </div>
                      ))}
                   </div>
-                  <div className="w-full pt-4 mt-2 border-t border-border/50">
+                  <div className="w-full pt-4 mt-2 border-t border-border/50 text-center">
                     <Link 
                       href="/bookings?tab=requests" 
                       className="flex items-center justify-center gap-2 text-xs font-semibold text-primary hover:underline transition-all"
                     >
-                      সব অনুরোধ দেখুন
+                      View all requests
                     </Link>
                   </div>
                 </>
@@ -208,7 +208,7 @@ export default async function DashboardPage({
                   <div className="h-12 w-12 rounded-full bg-muted flex items-center justify-center">
                     <Inbox className="h-6 w-6" />
                   </div>
-                  <p className="text-xs font-medium">কোনো অপেক্ষমান অনুরোধ নেই</p>
+                  <p className="text-xs font-medium">No pending requests</p>
                 </div>
               )}
             </CardContent>

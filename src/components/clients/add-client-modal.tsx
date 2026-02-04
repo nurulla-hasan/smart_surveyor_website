@@ -15,15 +15,15 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
-import { Plus, UserPlus, Pencil } from "lucide-react";
+import { Plus } from "lucide-react";
 import { Client } from "@/types/clients";
 import { createClient, updateClient } from "@/services/clients";
 import { SuccessToast, ErrorToast } from "@/lib/utils";
 
 const clientSchema = z.object({
-  name: z.string().min(1, "নাম প্রয়োজন"),
-  email: z.string().email("সঠিক ইমেইল দিন").or(z.literal("")),
-  phone: z.string().min(1, "ফোন নম্বর প্রয়োজন"),
+  name: z.string().min(1, "Name is required"),
+  email: z.string().email("Invalid email address").or(z.literal("")),
+  phone: z.string().min(1, "Phone number is required"),
   address: z.string().optional(),
 });
 
@@ -67,14 +67,14 @@ export function AddClientModal({ client, trigger }: AddClientModalProps) {
         : await createClient(values);
 
       if (res?.success) {
-        SuccessToast(client ? "ক্লায়েন্ট সফলভাবে আপডেট করা হয়েছে" : "ক্লায়েন্ট সফলভাবে যোগ করা হয়েছে");
+        SuccessToast(client ? "Client updated successfully" : "Client added successfully");
         form.reset();
         setIsOpen(false);
       } else {
-        ErrorToast(res?.message || (client ? "আপডেট করতে সমস্যা হয়েছে" : "যোগ করতে সমস্যা হয়েছে"));
+        ErrorToast(res?.message || (client ? "Problem updating client" : "Problem adding client"));
       }
-    } catch (error) {
-      ErrorToast("কিছু ভুল হয়েছে");
+    } catch {
+      ErrorToast("Something went wrong");
     } finally {
       setLoading(false);
     }
@@ -87,13 +87,13 @@ export function AddClientModal({ client, trigger }: AddClientModalProps) {
         setIsOpen(open);
         if (!open && !client) form.reset();
       }}
-      title={client ? "ক্লায়েন্ট এডিট করুন" : "নতুন ক্লায়েন্ট যোগ করুন"}
-      description={client ? "ক্লায়েন্টের তথ্য আপডেট করতে নিচের ফর্মটি পূরণ করুন।" : "আপনার কাস্টমার ডাটাবেসে নতুন ক্লায়েন্ট যোগ করতে বিস্তারিত তথ্য দিন।"}
+      title={client ? "Edit Client" : "Add New Client"}
+      description={client ? "Fill in the form below to update client information." : "Provide details to add a new client to your customer database."}
       actionTrigger={
         trigger || (
           <Button>
             <Plus className="h-5 w-5" />
-            ক্লায়েন্ট যোগ করুন
+            Add Client
           </Button>
         )
       }
@@ -106,7 +106,7 @@ export function AddClientModal({ client, trigger }: AddClientModalProps) {
             render={({ field }) => (
               <FormItem>
                 <FormLabel className="text-sm font-semibold uppercase">
-                  নাম
+                  Name
                 </FormLabel>
                 <FormControl>
                   <Input placeholder="e.g. Golap Hasan" {...field} />
@@ -123,7 +123,7 @@ export function AddClientModal({ client, trigger }: AddClientModalProps) {
               render={({ field }) => (
                 <FormItem>
                   <FormLabel className="text-sm font-semibold uppercase">
-                    ইমেইল
+                    Email
                   </FormLabel>
                   <FormControl>
                     <Input placeholder="example@mail.com" {...field} />
@@ -139,7 +139,7 @@ export function AddClientModal({ client, trigger }: AddClientModalProps) {
               render={({ field }) => (
                 <FormItem>
                   <FormLabel className="text-sm font-semibold uppercase">
-                    ফোন নম্বর
+                    Phone Number
                   </FormLabel>
                   <FormControl>
                     <Input placeholder="017XXXXXXXX" {...field} />
@@ -156,7 +156,7 @@ export function AddClientModal({ client, trigger }: AddClientModalProps) {
             render={({ field }) => (
               <FormItem>
                 <FormLabel className="text-sm font-semibold uppercase">
-                  ঠিকানা
+                  Address
                 </FormLabel>
                 <FormControl>
                   <Input placeholder="e.g. Dhaka, Bangladesh" {...field} />
@@ -174,14 +174,14 @@ export function AddClientModal({ client, trigger }: AddClientModalProps) {
               className="flex-1 font-semibold uppercase"
               disabled={loading}
             >
-              বাতিল
+              Cancel
             </Button>
             <Button 
               type="submit" 
               className="flex-1 font-semibold uppercase"
               disabled={loading}
             >
-              {loading ? "লোডিং..." : client ? "আপডেট করুন" : "যোগ করুন"}
+              {loading ? "Loading..." : client ? "Update Client" : "Add Client"}
             </Button>
           </div>
         </form>

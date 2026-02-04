@@ -28,7 +28,7 @@ export default async function ReportsPage({
           title="Reports"
           description="View and manage survey reports."
         />
-        <Link href="/reports/new">
+        <Link href="/dashboard/reports/new">
           <Button>
             <Plus/>
             Create Report

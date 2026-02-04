@@ -23,7 +23,7 @@ export function MapGeoJSONLayer({ data, mapKey }: MapGeoJSONLayerProps) {
       const props = feature.properties as Record<string, any>;
       const popupContent = `
         <div class="text-xs font-sans p-2">
-            <div class="font-bold border-b border-border pb-1 mb-2 text-primary">প্লট তথ্য</div>
+            <div class="font-bold border-b border-border pb-1 mb-2 text-primary">Plot Information</div>
             <div class="space-y-1">
                 ${Object.entries(props)
                   .map(

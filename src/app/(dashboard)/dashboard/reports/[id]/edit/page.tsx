@@ -4,8 +4,8 @@ import { EditReportView } from "@/components/reports/edit-report-view";
 import { notFound } from "next/navigation";
 
 export const metadata = {
-  title: "রিপোর্ট এডিট করুন | Smart Surveyor",
-  description: "জরিপ রিপোর্ট এডিট করুন।",
+  title: "Edit Report | Smart Surveyor",
+  description: "Edit survey report.",
 };
 
 export default async function EditReportPage({

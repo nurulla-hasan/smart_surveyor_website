@@ -10,7 +10,7 @@ import { Badge } from "@/components/ui/badge";
 export const reportColumns: ColumnDef<Report>[] = [
   {
     accessorKey: "title",
-    header: "শিরোনাম",
+    header: "Title",
     cell: ({ row }) => {
       const title = row.original.title;
       return (
@@ -25,7 +25,7 @@ export const reportColumns: ColumnDef<Report>[] = [
   },
   {
     accessorKey: "client",
-    header: "ক্লায়েন্ট",
+    header: "Client",
     cell: ({ row }) => (
       <span className="text-muted-foreground">
         {row.original.client?.name || "N/A"}
@@ -34,7 +34,7 @@ export const reportColumns: ColumnDef<Report>[] = [
   },
   {
     accessorKey: "mouzaName",
-    header: "মৌজা",
+    header: "Mouza",
     cell: ({ row }) => (
       <div className="flex items-center gap-1.5">
         <MapPin className="size-3 text-muted-foreground" />
@@ -44,21 +44,21 @@ export const reportColumns: ColumnDef<Report>[] = [
   },
   {
     accessorKey: "plotNo",
-    header: "দাগ নং",
+    header: "Plot No",
     cell: ({ row }) => (
       <Badge variant="secondary">{row.original.plotNo}</Badge>
     ),
   },
   {
     accessorKey: "areaDecimal",
-    header: "এলাকা (শতাংশ)",
+    header: "Area (Decimal)",
     cell: ({ row }) => (
-      <span className="font-medium">{row.original.areaDecimal} শতাংশ</span>
+      <span className="font-medium">{row.original.areaDecimal} Decimal</span>
     ),
   },
   {
     accessorKey: "createdAt",
-    header: "তৈরির তারিখ",
+    header: "Created Date",
     cell: ({ row }) => (
       <div className="flex items-center gap-2 text-muted-foreground">
         <span>{format(new Date(row.original.createdAt), "MMM d, yyyy")}</span>
@@ -67,7 +67,7 @@ export const reportColumns: ColumnDef<Report>[] = [
   },
   {
     id: "actions",
-    header: () => <div className="text-right mr-3">পদক্ষেপ</div>,
+    header: () => <div className="text-right mr-3">Actions</div>,
     cell: ({ row }) => <ReportActions report={row.original} />,
   },
 ];

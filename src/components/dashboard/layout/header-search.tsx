@@ -176,13 +176,13 @@ export function HeaderSearch() {
               <PlusCircle className="mr-2 h-4 w-4" />
               <span>New Booking</span>
             </CommandItem>
-            <CommandItem onSelect={() => handleSelect('/reports/new')}>
+            <CommandItem onSelect={() => handleSelect('/dashboard/reports/new')}>
               <FileText className="mr-2 h-4 w-4" />
-              <span>নতুন রিপোর্ট</span>
+              <span>New Report</span>
             </CommandItem>
-            <CommandItem onSelect={() => handleSelect('/calculator')}>
+            <CommandItem onSelect={() => handleSelect('/dashboard/calculator')}>
               <Calculator className="mr-2 h-4 w-4" />
-              <span>ল্যান্ড ক্যালকুলেটর</span>
+              <span>Land Calculator</span>
             </CommandItem>
           </CommandGroup>
         </CommandList>

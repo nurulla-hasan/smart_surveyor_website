@@ -63,11 +63,11 @@ export function SurveyControls({
       <div className="flex justify-start w-full pointer-events-none">
         <div className="bg-background/90 backdrop-blur-md border px-4 py-2 rounded-xl shadow-lg pointer-events-auto flex items-center gap-4">
           <div className="flex flex-col items-center border-r pr-4">
-            <span className="text-[10px] uppercase text-muted-foreground font-medium">এলাকা</span>
-            <span className="text-lg font-bold">{areaInfo.decimal} <span className="text-sm font-normal text-muted-foreground">শতাংশ</span></span>
+            <span className="text-[10px] uppercase text-muted-foreground font-medium">Area</span>
+            <span className="text-lg font-bold">{areaInfo.decimal} <span className="text-sm font-normal text-muted-foreground">Decimal</span></span>
           </div>
           <div className="flex flex-col items-center">
-            <span className="text-[10px] uppercase text-muted-foreground font-medium">বর্গফুট</span>
+            <span className="text-[10px] uppercase text-muted-foreground font-medium">Square Feet</span>
             <span className="text-lg font-bold">{areaInfo.sqft.toLocaleString()} <span className="text-sm font-normal text-muted-foreground">sqft</span></span>
           </div>
         </div>
@@ -93,7 +93,7 @@ export function SurveyControls({
               </Button>
             </TooltipTrigger>
             <TooltipContent side="left">
-              <p>আমার অবস্থান</p>
+              <p>My Location</p>
             </TooltipContent>
           </Tooltip>
         </TooltipProvider>
@@ -110,7 +110,7 @@ export function SurveyControls({
               </Button>
             </TooltipTrigger>
             <TooltipContent side="left">
-              <p>পয়েন্ট যোগ করুন</p>
+              <p>Add Point</p>
             </TooltipContent>
           </Tooltip>
         </TooltipProvider>
@@ -129,11 +129,11 @@ export function SurveyControls({
                   className="flex-1"
                 >
                   <Undo2 className="size-4" />
-                  মুছুন
+                  Undo
                 </Button>
               </TooltipTrigger>
               <TooltipContent>
-                <p>শেষ পয়েন্টটি মুছে ফেলুন</p>
+                <p>Remove last point</p>
               </TooltipContent>
             </Tooltip>
 
@@ -149,7 +149,7 @@ export function SurveyControls({
                 </Button>
               </TooltipTrigger>
               <TooltipContent>
-                <p>সব মুছে নতুন করে শুরু করুন</p>
+                <p>Reset all points</p>
               </TooltipContent>
             </Tooltip>
 
@@ -161,11 +161,11 @@ export function SurveyControls({
                   className="flex-[1.2]"
                 >
                   {isPending ? <Loader2 className="size-4 animate-spin" /> : <Save className="size-4" />}
-                  সেভ
+                  Save
                 </Button>
               </TooltipTrigger>
               <TooltipContent>
-                <p>জরিপ সেভ করুন</p>
+                <p>Save Survey</p>
               </TooltipContent>
             </Tooltip>
           </TooltipProvider>

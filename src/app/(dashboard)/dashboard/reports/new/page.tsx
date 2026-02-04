@@ -3,8 +3,8 @@ import { getBookings } from "@/services/bookings";
 import { CreateReportView } from "@/components/reports/create-report-view";
 
 export const metadata = {
-  title: "নতুন রিপোর্ট | Smart Surveyor",
-  description: "নতুন জরিপ রিপোর্ট তৈরি করুন।",
+  title: "New Report | Smart Surveyor",
+  description: "Create a new survey report.",
 };
 
 export default async function NewReportPage() {

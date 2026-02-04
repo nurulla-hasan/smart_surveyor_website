@@ -15,7 +15,7 @@ import Link from "next/link";
 import { Report } from "@/types/reports";
 import { Separator } from "@/components/ui/separator";
 import { format } from "date-fns";
-import { bn } from "date-fns/locale";
+import { enUS } from "date-fns/locale";
 import { toPng } from "html-to-image";
 import jsPDF from "jspdf";
 
@@ -67,15 +67,15 @@ export function ReportDetailsView({ report }: ReportDetailsViewProps) {
             </Button>
           </Link>
           <div>
-            <h1 className="text-2xl font-bold">রিপোর্ট ডিটেইলস</h1>
+            <h1 className="text-2xl font-bold">Report Details</h1>
             <p className="text-sm text-muted-foreground">
-              রিপোর্টের বিস্তারিত তথ্য এবং ডাউনলোড।
+              Detailed report information and download.
             </p>
           </div>
         </div>
         <Button onClick={downloadPDF} disabled={downloading}>
           <Download className="size-4 mr-2" />
-          {downloading ? "ডাউনলোড হচ্ছে..." : "PDF ডাউনলোড"}
+          {downloading ? "Downloading..." : "Download PDF"}
         </Button>
       </div>
 
@@ -92,7 +92,7 @@ export function ReportDetailsView({ report }: ReportDetailsViewProps) {
               </div>
               <div className="text-right">
                 <p className="font-bold text-lg">Smart Surveyor</p>
-                <p className="text-xs text-emerald-100">Date: {format(new Date(report.createdAt), "dd MMMM, yyyy", { locale: bn })}</p>
+                <p className="text-xs text-emerald-100">Date: {format(new Date(report.createdAt), "dd MMMM, yyyy", { locale: enUS })}</p>
                 <p className="text-xs text-emerald-100">Report ID: #{report.id.slice(-6)}</p>
               </div>
             </div>

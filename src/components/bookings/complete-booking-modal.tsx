@@ -91,7 +91,7 @@ export function CompleteBookingModal({ bookingId, trigger, onSuccess }: Complete
               name="amountReceived"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel className="text-sm font-semibold uppercase">Received (৳)</FormLabel>
+                  <FormLabel className="text-sm font-semibold uppercase">Received (TK)</FormLabel>
                   <FormControl>
                     <Input type="number" placeholder="0" {...field} />
                   </FormControl>
@@ -105,7 +105,7 @@ export function CompleteBookingModal({ bookingId, trigger, onSuccess }: Complete
               name="amountDue"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel className="text-sm font-semibold uppercase">Due (৳)</FormLabel>
+                  <FormLabel className="text-sm font-semibold uppercase">Due (TK)</FormLabel>
                   <FormControl>
                     <Input type="number" placeholder="0" {...field} />
                   </FormControl>
