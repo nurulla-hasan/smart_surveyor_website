@@ -2,8 +2,9 @@ import { getCalendarData } from "@/services/dashboard";
 import { getBookings } from "@/services/bookings";
 import { BookingsView } from "@/components/bookings/bookings-view";
 import { format } from "date-fns";
-import { SearchParams } from "@/types/global.type";
-import { Suspense } from "react";
+import { QueryParams } from "@/types/global.type";
+import PageHeader from "@/components/ui/custom/page-header";
+import { CreateBookingModal } from "@/components/bookings/create-booking-modal";
 
 export const metadata = {
   title: "Bookings | Smart Surveyor",
@@ -13,74 +14,70 @@ export const metadata = {
 export default async function BookingsPage({
   searchParams,
 }: {
-  searchParams: SearchParams;
+  searchParams: Promise<QueryParams>;
 }) {
   const params = await searchParams;
   const now = new Date();
-  
-  // Parse month/year from URL or use current date for calendar dot indicators
-  const month = typeof params.month === "string" ? parseInt(params.month) : now.getMonth() + 1;
-  const year = typeof params.year === "string" ? parseInt(params.year) : now.getFullYear();
-  const page = typeof params.page === "string" ? params.page : "1";
-  const pageSize = typeof params.pageSize === "string" ? params.pageSize : "10";
 
-  // Determine active tab and filters
-  const activeTab = typeof params.tab === "string" ? params.tab : "upcoming";
-  const dateFilter = typeof params.date === "string" ? params.date : (activeTab === "upcoming" ? format(now, "yyyy-MM-dd") : undefined);
-
-  let statusFilter = "upcoming";
-  
-  if (activeTab === "pending") {
-    statusFilter = "pending";
-  } else if (activeTab === "past") {
-    statusFilter = "past";
-  } else {
-    statusFilter = "upcoming";
-  }
-
-  // Fetch data in parallel since rate limits are removed
+  // Fetch data in parallel
   const [calendarResponse, bookingsResponse] = await Promise.all([
-    getCalendarData(month, year),
-    getBookings({ 
-      filter: statusFilter, 
-      date: statusFilter === "upcoming" ? dateFilter : undefined,
-      page,
-      pageSize 
-    })
+    getCalendarData(params),
+    getBookings({
+      ...params,
+      filter: params.tab || "upcoming",
+      date:
+        params.tab === "upcoming" || !params.tab
+          ? params.date || format(now, "yyyy-MM-dd")
+          : undefined,
+    }),
   ]);
-  
-  // Only fetch pending count if current filter is not pending
-  let requestCount = 0;
-  if (statusFilter === "pending") {
-    requestCount = bookingsResponse?.success ? bookingsResponse.data.meta.totalItems : 0;
-  } else {
-    const pendingCountResponse = await getBookings({ filter: "pending", pageSize: "1" });
-    requestCount = pendingCountResponse?.success ? pendingCountResponse.data.meta.totalItems : 0;
-  }
-  
-  // Prepare data
-  const bookedDates = (calendarResponse?.data?.bookedDates || []).map((d: { date: string }) => new Date(d.date));
-  const blockedDates = (calendarResponse?.data?.blockedDates || []).map((d: { date: string }) => new Date(d.date));
-  
-  const bookingsData = bookingsResponse;
 
-  const initialBookings = bookingsData?.success ? bookingsData.data.bookings : [];
-  const meta = bookingsData?.success ? bookingsData.data.meta : {
-    totalItems: 0,
-    totalPages: 0,
-    currentPage: 1,
-    pageSize: 10
-  };
+  // Fetch pending count for the badge
+  const pendingCountResponse = await getBookings({
+    filter: "pending",
+    pageSize: "1",
+  });
+  const requestCount = pendingCountResponse?.success
+    ? pendingCountResponse.data.meta.totalItems
+    : 0;
+
+  // Prepare data
+  const bookedDates = (calendarResponse?.data?.bookedDates || []).map(
+    (d: { date: string }) => new Date(d.date),
+  );
+  const blockedDates = (calendarResponse?.data?.blockedDates || []).map(
+    (d: { date: string }) => new Date(d.date),
+  );
+
+  const initialBookings = bookingsResponse?.success
+    ? bookingsResponse.data.bookings
+    : [];
+  const meta = bookingsResponse?.success
+    ? bookingsResponse.data.meta
+    : {
+        totalItems: 0,
+        totalPages: 0,
+        currentPage: 1,
+        pageSize: 10,
+      };
 
   return (
-    <Suspense fallback={<div>Loading...</div>}>
-      <BookingsView 
+    <div className="space-y-6">
+      <div className="flex justify-between">
+        <PageHeader
+          title="Bookings"
+          description="Manage your survey appointments and requests."
+        />
+        <CreateBookingModal />
+      </div>
+
+      <BookingsView
         bookedDates={bookedDates}
         blockedDates={blockedDates}
         initialBookings={initialBookings}
         requestCount={requestCount}
         meta={meta}
       />
-    </Suspense>
+    </div>
   );
 }

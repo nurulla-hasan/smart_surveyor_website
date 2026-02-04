@@ -24,7 +24,7 @@ import { SuccessToast, ErrorToast } from "@/lib/utils";
 import { useCallback, useEffect } from "react";
 import { SearchableSelect, SearchableOption } from "@/components/ui/custom/searchable-select";
 import { format } from "date-fns";
-import { bn } from "date-fns/locale";
+import { enUS } from "date-fns/locale";
 import {
   Popover,
   PopoverContent,
@@ -35,13 +35,15 @@ import { cn } from "@/lib/utils";
 
 // Define Form Schema
 const formSchema = z.object({
-  title: z.string().min(1, "শিরোনাম প্রয়োজন"),
+  title: z.string().min(1, "Title is required"),
   description: z.string().optional(),
   propertyAddress: z.string().optional(),
   clientId: z.string().optional(),
   clientName: z.string().optional(),
   clientPhone: z.string().optional(),
-  bookingDate: z.date(),
+  bookingDate: z.date({
+    error: "Booking date is required",
+  }),
 });
 
 type FormValues = z.infer<typeof formSchema>;
@@ -60,8 +62,8 @@ export function CreateBookingModal({ onSuccess }: CreateBookingModalProps) {
   // Fetch clients for selection
   const fetchClientOptions = useCallback(async (search: string): Promise<SearchableOption[]> => {
     const res = await getClients({ search, pageSize: "10" });
-    if (res?.success) {
-      return res.data.clients.map((client) => ({
+    if (res?.clients) {
+      return res.clients.map((client: any) => ({
         value: client.id,
         label: client.name,
         original: client,
@@ -113,16 +115,16 @@ export function CreateBookingModal({ onSuccess }: CreateBookingModalProps) {
 
       const res = await createBooking(payload);
       if (res?.success) {
-        SuccessToast("বুকিং সফলভাবে তৈরি করা হয়েছে");
+        SuccessToast("Booking created successfully");
         form.reset();
         setSelectedClient(null);
         setIsOpen(false);
         onSuccess?.();
       } else {
-        ErrorToast(res?.message || "বুকিং তৈরি করতে সমস্যা হয়েছে");
+        ErrorToast(res?.message || "Problem creating booking");
       }
     } catch {
-      ErrorToast("কিছু ভুল হয়েছে");
+      ErrorToast("Something went wrong");
     } finally {
       setLoading(false);
     }
@@ -138,12 +140,12 @@ export function CreateBookingModal({ onSuccess }: CreateBookingModalProps) {
           setSelectedClient(null);
         }
       }}
-      title="নতুন বুকিং যোগ করুন"
-      description="নতুন জরিপ বুকিং শিডিউল করতে বিস্তারিত তথ্য দিন।"
+      title="Add New Booking"
+      description="Provide details to schedule a new survey booking."
       actionTrigger={
         <Button>
           <Plus />
-          নতুন বুকিং
+          New Booking
         </Button>
       }
     >
@@ -156,7 +158,7 @@ export function CreateBookingModal({ onSuccess }: CreateBookingModalProps) {
             render={({ field }) => (
               <FormItem>
                 <FormLabel className="text-sm font-semibold uppercase">
-                  শিরোনাম / উদ্দেশ্য
+                  Title / Purpose
                 </FormLabel>
                 <FormControl>
                   <Input placeholder="e.g. Land Survey for Plot 102" {...field} />
@@ -173,7 +175,7 @@ export function CreateBookingModal({ onSuccess }: CreateBookingModalProps) {
               render={({ field }) => (
                 <FormItem>
                   <FormLabel className="text-sm font-semibold uppercase">
-                    জমির ঠিকানা
+                    Property Address
                   </FormLabel>
                   <FormControl>
                     <Input placeholder="e.g. Savar, Dhaka" {...field} />
@@ -189,10 +191,10 @@ export function CreateBookingModal({ onSuccess }: CreateBookingModalProps) {
               render={({ field }) => (
                 <FormItem>
                   <FormLabel className="text-sm font-semibold uppercase">
-                    বিস্তারিত বিবরণ
+                    Description
                   </FormLabel>
                   <FormControl>
-                    <Input placeholder="জরিপ সম্পর্কে কিছু লিখুন..." {...field} />
+                    <Input placeholder="Write something about the survey..." {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -208,7 +210,7 @@ export function CreateBookingModal({ onSuccess }: CreateBookingModalProps) {
               render={({ field }) => (
                 <FormItem className="flex flex-col">
                   <FormLabel className="text-sm font-semibold uppercase">
-                    ক্লায়েন্ট
+                    Client
                   </FormLabel>
                   <FormControl>
                     <SearchableSelect
@@ -222,8 +224,8 @@ export function CreateBookingModal({ onSuccess }: CreateBookingModalProps) {
                         }
                         setSelectedClient(option);
                       }}
-                      placeholder="ক্লায়েন্ট নির্বাচন করুন..."
-                      searchPlaceholder="ক্লায়েন্ট খুঁজুন..."
+                      placeholder="Select a client..."
+                      searchPlaceholder="Search client..."
                       fetchOptions={fetchClientOptions}
                       value={selectedClient}
                     />
@@ -231,7 +233,7 @@ export function CreateBookingModal({ onSuccess }: CreateBookingModalProps) {
                   <FormMessage />
                   {!field.value && (
                     <p className="text-[11px] text-muted-foreground mt-1">
-                      ক্লায়েন্ট খুঁজে পাচ্ছেন না? <span className="text-emerald-500 font-bold cursor-pointer">প্রথমে তাদের যোগ করুন</span> অথবা নিচে ম্যানুয়ালি নাম লিখুন।
+                      Can&apos;t find client? <span className="text-emerald-500 font-bold cursor-pointer">Add them first</span> or enter name manually below.
                     </p>
                   )}
                 </FormItem>
@@ -247,7 +249,7 @@ export function CreateBookingModal({ onSuccess }: CreateBookingModalProps) {
                   render={({ field }) => (
                     <FormItem>
                       <FormControl>
-                        <Input placeholder="অথবা নতুন ক্লায়েন্টের নাম লিখুন..." {...field} />
+                        <Input placeholder="Or enter new client name..." {...field} />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -260,7 +262,7 @@ export function CreateBookingModal({ onSuccess }: CreateBookingModalProps) {
                   render={({ field }) => (
                     <FormItem>
                       <FormControl>
-                        <Input placeholder="ক্লায়েন্টের ফোন নম্বর..." {...field} />
+                        <Input placeholder="Client phone number..." {...field} />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -277,7 +279,7 @@ export function CreateBookingModal({ onSuccess }: CreateBookingModalProps) {
             render={({ field }) => (
               <FormItem className="flex flex-col">
                 <FormLabel className="text-sm font-semibold uppercase">
-                  বুকিংয়ের তারিখ নির্বাচন করুন
+                  Select Booking Date
                 </FormLabel>
                 <Popover>
                   <PopoverTrigger asChild>
@@ -291,9 +293,9 @@ export function CreateBookingModal({ onSuccess }: CreateBookingModalProps) {
                       >
                         <CalendarIcon className="mr-2 h-4 w-4" />
                         {field.value ? (
-                          format(field.value, "PPP", { locale: bn })
+                          format(field.value, "PPP", { locale: enUS })
                         ) : (
-                          <span>তারিখ নির্বাচন করুন</span>
+                          <span>Select Date</span>
                         )}
                       </Button>
                     </FormControl>
@@ -322,15 +324,15 @@ export function CreateBookingModal({ onSuccess }: CreateBookingModalProps) {
               className="flex-1 font-semibold uppercase"
               disabled={loading}
             >
-              বাতিল
+              Cancel
             </Button>
             <Button 
               type="submit" 
               className="flex-1 font-semibold uppercase"
               loading={loading}
-              loadingText="তৈরি হচ্ছে..."
+              loadingText="Creating..."
             >
-              বুকিং তৈরি করুন
+              Create Booking
             </Button>
           </div>
         </form>

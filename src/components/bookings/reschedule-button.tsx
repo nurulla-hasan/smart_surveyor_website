@@ -13,7 +13,7 @@ import { updateBooking } from "@/services/bookings";
 import { format } from "date-fns";
 import { SuccessToast, ErrorToast } from "@/lib/utils";
 import { ConfirmationModal } from "@/components/ui/custom/confirmation-modal";
-import { bn } from "date-fns/locale";
+import { enUS } from "date-fns/locale";
 
 interface RescheduleButtonProps {
   bookingId: string;
@@ -44,7 +44,7 @@ export function RescheduleButton({ bookingId, onConfirm, trigger }: RescheduleBu
       });
 
       if (res?.success) {
-        SuccessToast("বুকিং সফলভাবে রি-শিডিউল করা হয়েছে");
+        SuccessToast("Booking rescheduled successfully");
         setDate(pendingDate);
         onConfirm?.(bookingId, pendingDate);
         setOpen(false);
@@ -52,10 +52,10 @@ export function RescheduleButton({ bookingId, onConfirm, trigger }: RescheduleBu
         // Trigger calendar refresh
         window.dispatchEvent(new CustomEvent("refresh-calendar"));
       } else {
-        ErrorToast(res?.message || "রি-শিডিউল করতে সমস্যা হয়েছে");
+        ErrorToast(res?.message || "Problem rescheduling");
       }
     } catch {
-      ErrorToast("সার্ভারে সমস্যা হয়েছে");
+      ErrorToast("Server problem");
     } finally {
       setLoading(false);
     }
@@ -70,10 +70,10 @@ export function RescheduleButton({ bookingId, onConfirm, trigger }: RescheduleBu
               size="sm" 
               variant="outline" 
               loading={loading}
-              loadingText="আপডেট হচ্ছে..."
+              loadingText="Updating..."
             >
               <CalendarClock />
-              নতুন সময় দিন
+              Reschedule
             </Button>
           )}
         </PopoverTrigger>
@@ -90,12 +90,12 @@ export function RescheduleButton({ bookingId, onConfirm, trigger }: RescheduleBu
       <ConfirmationModal
          open={isConfirmOpen}
          onOpenChange={setIsConfirmOpen}
-         title="আপনি কি নিশ্চিত?"
-         description={`আপনি কি এই বুকিংটি ${pendingDate ? format(pendingDate, "MMMM dd, yyyy", { locale: bn }) : ""} তারিখে রি-শিডিউল করতে চান?`}
+         title="Are you sure?"
+         description={`Are you sure you want to reschedule this booking to ${pendingDate ? format(pendingDate, "MMMM dd, yyyy", { locale: enUS }) : ""}?`}
          onConfirm={handleConfirmReschedule}
          isLoading={loading}
-         confirmText="নিশ্চিত করুন"
-         cancelText="বাতিল"
+         confirmText="Confirm"
+         cancelText="Cancel"
        />
     </>
   );

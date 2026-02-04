@@ -5,13 +5,13 @@ import { serverFetch } from "@/lib/fetcher";
 import { buildQueryString } from "@/lib/buildQueryString";
 import { FieldValues } from "react-hook-form";
 import { updateTag } from "next/cache";
-import { GetBookingsResponse } from "@/types/bookings";
 
-export const getBookings = async (query: Record<string, string | number | string[] | undefined> = {}): Promise<GetBookingsResponse | null> => {
+import { QueryParams } from "@/types/global.type";
+
+export const getBookings = async (query: QueryParams = {}): Promise<any> => {
   try {
-    const queryString = buildQueryString(query);
 
-    const response = await serverFetch(`/bookings${queryString}`, {
+    const response = await serverFetch(`/bookings${buildQueryString(query)}`, {
       next: {
         revalidate: 86400,
         tags: ["bookings"],

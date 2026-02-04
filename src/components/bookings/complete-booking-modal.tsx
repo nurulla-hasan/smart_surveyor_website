@@ -77,8 +77,8 @@ export function CompleteBookingModal({ bookingId, trigger, onSuccess }: Complete
       description="Close this survey by providing payment-related information."
       actionTrigger={
         trigger || (
-          <Button size="sm" variant="outline" className="font-bold uppercase border-emerald-500/20 text-emerald-500 hover:bg-emerald-500/10 gap-2">
-            <CheckCircle2 className="h-4 w-4" /> Mark Complete
+          <Button size="sm" variant="outline" className="text-xs font-bold uppercase border-emerald-500/20 text-emerald-500 hover:bg-emerald-500/10 gap-2">
+            <CheckCircle2 /> Mark Complete
           </Button>
         )
       }

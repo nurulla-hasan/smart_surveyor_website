@@ -1,14 +1,12 @@
 "use client";
 
 import { useState, useCallback, useEffect } from "react";
-import PageHeader from "@/components/ui/custom/page-header";
 import { useSmartFilter } from "@/hooks/useSmartFilter";
 import { Inbox } from "lucide-react";
 import { BookingCalendar } from "@/components/bookings/booking-calendar";
 import { BookingTabs, BookingTab } from "@/components/bookings/booking-tabs";
 import { BookingCard } from "@/components/bookings/booking-card";
 import { Booking } from "@/types/bookings";
-import { CreateBookingModal } from "@/components/bookings/create-booking-modal";
 import { format, isSameDay } from "date-fns";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import CustomPagination from "@/components/ui/custom/CustomPagination";
@@ -44,9 +42,6 @@ export function BookingsView({
     if (dateParam) {
       setSelectedDate(new Date(dateParam));
     } else {
-      // If no date in URL, server defaults to today, but maybe clear selection?
-      // For now keep it as today or whatever logic we want.
-      // If we want to allow "all", then undefined. But for scheduled usually date specific.
       setSelectedDate(new Date());
     }
   }, [dateParam]);
@@ -54,7 +49,7 @@ export function BookingsView({
   const handleDateSelect = (date: Date | undefined) => {
     setSelectedDate(date);
     if (date) {
-      updateFilter("date", format(date, "yyyy-MM-dd")); // Use backend friendly format
+      updateFilter("date", format(date, "yyyy-MM-dd"));
     } else {
       updateFilter("date", null);
     }
@@ -87,11 +82,11 @@ export function BookingsView({
   const getTabTitle = () => {
     switch (activeTab) {
       case "upcoming":
-        return `${selectedDate ? format(selectedDate, "MMMM do, yyyy") : "আজকের"}-এর অ্যাপয়েন্টমেন্ট`;
+        return `Appointments for ${selectedDate ? format(selectedDate, "MMMM do, yyyy") : "Today"}`;
       case "pending":
-        return "পাবলিক বুকিং অনুরোধ";
+        return "Public Booking Requests";
       case "past":
-        return "অতীত বুকিং";
+        return "Past Bookings";
       default:
         return "";
     }
@@ -100,11 +95,11 @@ export function BookingsView({
   const getTabDescription = () => {
     switch (activeTab) {
       case "upcoming":
-        return `আজ আপনার ${initialBookings.length}টি বুকিং আছে।`;
+        return `You have ${initialBookings.length} booking(s) for this date.`;
       case "pending":
-        return "পাবলিক পেজ থেকে নতুন জরিপ অনুরোধগুলো পর্যালোচনা এবং অনুমোদন করুন।";
+        return "Review and approve new survey requests from the public page.";
       case "past":
-        return "সম্পন্ন হওয়া জরিপগুলোর ইতিহাস।";
+        return "History of completed surveys.";
       default:
         return "";
     }
@@ -112,18 +107,10 @@ export function BookingsView({
 
   return (
     <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-500">
-      {/* Header section */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-        <PageHeader
-          title="বুকিং"
-          description="আপনার জরিপের অ্যাপয়েন্টমেন্ট এবং অনুরোধগুলো পরিচালনা করুন।"
-        />
-        <CreateBookingModal/>
-      </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
         {/* Sidebar Calendar */}
-        <div className="lg:col-span-4 sticky top-6">
+        <div className="lg:col-span-4">
           <BookingCalendar
             selectedDate={selectedDate}
             onSelect={handleDateSelect}
@@ -168,8 +155,8 @@ export function BookingsView({
                         <Inbox className="h-8 w-8 text-muted-foreground" />
                       </div>
                       <div className="space-y-1">
-                        <p className="font-bold uppercase">কোনো বুকিং পাওয়া যায়নি</p>
-                        <p className="text-xs">এই তারিখে কোনো অ্যাপয়েন্টমেন্ট নেই।</p>
+                        <p className="font-bold uppercase">No bookings found</p>
+                        <p className="text-xs">There are no appointments for this date.</p>
                       </div>
                     </div>
                   )}

@@ -151,7 +151,7 @@ export function BookingCard({ booking }: BookingCardProps) {
               </div>
             ) : isScheduled ? (
               <div className="flex items-center gap-2">
-                <Badge className="bg-red-600 text-white hover:bg-red-700 font-bold text-[10px] py-1 px-3 rounded-md mr-2">
+                <Badge className="bg-blue-600 text-white hover:bg-blue-700 font-bold text-[10px] py-1 px-3 rounded-md mr-2">
                   SCHEDULED
                 </Badge>
 
@@ -191,7 +191,7 @@ export function BookingCard({ booking }: BookingCardProps) {
               </div>
             ) : isCompleted ? (
               <div className="flex items-center gap-3">
-                <Badge variant="secondary" className="font-bold text-[10px] py-1 px-3 rounded-md bg-muted/50 text-muted-foreground/80 border-none uppercase">
+                <Badge variant="success" className="font-bold text-[10px] uppercase">
                   COMPLETED
                 </Badge>
               </div>
