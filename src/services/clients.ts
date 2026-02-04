@@ -5,11 +5,10 @@ import { serverFetch } from "@/lib/fetcher";
 import { buildQueryString } from "@/lib/buildQueryString";
 import { FieldValues } from "react-hook-form";
 import { updateTag } from "next/cache";
-import { GetClientsResponse } from "@/types/clients";
 
-export const getClients = async (
-  query: Record<string, string | number | string[] | undefined> = {},
-): Promise<GetClientsResponse | null> => {
+import { QueryParams } from "@/types/global.type";
+
+export const getClients = async (query: QueryParams = {},): Promise<any> => {
   try {
     const queryString = buildQueryString(query);
 
@@ -19,10 +18,17 @@ export const getClients = async (
         tags: ["clients"],
       },
     } as any);
-    return response;
+
+    return {
+      clients: response?.data?.clients || [],
+      meta: response?.data?.meta || {},
+    };
   } catch (error) {
     console.error("Error fetching clients:", error);
-    return null;
+    return {
+      clients: [],
+      meta: {},
+    };
   }
 };
 
