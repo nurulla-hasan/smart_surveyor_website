@@ -1,6 +1,6 @@
 import { getClients } from "@/services/clients";
 import { getBookings } from "@/services/bookings";
-import { CreateReportView } from "@/components/reports/create-report-view";
+import { CreateReportView } from "@/components/dashboard/reports/create-report-view";
 
 export const dynamic = "force-dynamic";
 

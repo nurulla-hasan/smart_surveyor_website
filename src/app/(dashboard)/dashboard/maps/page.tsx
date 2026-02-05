@@ -1,4 +1,4 @@
-import { MapsView } from "@/components/maps/maps-view";
+import { MapsView } from "@/components/dashboard/maps/maps-view";
 import { getBookings } from "@/services/bookings";
 import { getMaps } from "@/services/maps";
 

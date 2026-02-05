@@ -8,7 +8,7 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
-import { BookingCalendar } from "@/components/bookings/booking-calendar";
+import { BookingCalendar } from "@/components/dashboard/bookings/booking-calendar";
 import { updateBooking } from "@/services/bookings";
 import { format } from "date-fns";
 import { SuccessToast, ErrorToast } from "@/lib/utils";

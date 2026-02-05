@@ -3,8 +3,8 @@ import { getCalculations } from "@/services/calculations";
 import { getBookings } from "@/services/bookings";
 import { SearchInput } from "@/components/ui/custom/search-input";
 import { DataTable } from "@/components/ui/custom/data-table";
-import { calculationColumns } from "@/components/calculator/calculation-columns";
-import { CalculatorForm } from "@/components/calculator/calculator-form";
+import { calculationColumns } from "@/components/dashboard/calculator/calculation-columns";
+import { CalculatorForm } from "@/components/dashboard/calculator/calculator-form";
 import { SearchParams } from "@/types/global.type";
 import {History } from "lucide-react";
 

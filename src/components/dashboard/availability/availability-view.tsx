@@ -13,7 +13,7 @@ import {
   toggleBlockedDate,
   BlockedDate,
 } from "@/services/availability";
-import { ScrollArea } from "../ui/scroll-area";
+import { ScrollArea } from "../../ui/scroll-area";
 import { useRouter, usePathname, useSearchParams } from "next/navigation";
 
 interface AvailabilityViewProps {

@@ -2,7 +2,7 @@ import { getReports } from "@/services/reports";
 import { SearchParams } from "@/types/global.type";
 import PageHeader from "@/components/ui/custom/page-header";
 import { DataTable } from "@/components/ui/custom/data-table";
-import { reportColumns } from "@/components/reports/report-columns";
+import { reportColumns } from "@/components/dashboard/reports/report-columns";
 import { Plus } from "lucide-react";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";

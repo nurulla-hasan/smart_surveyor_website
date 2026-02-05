@@ -10,7 +10,7 @@ import { MapData } from "@/types/maps"
 
 // Dynamically import map components with no SSR
 const InteractiveMap = dynamic(
-  () => import("@/components/maps/interactive-map"),
+  () => import("@/components/dashboard/maps/interactive-map"),
   { 
     ssr: false,
     loading: () => <MapLoading />
@@ -18,7 +18,7 @@ const InteractiveMap = dynamic(
 )
 
 const SurveyorMap = dynamic(
-  () => import("@/components/maps/surveyor-map").then(mod => mod.SurveyorMap),
+  () => import("@/components/dashboard/maps/surveyor-map").then(mod => mod.SurveyorMap),
   { 
     ssr: false,
     loading: () => <MapLoading />

@@ -1,10 +1,10 @@
 import { getCalendarData } from "@/services/dashboard";
 import { getBookings } from "@/services/bookings";
-import { BookingsView } from "@/components/bookings/bookings-view";
+import { BookingsView } from "@/components/dashboard/bookings/bookings-view";
 import { format } from "date-fns";
 import { QueryParams } from "@/types/global.type";
 import PageHeader from "@/components/ui/custom/page-header";
-import { CreateBookingModal } from "@/components/bookings/create-booking-modal";
+import { CreateBookingModal } from "@/components/dashboard/bookings/create-booking-modal";
 
 export const dynamic = "force-dynamic";
 

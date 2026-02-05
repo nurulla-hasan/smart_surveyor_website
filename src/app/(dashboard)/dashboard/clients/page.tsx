@@ -2,8 +2,8 @@ import { getClients } from "@/services/clients";
 import { SearchParams } from "@/types/global.type";
 import PageHeader from "@/components/ui/custom/page-header";
 import { DataTable } from "@/components/ui/custom/data-table";
-import { clientColumns } from "@/components/clients/client-columns";
-import { AddClientModal } from "@/components/clients/add-client-modal";
+import { clientColumns } from "@/components/dashboard/clients/client-columns";
+import { AddClientModal } from "@/components/dashboard/clients/add-client-modal";
 import { SearchInput } from "@/components/ui/custom/search-input";
 
 export const dynamic = "force-dynamic";

@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { getBlockedDates } from "@/services/availability";
 import { getCalendarData } from "@/services/dashboard";
-import { AvailabilityView } from "@/components/availability/availability-view";
+import { AvailabilityView } from "@/components/dashboard/availability/availability-view";
 import PageHeader from "@/components/ui/custom/page-header";
 
 export const dynamic = "force-dynamic";

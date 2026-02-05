@@ -1,21 +1,18 @@
 
 import { getCurrentUser } from "@/services/auth";
 import { redirect } from "next/navigation";
+import PublicHomeView from "@/components/public/public-home-view";
 
 export const dynamic = "force-dynamic";
 
 export default async function Home() {
   const user = await getCurrentUser();
   
-  if (!user) {
-    redirect("/auth/login");
+  // Everyone (Logged out, Clients, etc.) will be redirected to the Public Home Page
+  if (!user || user.role === 'client') {
+    redirect("/home");
   }
 
-  if (user.role === 'client') {
-    redirect("/portal");
-  }
-
+  // Only Surveyors/Admins are redirected to dashboard
   redirect("/dashboard");
-
-  // 
 }

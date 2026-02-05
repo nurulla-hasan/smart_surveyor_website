@@ -3,9 +3,9 @@
 import { useState, useCallback, useEffect } from "react";
 import { useSmartFilter } from "@/hooks/useSmartFilter";
 import { Inbox } from "lucide-react";
-import { BookingCalendar } from "@/components/bookings/booking-calendar";
-import { BookingTabs, BookingTab } from "@/components/bookings/booking-tabs";
-import { BookingCard } from "@/components/bookings/booking-card";
+import { BookingCalendar } from "@/components/dashboard/bookings/booking-calendar";
+import { BookingTabs, BookingTab } from "@/components/dashboard/bookings/booking-tabs";
+import { BookingCard } from "@/components/dashboard/bookings/booking-card";
 import { Booking } from "@/types/bookings";
 import { format, isSameDay } from "date-fns";
 import { ScrollArea } from "@/components/ui/scroll-area";

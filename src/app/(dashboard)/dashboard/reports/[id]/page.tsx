@@ -1,5 +1,5 @@
 import { getReportById } from "@/services/reports";
-import { ReportDetailsView } from "@/components/reports/report-details-view";
+import { ReportDetailsView } from "@/components/dashboard/reports/report-details-view";
 import { notFound } from "next/navigation";
 
 export const dynamic = "force-dynamic";

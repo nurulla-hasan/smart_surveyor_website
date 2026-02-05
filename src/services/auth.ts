@@ -19,7 +19,7 @@ export const signInUser = async (userData: FieldValues): Promise<any> => {
       const decodedData: any = jwtDecode(accessToken);
 
       // ROLE CHECK
-      const allowedRoles = ['surveyor', 'client'];
+      const allowedRoles = ['surveyor', 'client', 'admin'];
       if (!allowedRoles.includes(decodedData?.role)) {
         return {
           success: false,
@@ -42,7 +42,7 @@ export const signInUser = async (userData: FieldValues): Promise<any> => {
       // Return redirect path based on role
       return { 
         ...result, 
-        redirectPath: decodedData?.role === 'client' ? '/portal' : '/dashboard' 
+        redirectPath: decodedData?.role === 'client' ? '/' : '/dashboard' 
       };
     }
 

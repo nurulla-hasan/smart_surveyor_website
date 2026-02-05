@@ -1,6 +1,6 @@
 import { getClients } from "@/services/clients";
 import { getReportById } from "@/services/reports";
-import { EditReportView } from "@/components/reports/edit-report-view";
+import { EditReportView } from "@/components/dashboard/reports/edit-report-view";
 import { notFound } from "next/navigation";
 
 export const dynamic = "force-dynamic";

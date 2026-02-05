@@ -37,7 +37,7 @@ import { Client } from "@/types/clients";
 import { Booking } from "@/types/bookings";
 import { SuccessToast, ErrorToast } from "@/lib/utils";
 import { Separator } from "@/components/ui/separator";
-import PageHeader from "../ui/custom/page-header";
+import PageHeader from "../../ui/custom/page-header";
 
 const reportSchema = z.object({
   title: z.string().min(1, "Title is required"),

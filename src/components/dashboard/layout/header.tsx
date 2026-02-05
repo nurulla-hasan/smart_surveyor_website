@@ -3,9 +3,13 @@
 "use client";
 
 import { Button } from "@/components/ui/button";
-import { Sun, Moon, LayoutDashboard, Settings, CalendarDays } from "lucide-react";
+import {
+  Sun,
+  Moon,
+  Settings,
+} from "lucide-react";
 import { useState, useEffect } from "react";
-import { usePathname, useRouter } from "next/navigation";
+import { useRouter } from "next/navigation";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -17,7 +21,7 @@ import {
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import Link from "next/link";
 import { useTheme } from "next-themes";
-import { cn, getInitials } from "@/lib/utils";
+import { getInitials } from "@/lib/utils";
 import { logOut, getCurrentUser } from "@/services/auth";
 import { HeaderSearch } from "./header-search";
 import { HeaderNotifications } from "./header-notifications";
@@ -27,7 +31,6 @@ export function Header() {
   const router = useRouter();
   const [mounted, setMounted] = useState(false);
   const [userData, setUserData] = useState<any>(null);
-  const pathname = usePathname();
 
   useEffect(() => {
     // eslint-disable-next-line react-hooks/set-state-in-effect
@@ -44,10 +47,9 @@ export function Header() {
     };
 
     window.addEventListener("profile-updated", handleProfileUpdate);
-    return () => window.removeEventListener("profile-updated", handleProfileUpdate);
+    return () =>
+      window.removeEventListener("profile-updated", handleProfileUpdate);
   }, []);
-
-  const isClientRole = userData?.role === "client";
 
   const handleLogout = async () => {
     await logOut();
@@ -58,34 +60,6 @@ export function Header() {
   return (
     <header className="sticky top-0 z-50 w-full bg-sidebar backdrop-blur-md">
       <div className="flex h-16 items-center px-4 sm:px-8">
-        {/* Client Navigation Links - Centered & Styled */}
-        {isClientRole && (
-          <nav className="flex items-center bg-muted/50 p-1 rounded-xl ml-8">
-            <Link
-              href="/portal"
-              className={cn(
-                "px-4 py-1.5 text-sm font-medium rounded-lg transition-all",
-                pathname === "/portal"
-                  ? "bg-background text-primary shadow-sm"
-                  : "text-muted-foreground hover:text-foreground"
-              )}
-            >
-              Dashboard
-            </Link>
-            <Link
-              href="/book-survey"
-              className={cn(
-                "px-4 py-1.5 text-sm font-medium rounded-lg transition-all",
-                pathname === "/book-survey"
-                  ? "bg-background text-primary shadow-sm"
-                  : "text-muted-foreground hover:text-foreground"
-              )}
-            >
-              Book Survey
-            </Link>
-          </nav>
-        )}
-
         <div className="flex flex-1 items-center justify-end space-x-2 sm:space-x-4">
           {/* Search Bar UI */}
           <HeaderSearch />
@@ -97,11 +71,12 @@ export function Header() {
               size="icon"
               onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
             >
-              {mounted && (resolvedTheme === "dark" ? (
-                <Sun className="h-5 w-5" />
-              ) : (
-                <Moon className="h-5 w-5" />
-              ))}
+              {mounted &&
+                (resolvedTheme === "dark" ? (
+                  <Sun className="h-5 w-5" />
+                ) : (
+                  <Moon className="h-5 w-5" />
+                ))}
               <span className="sr-only">Toggle theme</span>
             </Button>
 
@@ -111,7 +86,10 @@ export function Header() {
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
                 <Avatar className="h-10 w-10 border cursor-pointer">
-                  <AvatarImage src={userData?.profileImage} alt={userData?.name} />
+                  <AvatarImage
+                    src={userData?.profileImage}
+                    alt={userData?.name}
+                  />
                   <AvatarFallback className="font-bold uppercase tracking-tighter">
                     {getInitials(userData?.name) || "U"}
                   </AvatarFallback>
@@ -129,37 +107,15 @@ export function Header() {
                   </div>
                 </DropdownMenuLabel>
                 <DropdownMenuSeparator />
-                {mounted && isClientRole ? (
-                  <>
-                    <DropdownMenuItem asChild>
-                      <Link href="/portal" className="flex items-center gap-2 cursor-pointer">
-                        <LayoutDashboard className="h-4 w-4" />
-                        Portal Dashboard
-                      </Link>
-                    </DropdownMenuItem>
-                    <DropdownMenuItem asChild>
-                      <Link href="/book-survey" className="flex items-center gap-2 cursor-pointer">
-                        <CalendarDays className="h-4 w-4" />
-                        Survey Booking
-                      </Link>
-                    </DropdownMenuItem>
-                    <DropdownMenuItem asChild>
-                      <Link href="/portal/settings" className="flex items-center gap-2 cursor-pointer">
-                        <Settings className="h-4 w-4" />
-                        Profile Settings
-                      </Link>
-                    </DropdownMenuItem>
-                  </>
-                ) : (
-                  <>
-                    <DropdownMenuItem asChild>
-                      <Link href="/dashboard/settings" className="flex items-center gap-2 cursor-pointer">
-                        <Settings className="h-4 w-4" />
-                        Settings
-                      </Link>
-                    </DropdownMenuItem>
-                  </>
-                )}
+                <DropdownMenuItem asChild>
+                  <Link
+                    href="/dashboard/settings"
+                    className="flex items-center gap-2 cursor-pointer"
+                  >
+                    <Settings className="h-4 w-4" />
+                    Settings
+                  </Link>
+                </DropdownMenuItem>
                 <DropdownMenuSeparator />
                 <DropdownMenuItem
                   className="text-red-600 focus:text-red-600 cursor-pointer"

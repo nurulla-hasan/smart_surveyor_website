@@ -17,7 +17,7 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Plus, CalendarIcon } from "lucide-react";
-import { BookingCalendar } from "@/components/bookings/booking-calendar";
+import { BookingCalendar } from "@/components/dashboard/bookings/booking-calendar";
 import { getClients } from "@/services/clients";
 import { createBooking } from "@/services/bookings";
 import { SuccessToast, ErrorToast } from "@/lib/utils";
