@@ -1,69 +1,55 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 'use client';
 
-import { useState } from 'react';
+import { useState, useCallback } from 'react';
 import { Navbar } from './home/navbar';
 import { Hero } from './home/hero';
+import { SurveyorSelector } from './home/surveyor-selector';
 import { SurveyorProfile } from './home/surveyor-profile';
 import { BookingSection } from './home/booking-section';
 import { Stats } from './home/stats';
 import { Footer } from './home/footer';
+import { Surveyor } from '@/types/surveyor.type';
 
-// Fake Data for Design
-const FAKE_SURVEYORS = [
-  {
-    id: '1',
-    name: 'Golap Hasan',
-    role: 'Senior Surveyor',
-    rating: 4.9,
-    reviews: 124,
-    experience: '10+ Years',
-    location: 'Dinajpur, Bangladesh',
-    image: 'https://github.com/shadcn.png',
-    bio: 'Expert in land measurements, topographic surveys, and digital mapping with over a decade of field experience.'
-  },
-  {
-    id: '2',
-    name: 'Nurulla Hasan',
-    role: 'GIS Specialist',
-    rating: 4.8,
-    reviews: 89,
-    experience: '8 Years',
-    location: 'Dhaka, Bangladesh',
-    image: 'https://github.com/shadcn.png',
-    bio: 'Specialized in Geographic Information Systems (GIS) and precise boundary surveys for residential and commercial projects.'
-  },
-  {
-    id: '3',
-    name: 'Abdur Rahman',
-    role: 'Topographic Expert',
-    rating: 4.7,
-    reviews: 56,
-    experience: '5 Years',
-    location: 'Rangpur, Bangladesh',
-    image: 'https://github.com/shadcn.png',
-    bio: 'Focused on topographic mapping and construction site surveys with high-precision equipment.'
-  }
-];
-
-export default function PublicHomeView({ user }: { user?: any }) {
+export default function PublicHomeView({ 
+  user, 
+  initialSurveyors
+}: { 
+  user?: any;
+  initialSurveyors: Surveyor[];
+}) {
+  const [surveyors, setSurveyors] = useState<Surveyor[]>(initialSurveyors);
   const [selectedDate, setSelectedDate] = useState<Date | undefined>(new Date());
-  const [selectedSurveyorId, setSelectedSurveyorId] = useState<string>(FAKE_SURVEYORS[0].id);
+  const [selectedSurveyorId, setSelectedSurveyorId] = useState<string>(
+    initialSurveyors[0]?.id || ""
+  );
 
-  const surveyor = FAKE_SURVEYORS.find(s => s.id === selectedSurveyorId) || FAKE_SURVEYORS[0];
+  const surveyor = surveyors.find(s => s.id === selectedSurveyorId) || surveyors[0];
+
+  // Update surveyors list when selector fetches new data
+  const handleSurveyorDataChange = useCallback((newData: Surveyor[]) => {
+    setSurveyors(newData);
+  }, []);
 
   return (
     <div className="min-h-screen bg-background selection:bg-primary/20">
       <Navbar user={user} />
       
       <main>
-        <Hero 
-          surveyors={FAKE_SURVEYORS} 
-          selectedId={selectedSurveyorId} 
-          onSelect={setSelectedSurveyorId} 
-        />
+        <Hero />
         
-        <section className="py-24">
+        <section className="py-12 bg-muted/30">
+          <div className="container mx-auto px-4">
+            <SurveyorSelector 
+              initialSurveyors={initialSurveyors} 
+              selectedId={selectedSurveyorId} 
+              onSelect={setSelectedSurveyorId} 
+              onDataChange={handleSurveyorDataChange}
+            />
+          </div>
+        </section>
+        
+        <section id="booking-section" className="py-24">
           <div className="container mx-auto px-4">
 
             <div className="grid grid-cols-1 lg:grid-cols-12 gap-12">
@@ -73,7 +59,7 @@ export default function PublicHomeView({ user }: { user?: any }) {
 
               <div className="lg:col-span-7">
                 <BookingSection 
-                  surveyors={FAKE_SURVEYORS} 
+                  surveyors={surveyors} 
                   selectedId={selectedSurveyorId} 
                   onSelect={setSelectedSurveyorId} 
                   selectedDate={selectedDate}

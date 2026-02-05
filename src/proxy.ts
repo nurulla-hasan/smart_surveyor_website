@@ -88,7 +88,18 @@ export async function proxy(request: NextRequest) {
 
   // Redirect to dashboard if logged-in user tries to access auth pages
   if (isAuthPage && accessToken) {
-    return NextResponse.redirect(new URL('/dashboard', origin));
+    try {
+      // Additional verification for accessToken if needed
+      const decoded = jwtDecode<{ exp: number }>(accessToken);
+      if (decoded && decoded.exp * 1000 > Date.now()) {
+        return NextResponse.redirect(new URL('/dashboard', origin));
+      }
+    } catch {
+      // If token is invalid, let them access the auth page but maybe clear the cookie
+      const loginResponse = NextResponse.next();
+      loginResponse.cookies.delete('accessToken');
+      return loginResponse;
+    }
   }
 
   return response;

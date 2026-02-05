@@ -5,8 +5,9 @@ import { Calendar } from "@/components/ui/calendar";
 import { Card } from "@/components/ui/card";
 import { getCalendarData } from "@/services/dashboard";
 import { getCurrentUser } from "@/services/auth";
-import React, { useState, useEffect, useCallback } from "react";
+import React, { useState, useEffect, useCallback, useMemo } from "react";
 import { isSameDay, isBefore, startOfDay } from "date-fns";
+import { cn } from "@/lib/utils";
 
 interface BookingCalendarProps {
   selectedDate: Date | undefined;
@@ -15,6 +16,7 @@ interface BookingCalendarProps {
   surveyorId?: string;
   showLegend?: boolean;
   className?: string;
+  disableBookedDates?: boolean;
 }
 
 export function BookingCalendar({ 
@@ -24,30 +26,31 @@ export function BookingCalendar({
   surveyorId,
   showLegend = true,
   className,
+  disableBookedDates = false,
 }: BookingCalendarProps) {
   const [bookedDates, setBookedDates] = useState<Date[]>([]);
   const [blockedDates, setBlockedDates] = useState<Date[]>([]);
-  const [currentMonth, setCurrentMonth] = useState<Date | undefined>(undefined);
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const [currentMonth, setCurrentMonth] = useState<Date>(() => new Date());
   const [loading, setLoading] = useState(false);
   const [user, setUser] = useState<any>(null);
 
   useEffect(() => {
-    setCurrentMonth(new Date());
     if (!surveyorId) {
       const fetchUser = async () => {
-        const userData = await getCurrentUser();
-        setUser(userData);
+        try {
+          const userData = await getCurrentUser();
+          setUser(userData);
+        } catch (err) {
+          console.error("Failed to fetch user:", err);
+        }
       };
       fetchUser();
     }
   }, [surveyorId]);
 
-  const effectiveSurveyorId = surveyorId || user?.id;
+  const effectiveSurveyorId = surveyorId || user?.id || user?._id;
 
-  const fetchAvailability = useCallback(async (month: number, year: number, sid?: string) => {
-    if (!sid) return;
-    
+  const fetchAvailability = useCallback(async (month: number, year: number, sid: string) => {
     setLoading(true);
     try {
       const res = await getCalendarData({ month, year, surveyorId: sid } as any);
@@ -64,79 +67,98 @@ export function BookingCalendar({
     }
   }, []);
 
-  // Listen for custom refresh events
+  // Sync data when month or surveyor changes
   useEffect(() => {
-    if (!currentMonth || !effectiveSurveyorId) return;
+    if (effectiveSurveyorId) {
+      fetchAvailability(currentMonth.getMonth() + 1, currentMonth.getFullYear(), effectiveSurveyorId);
+    }
+  }, [currentMonth, effectiveSurveyorId, fetchAvailability]);
+
+  // Listen for refresh events (both generic and booking specific)
+  useEffect(() => {
+    if (!effectiveSurveyorId) return;
+    
     const handleRefresh = () => {
       fetchAvailability(currentMonth.getMonth() + 1, currentMonth.getFullYear(), effectiveSurveyorId);
     };
 
     window.addEventListener("refresh-calendar", handleRefresh);
-    return () => window.removeEventListener("refresh-calendar", handleRefresh);
+    window.addEventListener("booking-created", handleRefresh);
+    
+    return () => {
+      window.removeEventListener("refresh-calendar", handleRefresh);
+      window.removeEventListener("booking-created", handleRefresh);
+    };
   }, [currentMonth, effectiveSurveyorId, fetchAvailability]);
 
-  useEffect(() => {
-    if (currentMonth && effectiveSurveyorId) {
-      fetchAvailability(currentMonth.getMonth() + 1, currentMonth.getFullYear(), effectiveSurveyorId);
-    }
-  }, [currentMonth, effectiveSurveyorId, fetchAvailability]);
-
-  const handleMonthChange = (date: Date) => {
+  const handleMonthChange = useCallback((date: Date) => {
     setCurrentMonth(date);
     onMonthChange?.(date);
-  };
+  }, [onMonthChange]);
 
-  const modifiers = {
+  const modifiers = useMemo(() => ({
     booked: (date: Date) => bookedDates.some(d => isSameDay(d, date)),
     blocked: (date: Date) => blockedDates.some(d => isSameDay(d, date)),
-  };
+  }), [bookedDates, blockedDates]);
 
-  const isDateDisabled = (date: Date) => {
-    // Disable past dates (before today)
+  const isDateDisabled = useCallback((date: Date) => {
     const today = startOfDay(new Date());
     if (isBefore(date, today)) return true;
     
-    // Also disable specifically blocked dates from backend
-    return blockedDates.some(d => isSameDay(d, date));
-  };
+    const isBlocked = blockedDates.some(d => isSameDay(d, date));
+    const isBooked = disableBookedDates && bookedDates.some(d => isSameDay(d, date));
+    
+    return isBlocked || isBooked;
+  }, [blockedDates, bookedDates, disableBookedDates]);
 
-  const modifiersClassNames = {
-    booked: "bg-orange-500 text-white! font-bold rounded-full opacity-100!",
-    blocked: "bg-rose-900 text-white! font-bold rounded-full opacity-100!",
-  };
-
-  if (!currentMonth) return <Card className={`p-4 h-100 animate-pulse bg-muted/20 ${className}`} />;
+  const modifiersClassNames = useMemo(() => ({
+    booked: "bg-orange-500 text-white font-bold rounded-full",
+    blocked: "bg-rose-600 text-white font-bold rounded-full",
+  }), []);
 
   return (
-    <Card className={`p-4 overflow-hidden ${className}`}>
-      <Calendar
-        mode="single"
-        selected={selectedDate}
-        onSelect={onSelect}
-        onMonthChange={handleMonthChange}
-        disabled={isDateDisabled}
-        className="rounded-md"
-        modifiers={modifiers}
-        modifiersClassNames={modifiersClassNames}
-        classNames={{
-          day_selected: "!bg-transparent !text-foreground outline outline-4 outline-emerald-400 outline-offset-2 z-30 scale-110",
-          day_today: "bg-muted text-foreground font-semibold rounded-full",
-          day_disabled: "text-white! opacity-100!", // This forces disabled dates to show white text if they have our background
-        }}
-      />
+    <Card className={cn("p-4 overflow-hidden border-none shadow-none bg-transparent", className)}>
+      <div className={cn("relative transition-opacity duration-300", loading ? "opacity-50" : "opacity-100")}>
+        <Calendar
+          mode="single"
+          selected={selectedDate}
+          onSelect={onSelect}
+          onMonthChange={handleMonthChange}
+          disabled={isDateDisabled}
+          className="p-0"
+          modifiers={modifiers}
+          modifiersClassNames={modifiersClassNames}
+          classNames={{
+            day_selected: "bg-primary text-primary-foreground hover:bg-primary hover:text-primary-foreground focus:bg-primary focus:text-primary-foreground rounded-full",
+            day_today: "bg-muted text-foreground font-semibold rounded-full",
+            day_disabled: "text-muted-foreground opacity-50 cursor-not-allowed",
+          }}
+        />
+        {loading && (
+          <div className="absolute inset-0 flex items-center justify-center bg-background/10 backdrop-blur-[1px] rounded-xl z-10">
+            <div className="h-6 w-6 border-2 border-primary border-t-transparent rounded-full animate-spin" />
+          </div>
+        )}
+      </div>
       
       {showLegend && (
-        <div className="pt-6 border-t space-y-3 px-2">
-          <div className="flex items-center gap-3">
-            <div className="h-3 w-3 rounded-full bg-rose-900" />
-            <span className="text-[11px] font-semibold text-muted-foreground uppercase tracking-wider">
-              Off-Day (Blocked)
+        <div className="pt-6 mt-4 border-t border-border/40 flex flex-wrap gap-x-6 gap-y-3 px-2">
+          <div className="flex items-center gap-2.5">
+            <div className="h-2.5 w-2.5 rounded-full bg-rose-600 shadow-[0_0_8px_rgba(225,29,72,0.3)]" />
+            <span className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider">
+              Off-Day
             </span>
           </div>
-          <div className="flex items-center gap-3">
-            <div className="h-3 w-3 rounded-full bg-orange-500" />
-            <span className="text-[11px] font-semibold text-muted-foreground uppercase tracking-wider">
+          <div className="flex items-center gap-2.5">
+            <div className="h-2.5 w-2.5 rounded-full bg-orange-500 shadow-[0_0_8px_rgba(249,115,22,0.3)]" />
+            <span className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider">
               Booked
+            </span>
+          </div>
+          <div className="flex items-center gap-2.5">
+            <div className="h-2.5 w-2.5 rounded-full bg-primary shadow-[0_0_8px_rgba(var(--primary),0.3)]" />
+            <span className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider">
+              Selected
             </span>
           </div>
         </div>

@@ -83,6 +83,7 @@ export function RescheduleButton({ bookingId, onConfirm, trigger }: RescheduleBu
             onSelect={handleSelect}
             showLegend={true}
             className="border-none shadow-none"
+            disableBookedDates={true}
           />
         </PopoverContent>
       </Popover>

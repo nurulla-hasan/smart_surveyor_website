@@ -1,101 +1,137 @@
  
 'use client';
 
-import { ArrowRight } from 'lucide-react';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import React, { useState, useMemo, useCallback } from 'react';
+import { ArrowRight, Calendar, Info } from 'lucide-react';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { format } from 'date-fns';
 import { BookingCalendar } from '../../dashboard/bookings/booking-calendar';
-import { SurveyorSelector } from './surveyor-selector';
 import { BookingDialog } from './booking-dialog';
-import { useState } from 'react';
+import { Surveyor } from '@/types/surveyor.type';
+import { cn } from '@/lib/utils';
 
 interface BookingSectionProps {
-  surveyors: { id: string; name: string; role: string; image: string }[];
+  surveyors: Surveyor[];
   selectedId: string;
   onSelect: (id: string) => void;
   selectedDate: Date | undefined;
   onDateSelect: (date: Date | undefined) => void;
 }
 
-export function BookingSection({ surveyors, selectedId, onSelect, selectedDate, onDateSelect }: BookingSectionProps) {
+export function BookingSection({ surveyors, selectedId, selectedDate, onDateSelect }: BookingSectionProps) {
   const [isDialogOpen, setIsDialogOpen] = useState(false);
-  const selectedSurveyor = surveyors.find(s => s.id === selectedId);
+
+  const selectedSurveyor = useMemo(() => 
+    surveyors.find(s => s.id === selectedId || s._id === selectedId),
+  [surveyors, selectedId]);
+
+  const handleOpenDialog = useCallback(() => {
+    if (selectedDate) {
+      setIsDialogOpen(true);
+    }
+  }, [selectedDate]);
+
+  const handleCloseDialog = useCallback(() => {
+    setIsDialogOpen(false);
+  }, []);
 
   return (
-    <>
-      <Card className="flex flex-col">
-        <CardHeader>
-          <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
-            <div className="space-y-1">
-              <CardTitle className="text-2xl font-black tracking-tight">Check Availability</CardTitle>
-              <CardDescription className="text-base font-medium">Select a date to start your journey</CardDescription>
-            </div>
-            <div className="w-full md:w-auto">
-              <SurveyorSelector 
-                surveyors={surveyors} 
-                selectedId={selectedId} 
-                onSelect={onSelect} 
-              />
-            </div>
-          </div>
-        </CardHeader>
-        <CardContent className="flex flex-col">
-          <div className="bg-background/40 rounded-3xl p-4 border border-border/50 my-8">
-            <BookingCalendar 
-              selectedDate={selectedDate}
-              onSelect={onDateSelect}
-              surveyorId={selectedId}
-            />
-          </div>
-          
-          <div className="mt-auto grid grid-cols-1 md:grid-cols-2 gap-8">
-            <div className="space-y-6">
-              <h4 className="font-bold text-xs uppercase tracking-[0.2em] text-muted-foreground/70">Legend</h4>
-              <div className="flex flex-wrap gap-x-6 gap-y-3">
-                <div className="flex items-center gap-3">
-                  <div className="h-3 w-3 rounded-full bg-orange-500 ring-4 ring-orange-500/20" />
-                  <span className="text-sm font-bold text-muted-foreground">Booked</span>
+    <section className="py-12" id="booking-section">
+      <div className="container mx-auto max-w-5xl">
+        <Card className="pt-0 border-none shadow-xl bg-background/60 backdrop-blur-md overflow-hidden rounded-3xl">
+          <CardHeader className="border-b border-border/40 bg-muted/10 px-8 py-6">
+            <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
+              <div className="space-y-1.5">
+                <div className="flex items-center gap-2 text-primary font-semibold text-xs uppercase tracking-wider">
+                  <Calendar className="h-3.5 w-3.5" />
+                  <span>Availability</span>
                 </div>
-                <div className="flex items-center gap-3">
-                  <div className="h-3 w-3 rounded-full bg-destructive ring-4 ring-destructive/20" />
-                  <span className="text-sm font-bold text-muted-foreground">Off-Day</span>
+                <CardTitle className="text-2xl font-bold tracking-tight">
+                  Schedule with {selectedSurveyor?.name}
+                </CardTitle>
+              </div>
+              {selectedDate && (
+                <div className="hidden md:flex items-center gap-2 bg-primary/5 px-4 py-2 rounded-full border border-primary/10">
+                  <span className="text-sm font-medium text-primary">
+                    Selected: {format(selectedDate, 'MMMM do, yyyy')}
+                  </span>
                 </div>
-                <div className="flex items-center gap-3">
-                  <div className="h-3 w-3 rounded-full bg-primary ring-4 ring-primary/20" />
-                  <span className="text-sm font-bold text-muted-foreground">Selected</span>
+              )}
+            </div>
+          </CardHeader>
+
+          <CardContent className="p-8">
+            <div className="grid grid-cols-1 lg:grid-cols-12 gap-10">
+              {/* Calendar Column */}
+              <div className="lg:col-span-7">
+                <div className="bg-background/40 rounded-2xl p-4 border border-border/40 shadow-inner">
+                  <BookingCalendar 
+                    selectedDate={selectedDate}
+                    onSelect={onDateSelect}
+                    surveyorId={selectedId}
+                    disableBookedDates={true}
+                  />
                 </div>
               </div>
-            </div>
 
-            <div className="relative group">
-              <div className="absolute -inset-1 bg-linear-to-r from-primary to-primary/50 rounded-3xl blur opacity-20 group-hover:opacity-40 transition-opacity" />
-              <div className="relative bg-background/60 backdrop-blur-xl rounded-3xl p-6 border border-primary/10 flex flex-col justify-between h-full shadow-lg">
-                <div className="mb-4">
-                  <div className="text-xs font-bold text-muted-foreground uppercase tracking-widest mb-1">Target Date</div>
-                  <div className="text-lg font-black text-foreground">
-                    {selectedDate ? format(selectedDate, 'EEE, MMM do, yyyy') : 'Not Selected'}
+              {/* Info Column */}
+              <div className="lg:col-span-5 flex flex-col justify-between">
+                <div className="space-y-8">
+                  <div>
+                    <h4 className="text-xs font-bold uppercase tracking-widest text-muted-foreground mb-4 flex items-center gap-2">
+                      <Info className="h-3.5 w-3.5" />
+                      Status Guide
+                    </h4>
+                    <div className="grid grid-cols-2 gap-4">
+                      {[
+                        { label: 'Available', color: 'bg-background border border-border' },
+                        { label: 'Booked', color: 'bg-orange-500 shadow-[0_0_8px_rgba(249,115,22,0.4)]' },
+                        { label: 'Off-Day', color: 'bg-destructive shadow-[0_0_8px_rgba(239,68,68,0.4)]' },
+                        { label: 'Selected', color: 'bg-primary shadow-[0_0_8px_rgba(var(--primary),0.4)]' },
+                      ].map((item) => (
+                        <div key={item.label} className="flex items-center gap-3">
+                          <div className={cn("h-3 w-3 rounded-full", item.color)} />
+                          <span className="text-sm font-medium text-muted-foreground/80">{item.label}</span>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+
+                  <div className="p-6 rounded-2xl bg-muted/20 border border-border/40 space-y-4">
+                    <div className="space-y-1">
+                      <p className="text-xs font-bold text-muted-foreground uppercase tracking-widest">Target Date</p>
+                      <p className="text-lg font-bold text-foreground">
+                        {selectedDate ? format(selectedDate, 'EEEE, MMM do') : 'Select a date'}
+                      </p>
+                    </div>
+                    
+                    <Button 
+                      className="w-full h-12 rounded-xl font-bold shadow-lg shadow-primary/10 transition-all hover:shadow-primary/20 active:scale-[0.98]"
+                      disabled={!selectedDate}
+                      onClick={handleOpenDialog}
+                    >
+                      Continue to Booking
+                      <ArrowRight className="ml-2 h-4 w-4 transition-transform group-hover:translate-x-1" />
+                    </Button>
                   </div>
                 </div>
-                <Button 
-                  size="lg"
-                  disabled={!selectedDate}
-                  onClick={() => setIsDialogOpen(true)}
-                >
-                  Proceed to Book <ArrowRight className="ml-2 h-5 w-5 group-hover:translate-x-1 transition-transform" />
-                </Button>
+
+                <p className="text-xs text-muted-foreground/60 italic mt-6">
+                  * Final availability will be confirmed after your request is processed.
+                </p>
               </div>
             </div>
-          </div>
-        </CardContent>
-      </Card>
+          </CardContent>
+        </Card>
+      </div>
 
       <BookingDialog 
         isOpen={isDialogOpen}
-        onClose={() => setIsDialogOpen(false)}
+        onClose={handleCloseDialog}
         selectedSurveyor={selectedSurveyor}
         selectedDate={selectedDate}
       />
-    </>
+    </section>
   );
 }

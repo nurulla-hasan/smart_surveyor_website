@@ -20,6 +20,7 @@ import { DashboardCalendar } from "@/components/dashboard/dashboard-calendar";
 import { StatCard } from "@/components/dashboard/stat-card";
 import { getDashboardStats, getMonthlyStats, getCalendarData } from "@/services/dashboard";
 import { getCurrentUser } from "@/services/auth";
+import { redirect } from "next/navigation";
 
 export const dynamic = "force-dynamic";
 
@@ -45,6 +46,10 @@ export default async function DashboardPage({
 }) {
   const params = await searchParams;
   const user = await getCurrentUser();
+
+  if (!user) {
+    redirect("/auth/login");
+  }
 
   // Fetch data in parallel using params directly
   const [statsResponse, monthlyStatsResponse, calendarResponse] = await Promise.all([

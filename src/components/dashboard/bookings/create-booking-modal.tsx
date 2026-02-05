@@ -314,6 +314,7 @@ export function CreateBookingModal({ onSuccess }: CreateBookingModalProps) {
                         field.onChange(date);
                       }}
                       className="border-none shadow-none"
+                      disableBookedDates={true}
                     />
                   </PopoverContent>
                 </Popover>

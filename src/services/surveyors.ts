@@ -10,7 +10,7 @@ export const getPublicSurveyors = async (query: QueryParams = {}): Promise<any> 
     const response = await serverFetch(`/users/surveyors${buildQueryString(query)}`, {
       isPublic: true,
       next: {
-        revalidate: 3600, // 1 hour
+        revalidate: 86400, // 1 day
         tags: ["surveyors"],
       },
     });
@@ -26,7 +26,7 @@ export const getPublicSurveyorProfile = async (id: string): Promise<any> => {
     const response = await serverFetch(`/users/surveyors/${id}`, {
       isPublic: true,
       next: {
-        revalidate: 3600, // 1 hour
+        revalidate: 86400, // 1 day
         tags: [`surveyor-${id}`],
       },
     });
