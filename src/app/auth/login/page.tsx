@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from "react"
+import { useState, Suspense } from "react"
 import { useForm } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
 import * as z from "zod"
@@ -32,7 +32,7 @@ const loginSchema = z.object({
 
 type LoginFormValues = z.infer<typeof loginSchema>
 
-export default function LoginForm() {
+function LoginContent() {
   const router = useRouter()
   const searchParams = useSearchParams()
   const callbackUrl = searchParams.get("callbackUrl")
@@ -159,5 +159,13 @@ export default function LoginForm() {
         </Form>
       </CardContent>
     </Card>
+  )
+}
+
+export default function LoginForm() {
+  return (
+    <Suspense fallback={<div className="flex items-center justify-center min-h-100">Loading...</div>}>
+      <LoginContent />
+    </Suspense>
   )
 }
