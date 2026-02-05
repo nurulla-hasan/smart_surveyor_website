@@ -4,7 +4,7 @@ import { useState } from "react"
 import { useForm } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
 import * as z from "zod"
-import { useRouter } from "next/navigation"
+import { useRouter, useSearchParams } from "next/navigation"
 import Link from "next/link"
 import { Eye, EyeOff, Lock, Mail } from "lucide-react"
 import { Button } from "@/components/ui/button"
@@ -34,6 +34,8 @@ type LoginFormValues = z.infer<typeof loginSchema>
 
 export default function LoginForm() {
   const router = useRouter()
+  const searchParams = useSearchParams()
+  const callbackUrl = searchParams.get("callbackUrl")
   const [showPassword, setShowPassword] = useState(false)
   const [isLoading, setIsLoading] = useState(false)
 
@@ -54,9 +56,9 @@ export default function LoginForm() {
       if (result?.success) {
         SuccessToast("Login successful! Welcome back!")
         
-        // Redirect based on role-based path returned from service
+        // Redirect based on callbackUrl or role-based path returned from service
         setTimeout(() => {
-          router.push(result.redirectPath || "/")
+          router.push(callbackUrl || result.redirectPath || "/")
         }, 1000)
       } else {
         ErrorToast(result?.message || "Invalid email or password. Please try again.")
@@ -144,6 +146,15 @@ export default function LoginForm() {
             <Button type="submit" className="w-full" loading={isLoading} loadingText="Signing in...">
               Sign In
             </Button>
+            <div className="text-center text-sm">
+              Don&apos;t have an account?{" "}
+              <Link 
+                href="/auth/register" 
+                className="font-bold text-primary hover:underline"
+              >
+                Register here
+              </Link>
+            </div>
           </form>
         </Form>
       </CardContent>

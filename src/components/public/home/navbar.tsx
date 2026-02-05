@@ -35,7 +35,7 @@ export function Navbar({ user }: NavbarProps) {
   const handleLogout = async () => {
     await logOut();
     router.refresh();
-    router.push("/auth/login");
+    router.push("/home");
   };
 
   return (

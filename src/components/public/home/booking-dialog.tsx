@@ -120,7 +120,7 @@ export function BookingDialog({ isOpen, onClose, selectedSurveyor, selectedDate 
     
     setIsSubmitting(true);
     try {
-      const surveyorId = selectedSurveyor.id || (selectedSurveyor as any)._id || (selectedSurveyor as any).id;
+      const surveyorId = selectedSurveyor.id || selectedSurveyor._id;
       
       const payload = {
         title: values.title,
