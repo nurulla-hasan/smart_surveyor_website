@@ -24,6 +24,7 @@ interface ConfirmationModalProps {
   onConfirm: () => void;
   isLoading?: boolean;
   trigger?: ReactNode;
+  children?: ReactNode;
 }
 
 export function ConfirmationModal({
@@ -36,6 +37,7 @@ export function ConfirmationModal({
   onConfirm,
   isLoading,
   trigger,
+  children,
 }: ConfirmationModalProps) {
   return (
     <AlertDialog open={open} onOpenChange={onOpenChange}>
@@ -50,6 +52,8 @@ export function ConfirmationModal({
           <AlertDialogTitle>{title}</AlertDialogTitle>
           <AlertDialogDescription>{description}</AlertDialogDescription>
         </AlertDialogHeader>
+
+        {children}
 
         <AlertDialogFooter>
           <AlertDialogCancel disabled={isLoading}>{cancelText}</AlertDialogCancel>

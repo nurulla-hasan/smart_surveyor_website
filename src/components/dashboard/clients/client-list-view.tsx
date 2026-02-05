@@ -19,10 +19,10 @@ export function ClientListView({ initialData }: ClientListViewProps) {
 
   const clients = initialData?.data?.clients || [];
   const meta = initialData?.data?.meta || {
-    totalItems: 0,
+    total: 0,
     totalPages: 0,
-    currentPage: 1,
-    pageSize: 10,
+    page: 1,
+    limit: 10,
   };
 
 
@@ -53,13 +53,8 @@ export function ClientListView({ initialData }: ClientListViewProps) {
           <DataTable
             columns={clientColumns}
             data={clients}
-            pageSize={meta.pageSize}
-            meta={{
-              total: meta.totalItems,
-              page: meta.currentPage,
-              limit: meta.pageSize,
-              totalPages: meta.totalPages,
-            }}
+            limit={meta.limit}
+            meta={meta}
           />
         </div>
       </div>

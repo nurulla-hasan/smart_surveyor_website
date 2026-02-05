@@ -59,6 +59,7 @@ export default function PublicHomeView({
 
               <div className="lg:col-span-7">
                 <BookingSection 
+                  // user={user}
                   surveyors={surveyors} 
                   selectedId={selectedSurveyorId} 
                   onSelect={setSelectedSurveyorId} 

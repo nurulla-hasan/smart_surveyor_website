@@ -9,9 +9,11 @@ import {
   getPaginationRowModel,
   getSortedRowModel,
   SortingState,
+  PaginationState,
 } from "@tanstack/react-table";
 import { ArrowUpDown, ArrowUp, ArrowDown } from "lucide-react";
 
+import { PaginationMeta } from "@/types/global.type";
 import {
   Table,
   TableBody,
@@ -34,35 +36,30 @@ declare module "@tanstack/react-table" {
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
   data: TData[];
-  pageSize?: number;
-  meta?: {
-    total: number;
-    page: number;
-    limit: number;
-    totalPages?: number;
-  };
+  limit?: number;
+  meta?: PaginationMeta;
 }
 
 export function DataTable<TData, TValue>({
   columns,
   data,
-  pageSize = 10,
+  limit = 10,
   meta,
 }: DataTableProps<TData, TValue>) {
   const [sorting, setSorting] = React.useState<SortingState>([]);
-  const [pagination, setPagination] = React.useState({
+  const [pagination, setPagination] = React.useState<PaginationState>({
     pageIndex: meta ? meta.page - 1 : 0,
-    pageSize: pageSize,
+    pageSize: limit,
   });
 
-  // Update pagination state when pageSize or meta changes
+  // Update pagination state when limit or meta changes
   React.useEffect(() => {
     setPagination((prev) => ({
       ...prev,
-      pageSize: pageSize,
+      pageSize: limit,
       ...(meta && { pageIndex: meta.page - 1 }),
     }));
-  }, [pageSize, meta]);
+  }, [limit, meta]);
 
   // eslint-disable-next-line react-hooks/incompatible-library
   const table = useReactTable({

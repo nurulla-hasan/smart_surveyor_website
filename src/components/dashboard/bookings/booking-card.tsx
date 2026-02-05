@@ -103,6 +103,14 @@ export function BookingCard({ booking }: BookingCardProps) {
               <p className="flex items-center gap-1.5">
                 {format(new Date(booking.bookingDate), "MMMM do, yyyy")}
               </p>
+              {booking.bookingTime && (
+                <>
+                  <div className="h-1 w-1 rounded-full bg-border" />
+                  <p className="flex items-center gap-1.5 text-primary font-medium">
+                    {booking.bookingTime}
+                  </p>
+                </>
+              )}
               {booking.amountReceived > 0 && (
                 <>
                   <div className="h-1 w-1 rounded-full bg-border" />

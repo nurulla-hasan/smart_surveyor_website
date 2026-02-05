@@ -19,7 +19,7 @@ export default async function EditReportPage({
   
   const [reportRes, clientsRes] = await Promise.all([
     getReportById(id),
-    getClients({ pageSize: "20" }),
+    getClients({ limit: "20" }),
   ]);
 
   if (!reportRes?.success || !reportRes.data) {

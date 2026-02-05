@@ -1,12 +1,21 @@
- 
 'use client';
 
 import React, { useState, useCallback, useMemo } from 'react';
+import { useForm } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
+import * as z from 'zod';
 import { ModalWrapper } from '@/components/ui/custom/modal-wrapper';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
-import { Label } from '@/components/ui/label';
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/components/ui/form";
 import { format } from 'date-fns';
 import { 
   MapPin, 
@@ -18,6 +27,7 @@ import {
   ChevronLeft,
   CheckCircle2,
   Loader2,
+  Clock,
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -32,72 +42,98 @@ interface BookingDialogProps {
   selectedDate: Date | undefined;
 }
 
-const INITIAL_FORM_DATA = {
-  title: '',
-  propertyAddress: '',
-  clientName: '',
-  clientPhone: '',
-  description: ''
-};
+const bookingSchema = z.object({
+  title: z.string().min(3, "Title must be at least 3 characters"),
+  propertyAddress: z.string().min(5, "Property address is required"),
+  clientName: z.string().min(2, "Your name is required"),
+  clientPhone: z.string().regex(/^01[3-9]\d{8}$/, "Please enter a valid 11-digit Bangladeshi phone number"),
+  description: z.string().optional(),
+  bookingTime: z.string().min(1, "Please select a time slot"),
+});
+
+type BookingFormValues = z.infer<typeof bookingSchema>;
+
+const TIME_SLOTS = [
+  "08:00 AM",
+  "10:00 AM",
+  "12:00 PM",
+  "02:00 PM",
+  "04:00 PM"
+];
 
 export function BookingDialog({ isOpen, onClose, selectedSurveyor, selectedDate }: BookingDialogProps) {
   const [step, setStep] = useState(1);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSuccess, setIsSuccess] = useState(false);
-  
-  const [formData, setFormData] = useState(INITIAL_FORM_DATA);
-  const [errors, setErrors] = useState<Record<string, string>>({});
 
-  const handleInputChange = useCallback((e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-    const { name, value } = e.target;
-    setFormData(prev => ({ ...prev, [name]: value }));
-    // Clear error when user types
-    if (errors[name]) {
-      setErrors(prev => {
-        const newErrors = { ...prev };
-        delete newErrors[name];
-        return newErrors;
-      });
+  const form = useForm<BookingFormValues>({
+    resolver: zodResolver(bookingSchema),
+    defaultValues: {
+      title: '',
+      propertyAddress: '',
+      clientName: '',
+      clientPhone: '',
+      description: '',
+      bookingTime: '',
+    },
+  });
+
+  const handleNext = async (e?: React.MouseEvent) => {
+    console.log("handleNext called, current step:", step);
+    if (e) {
+      e.preventDefault();
+      e.stopPropagation();
     }
-  }, [errors]);
-
-  const validateStep = useCallback((currentStep: number) => {
-    const newErrors: Record<string, string> = {};
-    if (currentStep === 1) {
-      // Optional fields for now as per previous logic, but we can add validation if needed
-    } else if (currentStep === 2) {
-      if (formData.clientPhone && !/^\d{11}$/.test(formData.clientPhone)) {
-        newErrors.clientPhone = 'Please enter a valid 11-digit phone number';
+    
+    const fieldsToValidate = step === 1 
+      ? ['title', 'bookingTime', 'propertyAddress'] as const
+      : ['clientName', 'clientPhone'] as const;
+    
+    console.log("Validating fields:", fieldsToValidate);
+    const isValid = await form.trigger(fieldsToValidate);
+    console.log("Form validation result:", isValid);
+    
+    if (isValid) {
+      if (step === 1) {
+        console.log("Moving to step 2");
+        setStep(2);
+      } else {
+        console.log("Submitting form data:", form.getValues());
+        await form.handleSubmit(onSubmit)();
       }
+    } else {
+      console.log("Validation errors:", form.formState.errors);
     }
-    setErrors(newErrors);
-    return Object.keys(newErrors).length === 0;
-  }, [formData]);
+  };
 
-  const handleNext = useCallback(() => {
-    if (validateStep(1)) setStep(prev => prev + 1);
-  }, [validateStep]);
+  const handleBack = useCallback(() => {
+    console.log("handleBack called");
+    setStep(prev => prev - 1);
+  }, []);
 
-  const handleBack = useCallback(() => setStep(prev => prev - 1), []);
-
-  const handleSubmit = async () => {
-    if (!selectedDate || !selectedSurveyor) return;
-    if (!validateStep(2)) return;
+  const onSubmit = async (values: BookingFormValues) => {
+    console.log("onSubmit triggered with values:", values);
+    if (!selectedDate || !selectedSurveyor) {
+      console.error("Missing selectedDate or selectedSurveyor", { selectedDate, selectedSurveyor });
+      return;
+    }
     
     setIsSubmitting(true);
     try {
+      const surveyorId = selectedSurveyor.id || (selectedSurveyor as any)._id || (selectedSurveyor as any).id;
+      
       const payload = {
-        title: formData.title,
-        propertyAddress: formData.propertyAddress,
-        client: {
-          name: formData.clientName,
-          phone: formData.clientPhone,
-        },
-        description: formData.description,
+        title: values.title,
+        propertyAddress: values.propertyAddress,
+        clientName: values.clientName,
+        clientPhone: values.clientPhone,
+        description: values.description,
         bookingDate: selectedDate.toISOString(),
-        surveyorId: selectedSurveyor.id || selectedSurveyor._id,
+        bookingTime: values.bookingTime,
+        surveyorId: surveyorId,
       };
 
+      console.log("Sending booking payload:", payload);
       const response = await createBooking(payload);
       
       if (response?.success) {
@@ -116,203 +152,252 @@ export function BookingDialog({ isOpen, onClose, selectedSurveyor, selectedDate 
 
   const resetAndClose = useCallback(() => {
     onClose();
-    // Use a slight delay to allow modal exit animation
     setTimeout(() => {
       setStep(1);
       setIsSuccess(false);
-      setFormData(INITIAL_FORM_DATA);
-      setErrors({});
+      form.reset();
     }, 300);
-  }, [onClose]);
+  }, [onClose, form]);
 
   const formattedDate = useMemo(() => 
     selectedDate ? format(selectedDate, 'PPP') : 'No date selected',
   [selectedDate]);
 
-  const stepContent = useMemo(() => {
-    if (isSuccess) return null;
-    
-    return step === 1 ? (
-      <div className="space-y-4">
-        <div className="space-y-2">
-          <Label htmlFor="title">Service Title (Optional)</Label>
-          <div className="relative group">
-            <Briefcase className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground group-focus-within:text-primary transition-colors" />
-            <Input 
-              id="title"
-              name="title"
-              value={formData.title}
-              onChange={handleInputChange}
-              placeholder="e.g., Digital Survey, Boundary Demarcation" 
-              className="pl-10"
-            />
-          </div>
-        </div>
-        
-        <div className="space-y-2">
-          <Label htmlFor="propertyAddress">Property Address (Optional)</Label>
-          <div className="relative group">
-            <MapPin className="absolute left-3 top-3 h-4 w-4 text-muted-foreground group-focus-within:text-primary transition-colors" />
-            <Textarea 
-              id="propertyAddress"
-              name="propertyAddress"
-              value={formData.propertyAddress}
-              onChange={handleInputChange}
-              placeholder="Enter detailed property address..." 
-              className="min-h-25 pl-10"
-            />
-          </div>
-        </div>
-      </div>
-    ) : (
-      <div className="space-y-4">
-        <div className="grid grid-cols-1 gap-4">
-          <div className="space-y-2">
-            <Label htmlFor="clientName">Your Name (Optional)</Label>
-            <div className="relative group">
-              <User className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground group-focus-within:text-primary transition-colors" />
-              <Input 
-                id="clientName"
-                name="clientName"
-                value={formData.clientName}
-                onChange={handleInputChange}
-                placeholder="Enter your full name" 
-                className="pl-10"
-              />
-            </div>
-          </div>
-          <div className="space-y-2">
-            <Label htmlFor="clientPhone">Phone Number (Optional)</Label>
-            <div className="relative group">
-              <Phone className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground group-focus-within:text-primary transition-colors" />
-              <Input 
-                id="clientPhone"
-                name="clientPhone"
-                type="tel"
-                value={formData.clientPhone}
-                onChange={handleInputChange}
-                placeholder="017XXXXXXXX" 
-                className={cn(
-                  "pl-10",
-                  errors.clientPhone && "border-destructive"
-                )}
-              />
-            </div>
-            {errors.clientPhone && <p className="text-xs text-destructive">{errors.clientPhone}</p>}
-          </div>
-        </div>
-        <div className="space-y-2">
-          <Label htmlFor="description">Additional Notes (Optional)</Label>
-          <div className="relative group">
-            <MessageSquare className="absolute left-3 top-3 h-4 w-4 text-muted-foreground group-focus-within:text-primary transition-colors" />
-            <Textarea 
-              id="description"
-              name="description"
-              value={formData.description}
-              onChange={handleInputChange}
-              placeholder="Enter any special requests here..." 
-              className="min-h-20 pl-10"
-            />
-          </div>
-        </div>
-      </div>
-    );
-  }, [step, formData, handleInputChange, isSuccess, errors]);
-
   return (
-    <ModalWrapper 
-      open={isOpen} 
+    <ModalWrapper
+      open={isOpen}
       onOpenChange={resetAndClose}
       title="Book a Survey"
       description={formattedDate}
     >
-      <div className="p-6">
+      <div className="relative min-h-100 p-6">
         <AnimatePresence mode="wait">
           {isSuccess ? (
             <motion.div
               key="success"
-              initial={{ opacity: 0, y: 10 }}
-              animate={{ opacity: 1, y: 0 }}
-              className="py-8 text-center space-y-4"
+              initial={{ opacity: 0, scale: 0.9 }}
+              animate={{ opacity: 1, scale: 1 }}
+              exit={{ opacity: 0, scale: 0.9 }}
+              className="absolute inset-0 flex flex-col items-center justify-center text-center p-6 space-y-6"
             >
-              <div className="h-16 w-16 bg-primary/10 rounded-full flex items-center justify-center mx-auto">
-                <CheckCircle2 className="h-8 w-8 text-primary" />
+              <div className="relative">
+                <div className="absolute -inset-4 bg-primary/20 rounded-full blur-xl animate-pulse" />
+                <CheckCircle2 className="h-20 w-20 text-primary relative" />
               </div>
               <div className="space-y-2">
-                <h3 className="text-xl font-bold">Booking Successful!</h3>
-                <p className="text-sm text-muted-foreground">
-                  Your request has been sent. {selectedSurveyor?.name} will contact you shortly.
+                <h3 className="text-2xl font-black tracking-tight">Booking Requested!</h3>
+                <p className="text-muted-foreground font-medium">
+                  Your survey request has been sent to <span className="text-foreground font-bold">{selectedSurveyor?.name}</span>. They will contact you shortly.
                 </p>
               </div>
-              <Button onClick={resetAndClose}>
-                Close
+              <Button 
+                onClick={resetAndClose}
+                className="w-full h-12 rounded-xl font-bold text-lg shadow-lg shadow-primary/20"
+              >
+                Close Window
               </Button>
             </motion.div>
           ) : (
             <motion.div
               key={step}
-              initial={{ opacity: 0, x: 10 }}
+              initial={{ opacity: 0, x: step === 1 ? -20 : 20 }}
               animate={{ opacity: 1, x: 0 }}
-              exit={{ opacity: 0, x: -10 }}
+              exit={{ opacity: 0, x: step === 1 ? 20 : -20 }}
               transition={{ duration: 0.2 }}
+              className="space-y-6"
             >
-              {stepContent}
+              <Form {...form}>
+                <form className="space-y-4">
+                  {step === 1 ? (
+                    <>
+                      <FormField
+                        control={form.control}
+                        name="title"
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel>Service Title</FormLabel>
+                            <FormControl>
+                              <div className="relative group">
+                                <Briefcase className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground group-focus-within:text-primary transition-colors" />
+                                <Input 
+                                  placeholder="e.g., Digital Survey, Boundary Demarcation" 
+                                  className="pl-10 h-11"
+                                  {...field}
+                                />
+                              </div>
+                            </FormControl>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+
+                      <FormField
+                        control={form.control}
+                        name="bookingTime"
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel>Preferred Time</FormLabel>
+                            <div className="grid grid-cols-3 gap-2">
+                              {TIME_SLOTS.map((slot) => (
+                                <button
+                                  key={slot}
+                                  type="button"
+                                  onClick={() => field.onChange(slot)}
+                                  className={cn(
+                                    "flex items-center justify-center gap-1.5 py-2.5 px-1 rounded-xl border text-[11px] font-bold transition-all",
+                                    field.value === slot
+                                      ? "border-primary bg-primary/10 text-primary ring-1 ring-primary"
+                                      : "border-border/50 hover:border-primary/30 hover:bg-muted/50 text-muted-foreground"
+                                  )}
+                                >
+                                  <Clock className="h-3.5 w-3.5" />
+                                  {slot}
+                                </button>
+                              ))}
+                            </div>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+                      
+                      <FormField
+                        control={form.control}
+                        name="propertyAddress"
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel>Property Address</FormLabel>
+                            <FormControl>
+                              <div className="relative group">
+                                <MapPin className="absolute left-3 top-3 h-4 w-4 text-muted-foreground group-focus-within:text-primary transition-colors" />
+                                <Textarea 
+                                  placeholder="Enter detailed property address..." 
+                                  className="min-h-24 pl-10 pt-2.5 resize-none"
+                                  {...field}
+                                />
+                              </div>
+                            </FormControl>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+                    </>
+                  ) : (
+                    <>
+                      <FormField
+                        control={form.control}
+                        name="clientName"
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel>Your Name</FormLabel>
+                            <FormControl>
+                              <div className="relative group">
+                                <User className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground group-focus-within:text-primary transition-colors" />
+                                <Input 
+                                  placeholder="Enter your full name" 
+                                  className="pl-10 h-11"
+                                  {...field}
+                                />
+                              </div>
+                            </FormControl>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+
+                      <FormField
+                        control={form.control}
+                        name="clientPhone"
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel>Phone Number</FormLabel>
+                            <FormControl>
+                              <div className="relative group">
+                                <Phone className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground group-focus-within:text-primary transition-colors" />
+                                <Input 
+                                  type="tel"
+                                  placeholder="017XXXXXXXX" 
+                                  className="pl-10 h-11"
+                                  {...field}
+                                />
+                              </div>
+                            </FormControl>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+
+                      <FormField
+                        control={form.control}
+                        name="description"
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel>Additional Notes (Optional)</FormLabel>
+                            <FormControl>
+                              <div className="relative group">
+                                <MessageSquare className="absolute left-3 top-3 h-4 w-4 text-muted-foreground group-focus-within:text-primary transition-colors" />
+                                <Textarea 
+                                  placeholder="Anything else we should know?" 
+                                  className="min-h-24 pl-10 pt-2.5 resize-none"
+                                  {...field}
+                                />
+                              </div>
+                            </FormControl>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+                    </>
+                  )}
+                </form>
+              </Form>
+
+              <div className="flex items-center gap-3 pt-4">
+                {step === 2 && (
+                  <Button
+                    type="button"
+                    variant="outline"
+                    onClick={handleBack}
+                    className="h-12 px-6 rounded-xl font-bold border-2"
+                  >
+                    <ChevronLeft className="h-5 w-5 mr-1" />
+                    Back
+                  </Button>
+                )}
+                <Button 
+                  type="button"
+                  onClick={(e) => {
+                    console.log("Button onClick event triggered");
+                    e.preventDefault();
+                    e.stopPropagation();
+                    handleNext(e);
+                  }}
+                  disabled={isSubmitting}
+                  className="flex-1 h-12 rounded-xl font-bold text-lg shadow-lg shadow-primary/20 group"
+                >
+                  {isSubmitting ? (
+                    <Loader2 className="h-5 w-5 animate-spin" />
+                  ) : step === 1 ? (
+                    <>
+                      Continue
+                      <ChevronRight className="ml-2 h-5 w-5 transition-transform group-hover:translate-x-1" />
+                    </>
+                  ) : (
+                    <>
+                      Confirm Booking
+                      <CheckCircle2 className="ml-2 h-5 w-5" />
+                    </>
+                  )}
+                </Button>
+              </div>
+              
+              <div className="flex justify-center gap-1.5 pt-2">
+                <div className={cn("h-1.5 rounded-full transition-all duration-300", step === 1 ? "w-8 bg-primary" : "w-2 bg-muted")} />
+                <div className={cn("h-1.5 rounded-full transition-all duration-300", step === 2 ? "w-8 bg-primary" : "w-2 bg-muted")} />
+              </div>
             </motion.div>
           )}
         </AnimatePresence>
       </div>
-
-      {!isSuccess && (
-        <div className="p-6 flex items-center justify-between gap-4">
-          <div className="flex gap-1">
-            {[1, 2].map((i) => (
-              <div 
-                key={i} 
-                className={cn(
-                  "h-1 w-4 rounded-full transition-all duration-300",
-                  step === i ? "bg-primary w-8" : "bg-primary/20"
-                )} 
-              />
-            ))}
-          </div>
-
-          <div className="flex items-center gap-2">
-            {step > 1 && (
-              <Button
-                variant="ghost"
-                onClick={handleBack}
-                disabled={isSubmitting}
-              >
-                <ChevronLeft className="mr-1.5 h-4 w-4" /> Back
-              </Button>
-            )}
-
-            {step < 2 ? (
-              <Button
-                onClick={handleNext}
-              >
-                Next <ChevronRight className="ml-1.5 h-4 w-4" />
-              </Button>
-            ) : (
-              <Button
-                onClick={handleSubmit}
-                disabled={isSubmitting}
-              >
-                {isSubmitting ? (
-                  <>
-                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                    Booking...
-                  </>
-                ) : (
-                  <>
-                    Confirm <CheckCircle2 className="ml-1.5 h-4 w-4" />
-                  </>
-                )}
-              </Button>
-            )}
-          </div>
-        </div>
-      )}
     </ModalWrapper>
   );
 }

@@ -12,6 +12,7 @@ import {
   Activity as ActivityIcon,
   Inbox,
   CheckCircle2,
+  Clock,
 } from "lucide-react";
 import { format } from "date-fns";
 import { Badge } from "@/components/ui/badge";
@@ -28,6 +29,7 @@ interface RecentActivity {
   id: string;
   client?: { name: string };
   bookingDate: string;
+  bookingTime?: string;
   status: string;
 }
 
@@ -37,6 +39,7 @@ interface PendingRequest {
   client?: { name: string; phone?: string };
   description?: string;
   bookingDate?: string;
+  bookingTime?: string;
 }
 
 export default async function DashboardPage({
@@ -147,6 +150,7 @@ export default async function DashboardPage({
                           <p className="text-sm font-bold leading-none">{activity.client?.name || "Client"}</p>
                           <p className="text-[11px] text-muted-foreground">
                             {activity.bookingDate ? format(new Date(activity.bookingDate), "MMM d") : "N/A"}
+                            {activity.bookingTime && ` at ${activity.bookingTime}`}
                           </p>
                         </div>
                       </div>
@@ -197,11 +201,19 @@ export default async function DashboardPage({
                                  <p className="text-xs text-muted-foreground">
                                    Client: <span className="font-semibold text-foreground">{request.client?.name || "N/A"}</span>
                                  </p>
-                                 {request.bookingDate && (
-                                   <p className="text-[10px] text-muted-foreground">
-                                     {format(new Date(request.bookingDate), "MMM d, yyyy")}
-                                   </p>
-                                 )}
+                                 <div className="flex items-center gap-2">
+                                   {request.bookingTime && (
+                                     <div className="flex items-center gap-1 text-[10px] font-bold text-primary">
+                                       <Clock className="h-2.5 w-2.5" />
+                                       {request.bookingTime}
+                                     </div>
+                                   )}
+                                   {request.bookingDate && (
+                                     <p className="text-[10px] text-muted-foreground">
+                                       {format(new Date(request.bookingDate), "MMM d, yyyy")}
+                                     </p>
+                                   )}
+                                 </div>
                               </div>
                            </div>
                         </div>

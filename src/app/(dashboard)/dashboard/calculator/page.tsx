@@ -23,7 +23,7 @@ export default async function CalculatorPage({
   // Fetch calculation history and initial bookings using Promise.all
   const [calculationsRes, bookingsRes] = await Promise.all([
     getCalculations(params),
-    getBookings({ pageSize: "10" })
+    getBookings({ limit: "10" })
   ]);
 
   const { calculations, meta } = calculationsRes;
@@ -56,13 +56,8 @@ export default async function CalculatorPage({
             <DataTable
               columns={calculationColumns}
               data={calculations}
-              pageSize={meta.pageSize}
-              meta={{
-                total: meta.totalItems,
-                page: meta.currentPage,
-                limit: meta.pageSize,
-                totalPages: meta.totalPages,
-              }}
+              limit={meta.limit}
+              meta={meta}
             />
           </div>
         </div>

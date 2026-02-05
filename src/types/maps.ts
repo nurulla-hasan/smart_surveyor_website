@@ -1,3 +1,5 @@
+import { PaginationMeta } from "./global.type";
+
 /* eslint-disable @typescript-eslint/no-explicit-any */
 export interface MapData {
   id: string;
@@ -12,20 +14,13 @@ export interface MapData {
   updatedAt: string;
 }
 
-export interface MapMeta {
-  totalItems: number;
-  totalPages: number;
-  currentPage: number;
-  pageSize: number;
-}
-
 export interface MapsResponse {
   success: boolean;
   statusCode: number;
   message: string;
   data: {
     maps: MapData[];
-    meta: MapMeta;
+    meta: PaginationMeta;
   };
 }
 

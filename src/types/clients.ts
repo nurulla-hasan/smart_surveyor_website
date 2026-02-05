@@ -1,3 +1,5 @@
+import { PaginationMeta } from "./global.type";
+
 export interface Client {
   id: string;
   userId: string;
@@ -16,11 +18,6 @@ export interface GetClientsResponse {
   message: string;
   data: {
     clients: Client[];
-    meta: {
-      totalItems: number;
-      totalPages: number;
-      currentPage: number;
-      pageSize: number;
-    };
+    meta: PaginationMeta;
   };
 }

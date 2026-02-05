@@ -14,15 +14,15 @@ import {
 
 type PaginationIdentifier = number | "...";
 
-const getPaginationRange = (totalPages: number, currentPage: number, siblingCount = 1): PaginationIdentifier[] => {
+const getPaginationRange = (totalPages: number, page: number, siblingCount = 1): PaginationIdentifier[] => {
   const totalPageNumbers = siblingCount + 5;
 
   if (totalPageNumbers >= totalPages) {
     return [...Array(totalPages)].map((_, idx) => idx + 1);
   }
 
-  const leftSiblingIndex = Math.max(currentPage - siblingCount, 1);
-  const rightSiblingIndex = Math.min(currentPage + siblingCount, totalPages);
+  const leftSiblingIndex = Math.max(page - siblingCount, 1);
+  const rightSiblingIndex = Math.min(page + siblingCount, totalPages);
 
   const shouldShowLeftDots = leftSiblingIndex > 2;
   const shouldShowRightDots = rightSiblingIndex < totalPages - 2;
@@ -55,19 +55,19 @@ const getPaginationRange = (totalPages: number, currentPage: number, siblingCoun
 };
 
 type CustomPaginationProps = {
-  currentPage: number;
+  page: number;
   totalPages: number;
 };
 
 const CustomPagination: React.FC<CustomPaginationProps> = ({
-  currentPage,
+  page,
   totalPages,
 }) => {
   const pathname = usePathname();
   const searchParams = useSearchParams();
-  const paginationRange = getPaginationRange(totalPages, currentPage);
+  const paginationRange = getPaginationRange(totalPages, page);
 
-  if (currentPage === 0 || paginationRange.length === 0) {
+  if (page === 0 || paginationRange.length === 0) {
     return null;
   }
 
@@ -82,8 +82,8 @@ const CustomPagination: React.FC<CustomPaginationProps> = ({
       <PaginationContent>
         <PaginationItem>
           <PaginationPrevious
-            href={currentPage > 1 ? createPageUrl(currentPage - 1) : "#"}
-            className={currentPage === 1 ? "pointer-events-none opacity-50" : ""}
+            href={page > 1 ? createPageUrl(page - 1) : "#"}
+            className={page === 1 ? "pointer-events-none opacity-50" : ""}
           />
         </PaginationItem>
         {paginationRange.map((pageNumber, index) => {
@@ -98,8 +98,8 @@ const CustomPagination: React.FC<CustomPaginationProps> = ({
           return (
             <PaginationItem key={pageNumber}>
               <PaginationLink
-                href={createPageUrl(pageNumber as number)}
-                isActive={currentPage === pageNumber}
+                href={createPageUrl(pageNumber)}
+                isActive={page === pageNumber}
               >
                 {pageNumber}
               </PaginationLink>
@@ -108,8 +108,8 @@ const CustomPagination: React.FC<CustomPaginationProps> = ({
         })}
         <PaginationItem>
           <PaginationNext
-            href={currentPage < totalPages ? createPageUrl(currentPage + 1) : "#"}
-            className={currentPage === totalPages ? "pointer-events-none opacity-50" : ""}
+            href={page < totalPages ? createPageUrl(page + 1) : "#"}
+            className={page === totalPages ? "pointer-events-none opacity-50" : ""}
           />
         </PaginationItem>
       </PaginationContent>

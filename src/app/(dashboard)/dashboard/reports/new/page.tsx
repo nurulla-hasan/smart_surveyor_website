@@ -11,8 +11,8 @@ export const metadata = {
 
 export default async function NewReportPage() {
   const [clientsRes, bookingsRes] = await Promise.all([
-    getClients({ pageSize: "20" }),
-    getBookings({ pageSize: "20" }),
+    getClients({ limit: "20" }),
+    getBookings({ limit: "20" }),
   ]);
 
   return (

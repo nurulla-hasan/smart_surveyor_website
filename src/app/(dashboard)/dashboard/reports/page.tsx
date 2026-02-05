@@ -44,13 +44,8 @@ export default async function ReportsPage({
           <DataTable
             columns={reportColumns}
             data={reports}
-            pageSize={meta.pageSize}
-            meta={{
-              total: meta.totalItems,
-              page: meta.currentPage,
-              limit: meta.pageSize,
-              totalPages: meta.totalPages,
-            }}
+            limit={meta.limit}
+            meta={meta}
           />
         </div>
       </div>

@@ -1,3 +1,5 @@
+import { PaginationMeta } from "./global.type";
+
 export interface Report {
   id: string;
   userId: string;
@@ -34,12 +36,7 @@ export interface GetReportsResponse {
   message: string;
   data: {
     reports: Report[];
-    meta: {
-      totalItems: number;
-      totalPages: number;
-      currentPage: number;
-      pageSize: number;
-    };
+    meta: PaginationMeta;
   };
 }
 

@@ -6,7 +6,7 @@ export const dynamic = "force-dynamic";
 
 export default async function HomePage() {
   const user = await getCurrentUser();
-  const surveyorsResponse = await getPublicSurveyors({ page: "1", limit: "6" });
+  const surveyorsResponse = await getPublicSurveyors({ page: "1",});
   const surveyors = surveyorsResponse?.data?.surveyors || [];
 
   return (

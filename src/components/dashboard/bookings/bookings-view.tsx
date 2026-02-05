@@ -7,6 +7,7 @@ import { BookingCalendar } from "@/components/dashboard/bookings/booking-calenda
 import { BookingTabs, BookingTab } from "@/components/dashboard/bookings/booking-tabs";
 import { BookingCard } from "@/components/dashboard/bookings/booking-card";
 import { Booking } from "@/types/bookings";
+import { PaginationMeta } from "@/types/global.type";
 import { format, isSameDay } from "date-fns";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import CustomPagination from "@/components/ui/custom/CustomPagination";
@@ -16,12 +17,7 @@ interface BookingsViewProps {
   blockedDates: Date[];
   initialBookings: Booking[];
   requestCount: number;
-  meta: {
-    totalItems: number;
-    totalPages: number;
-    currentPage: number;
-    pageSize: number;
-  };
+  meta: PaginationMeta;
 }
 
 export function BookingsView({ 
@@ -165,7 +161,7 @@ export function BookingsView({
               {/* Pagination */}
               {meta.totalPages > 1 && (
                 <div className="pt-4 border-t border-border/10">
-                  <CustomPagination currentPage={meta.currentPage} totalPages={meta.totalPages} />
+                  <CustomPagination page={meta.page} totalPages={meta.totalPages} />
                 </div>
               )}
             </div>

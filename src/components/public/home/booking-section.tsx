@@ -12,6 +12,7 @@ import { Surveyor } from '@/types/surveyor.type';
 import { cn } from '@/lib/utils';
 
 interface BookingSectionProps {
+  // user: any;
   surveyors: Surveyor[];
   selectedId: string;
   onSelect: (id: string) => void;

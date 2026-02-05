@@ -4,7 +4,7 @@ I will refactor the bookings feature to be cleaner, type-safe, and fully support
 - **Update `src/services/bookings.ts`**: Replace `Promise<any>` with `Promise<GetBookingsResponse | null>` to ensure type safety across the application.
 
 ### 2. Server-Side Logic Refinement (`src/app/(dashboard)/bookings/page.tsx`)
-- **Dynamic Pagination**: Parse `page` and `pageSize` from URL search parameters (defaulting to 1 and 10).
+- **Dynamic Pagination**: Parse `page` and `limit` from URL search parameters (defaulting to 1 and 10).
 - **Cleaner Fetching**: Pass these parameters to the `getBookings` service instead of hardcoded values.
 - **Data Passing**: Pass the full `meta` object (total items, pages, etc.) to the client component.
 

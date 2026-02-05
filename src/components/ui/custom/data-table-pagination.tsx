@@ -10,18 +10,14 @@ import {
   PaginationNext,
   PaginationPrevious,
 } from "@/components/ui/pagination";
+import { PaginationMeta } from "@/types/global.type";
 import { cn } from "@/lib/utils";
 import { useRouter, usePathname, useSearchParams } from "next/navigation";
 import React from "react";
 
 interface DataTablePaginationProps<TData> {
   table: Table<TData>;
-  meta?: {
-    total: number;
-    page: number;
-    limit: number;
-    totalPages?: number;
-  };
+  meta?: PaginationMeta;
 }
 
 export function DataTablePagination<TData>({
@@ -86,7 +82,7 @@ export function DataTablePagination<TData>({
             </PaginationItem>
 
             {(() => {
-              const currentPage = table.getState().pagination.pageIndex + 1;
+              const page = table.getState().pagination.pageIndex + 1;
               const totalPages = table.getPageCount();
               const pages: (number | string)[] = [];
 
@@ -96,20 +92,20 @@ export function DataTablePagination<TData>({
                 }
               } else {
                 pages.push(1);
-                if (currentPage > 3) pages.push("...");
+                if (page > 3) pages.push("...");
                 for (
-                  let i = Math.max(2, currentPage - 1);
-                  i <= Math.min(totalPages - 1, currentPage + 1);
+                  let i = Math.max(2, page - 1);
+                  i <= Math.min(totalPages - 1, page + 1);
                   i++
                 ) {
                   pages.push(i);
                 }
-                if (currentPage < totalPages - 2) pages.push("...");
+                if (page < totalPages - 2) pages.push("...");
                 pages.push(totalPages);
               }
 
-              return pages.map((page, idx) => {
-                if (page === "...") {
+              return pages.map((pageNumItem, idx) => {
+                if (pageNumItem === "...") {
                   return (
                     <PaginationItem key={`ellipsis-${idx}`}>
                       <PaginationEllipsis />
@@ -117,8 +113,8 @@ export function DataTablePagination<TData>({
                   );
                 }
 
-                const pageNum = page as number;
-                const isActive = pageNum === currentPage;
+                const pageNum = pageNumItem as number;
+                const isActive = pageNum === page;
 
                 return (
                   <PaginationItem key={pageNum}>

@@ -99,7 +99,7 @@ export function EditReportView({
       const fetchClientBookings = async () => {
         const res = await getBookings({
           clientId: selectedClient.value,
-          pageSize: "50",
+          limit: "50",
         });
         if (res?.success) {
           setClientBookings(res.data.bookings);
@@ -152,7 +152,7 @@ export function EditReportView({
           original: c,
         }));
       }
-      const res = await getClients({ search, pageSize: "10" });
+      const res = await getClients({ search, limit: "10" });
       if (res?.clients) {
         return res.clients.map((c: Client) => ({
           value: c.id,

@@ -16,7 +16,7 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
-import { Plus, CalendarIcon } from "lucide-react";
+import { Plus, CalendarIcon, Clock } from "lucide-react";
 import { BookingCalendar } from "@/components/dashboard/bookings/booking-calendar";
 import { getClients } from "@/services/clients";
 import { createBooking } from "@/services/bookings";
@@ -35,6 +35,14 @@ import { useSearchParams } from "next/navigation";
 import { cn } from "@/lib/utils";
 
 // Define Form Schema
+const TIME_SLOTS = [
+  "08:00 AM",
+  "10:00 AM",
+  "12:00 PM",
+  "02:00 PM",
+  "04:00 PM"
+];
+
 const formSchema = z.object({
   title: z.string().min(1, "Title is required"),
   description: z.string().optional(),
@@ -45,6 +53,7 @@ const formSchema = z.object({
   bookingDate: z.date({
     error: "Booking date is required",
   }),
+  bookingTime: z.string().optional(),
 });
 
 type FormValues = z.infer<typeof formSchema>;
@@ -63,7 +72,7 @@ export function CreateBookingModal({ onSuccess }: CreateBookingModalProps) {
 
   // Fetch clients for selection
   const fetchClientOptions = useCallback(async (search: string): Promise<SearchableOption[]> => {
-    const res = await getClients({ search, pageSize: "10" });
+    const res = await getClients({ search, limit: "10" });
     if (res?.clients) {
       return res.clients.map((client: any) => ({
         value: client.id,
@@ -85,6 +94,7 @@ export function CreateBookingModal({ onSuccess }: CreateBookingModalProps) {
       clientName: "",
       clientPhone: "",
       bookingDate: undefined as unknown as Date,
+      bookingTime: "",
     },
   });
 
@@ -106,6 +116,7 @@ export function CreateBookingModal({ onSuccess }: CreateBookingModalProps) {
         description: values.description || "",
         propertyAddress: values.propertyAddress || "",
         bookingDate: format(values.bookingDate, "yyyy-MM-dd"),
+        bookingTime: values.bookingTime,
       };
 
       if (values.clientId) {
@@ -318,6 +329,38 @@ export function CreateBookingModal({ onSuccess }: CreateBookingModalProps) {
                     />
                   </PopoverContent>
                 </Popover>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+
+          {/* Time Selection Section */}
+          <FormField
+            control={form.control}
+            name="bookingTime"
+            render={({ field }) => (
+              <FormItem className="flex flex-col">
+                <FormLabel className="text-sm font-semibold uppercase">
+                  Select Time (Optional)
+                </FormLabel>
+                <div className="grid grid-cols-3 gap-2 mt-2">
+                  {TIME_SLOTS.map((slot) => (
+                    <button
+                      key={slot}
+                      type="button"
+                      onClick={() => field.onChange(field.value === slot ? "" : slot)}
+                      className={cn(
+                        "flex items-center justify-center gap-1.5 py-2 px-1 rounded-xl border text-[11px] font-bold transition-all",
+                        field.value === slot
+                          ? "border-primary bg-primary/10 text-primary ring-1 ring-primary"
+                          : "border-border/50 hover:border-primary/30 hover:bg-muted/50 text-muted-foreground"
+                      )}
+                    >
+                      <Clock className="h-3 w-3" />
+                      {slot}
+                    </button>
+                  ))}
+                </div>
                 <FormMessage />
               </FormItem>
             )}

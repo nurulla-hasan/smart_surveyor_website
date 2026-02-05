@@ -47,10 +47,10 @@ export default async function BookingsPage({
   // Fetch pending count for the badge
   const pendingCountResponse = await getBookings({
     filter: "pending",
-    pageSize: "1",
+    limit: "1",
   });
   const requestCount = pendingCountResponse?.success
-    ? pendingCountResponse.data.meta.totalItems
+    ? pendingCountResponse.data.meta.total
     : 0;
 
   // Prepare data
@@ -67,10 +67,10 @@ export default async function BookingsPage({
   const meta = bookingsResponse?.success
     ? bookingsResponse.data.meta
     : {
-        totalItems: 0,
+        total: 0,
         totalPages: 0,
-        currentPage: 1,
-        pageSize: 10,
+        page: 1,
+        limit: 10,
       };
 
   return (

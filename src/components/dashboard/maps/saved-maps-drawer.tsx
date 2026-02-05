@@ -14,7 +14,8 @@ import { Input } from "@/components/ui/input";
 import { format } from "date-fns";
 import { useState, useEffect, useCallback } from "react";
 import { getMaps, deleteMap as deleteMapService } from "@/services/maps";
-import { MapData, MapMeta } from "@/types/maps";
+import { MapData } from "@/types/maps";
+import { PaginationMeta } from "@/types/global.type";
 import { toast } from "sonner";
 import { useSmartFilter } from "@/hooks/useSmartFilter";
 import { Search } from "lucide-react";
@@ -37,13 +38,13 @@ export function SavedMapsDrawer({
   const search = getFilter("search") || "";
 
   const [maps, setMaps] = useState<MapData[]>(initialMaps);
-  const [meta, setMeta] = useState<MapMeta | null>(null);
+  const [meta, setMeta] = useState<PaginationMeta | null>(null);
   const [isLoading, setIsLoading] = useState(false);
 
-  const fetchMaps = useCallback(async (currentPage: number, search: string) => {
+  const fetchMaps = useCallback(async (page: number, search: string) => {
     setIsLoading(true);
     try {
-      const response = await getMaps({ page: currentPage.toString(), limit: "6", search });
+      const response = await getMaps({ page: page.toString(), limit: "6", search });
       if (response?.success) {
         setMaps(response.data.maps);
         setMeta(response.data.meta);
