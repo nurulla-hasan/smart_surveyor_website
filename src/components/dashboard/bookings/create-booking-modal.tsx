@@ -20,6 +20,7 @@ import { Plus, CalendarIcon } from "lucide-react";
 import { BookingCalendar } from "@/components/dashboard/bookings/booking-calendar";
 import { getClients } from "@/services/clients";
 import { createBooking } from "@/services/bookings";
+import { useRouter } from "next/navigation";
 import { SuccessToast, ErrorToast } from "@/lib/utils";
 import { useCallback, useEffect } from "react";
 import { SearchableSelect, SearchableOption } from "@/components/ui/custom/searchable-select";
@@ -56,6 +57,7 @@ export function CreateBookingModal({ onSuccess }: CreateBookingModalProps) {
   const [isOpen, setIsOpen] = useState(false);
   const [loading, setLoading] = useState(false);
   const searchParams = useSearchParams();
+  const router = useRouter();
 
   const [selectedClient, setSelectedClient] = useState<SearchableOption | null>(null);
 
@@ -119,6 +121,11 @@ export function CreateBookingModal({ onSuccess }: CreateBookingModalProps) {
         form.reset();
         setSelectedClient(null);
         setIsOpen(false);
+        
+        // Trigger calendar refresh
+        window.dispatchEvent(new CustomEvent("refresh-calendar"));
+        router.refresh();
+        
         onSuccess?.();
       } else {
         ErrorToast(res?.message || "Problem creating booking");

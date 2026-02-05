@@ -19,6 +19,7 @@ import { OverviewChart } from "@/components/dashboard/overview-chart";
 import { DashboardCalendar } from "@/components/dashboard/dashboard-calendar";
 import { StatCard } from "@/components/dashboard/stat-card";
 import { getDashboardStats, getMonthlyStats, getCalendarData } from "@/services/dashboard";
+import { getCurrentUser } from "@/services/auth";
 
 export const dynamic = "force-dynamic";
 
@@ -43,11 +44,16 @@ export default async function DashboardPage({
   searchParams: Promise<{ month?: string; year?: string }>;
 }) {
   const params = await searchParams;
+  const user = await getCurrentUser();
+
   // Fetch data in parallel using params directly
   const [statsResponse, monthlyStatsResponse, calendarResponse] = await Promise.all([
     getDashboardStats(),
     getMonthlyStats(params),
-    getCalendarData(params)
+    getCalendarData({
+      ...params,
+      surveyorId: user?.id
+    })
   ]);
 
   const stats = statsResponse?.data || {

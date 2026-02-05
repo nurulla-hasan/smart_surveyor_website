@@ -4,6 +4,7 @@
 import { Calendar } from "@/components/ui/calendar";
 import { Card } from "@/components/ui/card";
 import { getCalendarData } from "@/services/dashboard";
+import { getCurrentUser } from "@/services/auth";
 import React, { useState, useEffect, useCallback } from "react";
 import { isSameDay, isBefore, startOfDay } from "date-fns";
 
@@ -11,6 +12,7 @@ interface BookingCalendarProps {
   selectedDate: Date | undefined;
   onSelect: (date: Date | undefined) => void;
   onMonthChange?: (date: Date) => void;
+  surveyorId?: string;
   showLegend?: boolean;
   className?: string;
 }
@@ -19,6 +21,7 @@ export function BookingCalendar({
   selectedDate, 
   onSelect, 
   onMonthChange,
+  surveyorId,
   showLegend = true,
   className,
 }: BookingCalendarProps) {
@@ -27,15 +30,27 @@ export function BookingCalendar({
   const [currentMonth, setCurrentMonth] = useState<Date | undefined>(undefined);
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [loading, setLoading] = useState(false);
+  const [user, setUser] = useState<any>(null);
 
   useEffect(() => {
     setCurrentMonth(new Date());
-  }, []);
+    if (!surveyorId) {
+      const fetchUser = async () => {
+        const userData = await getCurrentUser();
+        setUser(userData);
+      };
+      fetchUser();
+    }
+  }, [surveyorId]);
 
-  const fetchAvailability = useCallback(async (month: number, year: number) => {
+  const effectiveSurveyorId = surveyorId || user?.id;
+
+  const fetchAvailability = useCallback(async (month: number, year: number, sid?: string) => {
+    if (!sid) return;
+    
     setLoading(true);
     try {
-      const res = await getCalendarData(month, year);
+      const res = await getCalendarData({ month, year, surveyorId: sid } as any);
       if (res?.success) {
         const booked = (res.data.bookedDates || []).map((d: any) => new Date(d.date));
         const blocked = (res.data.blockedDates || []).map((d: any) => new Date(d.date));
@@ -51,20 +66,20 @@ export function BookingCalendar({
 
   // Listen for custom refresh events
   useEffect(() => {
-    if (!currentMonth) return;
+    if (!currentMonth || !effectiveSurveyorId) return;
     const handleRefresh = () => {
-      fetchAvailability(currentMonth.getMonth() + 1, currentMonth.getFullYear());
+      fetchAvailability(currentMonth.getMonth() + 1, currentMonth.getFullYear(), effectiveSurveyorId);
     };
 
     window.addEventListener("refresh-calendar", handleRefresh);
     return () => window.removeEventListener("refresh-calendar", handleRefresh);
-  }, [currentMonth, fetchAvailability]);
+  }, [currentMonth, effectiveSurveyorId, fetchAvailability]);
 
   useEffect(() => {
-    if (currentMonth) {
-      fetchAvailability(currentMonth.getMonth() + 1, currentMonth.getFullYear());
+    if (currentMonth && effectiveSurveyorId) {
+      fetchAvailability(currentMonth.getMonth() + 1, currentMonth.getFullYear(), effectiveSurveyorId);
     }
-  }, [currentMonth, fetchAvailability]);
+  }, [currentMonth, effectiveSurveyorId, fetchAvailability]);
 
   const handleMonthChange = (date: Date) => {
     setCurrentMonth(date);

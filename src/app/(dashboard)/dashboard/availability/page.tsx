@@ -1,6 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { getBlockedDates } from "@/services/availability";
 import { getCalendarData } from "@/services/dashboard";
+import { getCurrentUser } from "@/services/auth";
 import { AvailabilityView } from "@/components/dashboard/availability/availability-view";
 import PageHeader from "@/components/ui/custom/page-header";
 
@@ -18,13 +19,17 @@ export default async function AvailabilityPage({
 }) {
   const params = await searchParams;
   const now = new Date();
+  const user = await getCurrentUser();
   const monthNum = params.month ? parseInt(params.month) : now.getMonth() + 1;
   const yearNum = params.year ? parseInt(params.year) : now.getFullYear();
 
   // Fetch data in parallel on the server using params directly
   const [blockedRes, calendarRes] = await Promise.all([
     getBlockedDates(params),
-    getCalendarData(params),
+    getCalendarData({
+      ...params,
+      surveyorId: user?.id,
+    }),
   ]);
 
   const initialBlockedDates = blockedRes?.data || [];

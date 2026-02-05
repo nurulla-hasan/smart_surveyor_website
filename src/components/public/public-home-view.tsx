@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 'use client';
 
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { Navbar } from './home/navbar';
 import { Hero } from './home/hero';
 import { SurveyorProfile } from './home/surveyor-profile';
@@ -46,16 +46,6 @@ const FAKE_SURVEYORS = [
   }
 ];
 
-const FAKE_BOOKED_DATES = [
-  { date: '2026-02-10', title: 'Plot Survey', status: 'confirmed' },
-  { date: '2026-02-15', title: 'Boundary Marking', status: 'confirmed' },
-];
-
-const FAKE_BLOCKED_DATES = [
-  { date: '2026-02-12', reason: 'Field Work' },
-  { date: '2026-02-20', reason: 'Maintenance' },
-];
-
 export default function PublicHomeView({ user }: { user?: any }) {
   const [selectedDate, setSelectedDate] = useState<Date | undefined>(new Date());
   const [selectedSurveyorId, setSelectedSurveyorId] = useState<string>(FAKE_SURVEYORS[0].id);
@@ -88,8 +78,6 @@ export default function PublicHomeView({ user }: { user?: any }) {
                   onSelect={setSelectedSurveyorId} 
                   selectedDate={selectedDate}
                   onDateSelect={setSelectedDate}
-                  bookedDates={FAKE_BOOKED_DATES}
-                  blockedDates={FAKE_BLOCKED_DATES}
                 />
               </div>
             </div>

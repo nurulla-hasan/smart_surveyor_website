@@ -1,5 +1,6 @@
 import { getCalendarData } from "@/services/dashboard";
 import { getBookings } from "@/services/bookings";
+import { getCurrentUser } from "@/services/auth";
 import { BookingsView } from "@/components/dashboard/bookings/bookings-view";
 import { format } from "date-fns";
 import { QueryParams } from "@/types/global.type";
@@ -20,10 +21,14 @@ export default async function BookingsPage({
 }) {
   const params = await searchParams;
   const now = new Date();
+  const user = await getCurrentUser();
 
   // Fetch data in parallel
   const [calendarResponse, bookingsResponse] = await Promise.all([
-    getCalendarData(params),
+    getCalendarData({
+      ...params,
+      surveyorId: user?.id,
+    }),
     getBookings({
       ...params,
       filter: params.tab || "upcoming",
