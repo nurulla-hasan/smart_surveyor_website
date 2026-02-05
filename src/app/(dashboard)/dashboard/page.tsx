@@ -221,7 +221,7 @@ export default async function DashboardPage({
                   </div>
                   <div className="w-full pt-4 mt-2 border-t border-border/50 text-center">
                     <Link 
-                      href="/bookings?tab=requests" 
+                      href="/dashboard/bookings?tab=pending" 
                       className="flex items-center justify-center gap-2 text-xs font-semibold text-primary hover:underline transition-all"
                     >
                       View all requests
