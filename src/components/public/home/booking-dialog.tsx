@@ -169,6 +169,7 @@ export function BookingDialog({ isOpen, onClose, selectedSurveyor, selectedDate 
       onOpenChange={resetAndClose}
       title="Book a Survey"
       description={formattedDate}
+      showClose={true}
     >
       <div className="relative min-h-100 p-6">
         <AnimatePresence mode="wait">

@@ -7,9 +7,18 @@ import {
   Sun,
   Moon,
   Settings,
+  Menu,
 } from "lucide-react";
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
+import {
+  Sheet,
+  SheetContent,
+  SheetDescription,
+  SheetTitle,
+  SheetTrigger,
+} from "@/components/ui/sheet";
+import { Sidebar } from "./sidebar";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -31,6 +40,7 @@ export function Header() {
   const router = useRouter();
   const [mounted, setMounted] = useState(false);
   const [userData, setUserData] = useState<any>(null);
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
   useEffect(() => {
     // eslint-disable-next-line react-hooks/set-state-in-effect
@@ -60,6 +70,25 @@ export function Header() {
   return (
     <header className="sticky top-0 z-50 w-full bg-sidebar backdrop-blur-md">
       <div className="flex h-16 items-center px-4 sm:px-8">
+        {/* Mobile Sidebar Toggle */}
+        <Sheet open={isSidebarOpen} onOpenChange={setIsSidebarOpen}>
+          <SheetTrigger asChild>
+            <Button variant="ghost" size="icon" className="lg:hidden mr-2">
+              <Menu className="h-6 w-6" />
+              <span className="sr-only">Toggle Sidebar</span>
+            </Button>
+          </SheetTrigger>
+          <SheetContent side="left" className="p-0 w-64 bg-sidebar border-r-0">
+            <SheetTitle className="sr-only">
+              SmartSurveyor
+            </SheetTitle>
+            <SheetDescription className="sr-only">
+              Navigate through the dashboard
+            </SheetDescription>
+            <Sidebar onItemClick={() => setIsSidebarOpen(false)} />
+          </SheetContent>
+        </Sheet>
+
         <div className="flex flex-1 items-center justify-end space-x-2 sm:space-x-4">
           {/* Search Bar UI */}
           <HeaderSearch />

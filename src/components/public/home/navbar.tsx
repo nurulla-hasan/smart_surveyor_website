@@ -45,7 +45,7 @@ export function Navbar({ user }: NavbarProps) {
           <div className="bg-primary p-1.5 rounded-lg shadow-sm group-hover:scale-110 transition-transform">
             <ShieldCheck className="h-6 w-6 text-primary-foreground" />
           </div>
-          <span className="text-xl font-bold tracking-tight bg-clip-text text-transparent bg-linear-to-r from-foreground to-foreground/70">
+          <span className="hidden sm:block text-xl font-bold tracking-tight bg-clip-text text-transparent bg-linear-to-r from-foreground to-foreground/70">
             SmartSurveyor
           </span>
         </Link>
@@ -113,10 +113,10 @@ export function Navbar({ user }: NavbarProps) {
             </div>
           ) : (
             <div className="flex items-center gap-2">
-              <Button variant="ghost" asChild>
+              <Button variant="ghost" size="sm" asChild>
                 <Link href="/auth/login">Login</Link>
               </Button>
-              <Button asChild>
+              <Button size="sm" asChild>
                 <Link href="/auth/register">Get Started</Link>
               </Button>
             </div>
