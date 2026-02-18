@@ -61,7 +61,7 @@ export function ReportDetailsView({ report }: ReportDetailsViewProps) {
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-4">
-          <Link href="/reports">
+          <Link href="/dashboard/reports">
             <Button variant="ghost" size="icon">
               <ArrowLeft className="size-5" />
             </Button>
